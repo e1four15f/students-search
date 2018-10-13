@@ -24,4 +24,8 @@ namespace GoogleReq
 			Console.ReadKey(true);
 		}
 	}
+	
+	void go() {
+		return void;
+	}
 }
