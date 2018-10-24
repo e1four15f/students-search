@@ -11,25 +11,26 @@ namespace Search
     {
         /* Метод проверяющий скрытую группу на принадлежность к миэту по участникам
          * Группа считается миэтовской, если в группе, где меньше 75 человек найдётся 5 человек из миэта
-           Возвращает id группы, если она миэтовская */
-        internal static string HiddenMietGroupCheck(string hidden_group_id)
+           Возвращает информацию об участниках, если она миэтовская */
+        internal static JArray LocalMietGroupCheck(string local_group_id)
         {
             byte pivot = 0;
-            List<int> data = VkApi.GroupsGetMembers(hidden_group_id, 100);
-            if (data.Count > 75)
+            List<string> user_ids = VkApi.GroupsGetMembers(local_group_id, 100);
+            if (user_ids.Count > 75)
             {
                 // TODO мб возвращать пустую строку или null
                 return null;
             }
-            
-            foreach (int user_id in data)
+            // TODO Добавить в токен поле from group_id
+            JArray users_data = VkApi.UsersGet(user_ids, VkApiUtils.fields);
+            foreach (JToken user_data in users_data)
             {
-                if (pivot == 5)
+                // TODO Определить оптимальное значение для pivot
+                if (pivot == 8)
                 {
-                    return hidden_group_id;
+                    return users_data;
                 }
-
-                JToken user_data = VkApi.UsersGet(user_id, "occupation,universities");
+                
                 if (user_data["occupation"] != null && (string) user_data["occupation"]["id"] == "241")
                 {
                     pivot++;
@@ -48,12 +49,14 @@ namespace Search
                     }
                 }
             }
+
             // TODO мб возвращать пустую строку или null
             return null;
         }
 
-        /* Метод для нахождения скрытых групп по строке запроса
-           Возвращает лист int с id скрытых групп */
+        /* В данный момент не используется
+         * Метод для нахождения скрытых групп по строке запроса
+           Возвращает лист int с id скрытых групп 
         internal static List<int> GetHiddenGroups(string word, short count = 1000)
         {
             HashSet<int> hidden_group_ids = new HashSet<int>();
@@ -73,5 +76,6 @@ namespace Search
 
             return hidden_group_ids.ToList<int>();
         }
+        */
     }
 }

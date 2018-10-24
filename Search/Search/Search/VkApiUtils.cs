@@ -24,8 +24,11 @@ namespace Search
         // Пользовательский ключ доступа
         public static string user_key = ConfigurationManager.AppSettings.Get("user_key");
 
+        // Строка запроса для users.get
+        public const string fields = "bdate,city,connections,contacts,domain,education,exports,occupation,photo_100,sex,universities";
         // Время засыпания потока при большом количестве запросов
-        public const int sleep_time = 10000; 
+        public const int sleep_time = 2500; 
+
         // Для вывода доп информации в консоль 
         private const bool verbose = true;
 
@@ -116,8 +119,8 @@ namespace Search
                     count = 0;
                 }
                 Console.Write(count);
-                count++;
                 Console.Write("\b");
+                count++;
             }
             
             JObject data = JObject.Parse(response);

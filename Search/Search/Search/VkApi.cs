@@ -2,36 +2,37 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace Search
 {
     // Класс, в котором хранятся методы из vk api
     abstract class VkApi
     {
-        /* Метод позволяющий получить подробную информацию о пользователе по id
-           Возвращает json с информацией пользователя */
-        internal static JToken UsersGet(int user_id, string fields = "")
+        /* Метод позволяющий получить подробную информацию о пользователях по листу string с id
+           Возвращает массив json с информацией пользователей */
+        internal static JArray UsersGet(List<string> user_ids, string fields = "")
         {
+            JArray users_data = new JArray();
+            
             Dictionary<string, string> parameters = new Dictionary<string, string>()
             {
-                { "user_id", user_id.ToString() },
+                { "user_ids", String.Join(",", String.Join(",", user_ids)) },
                 { "fields", fields }
             };
 
-            JObject data = VkApiUtils.MethodRequest("users.get", parameters, VkApiUtils.service_key);
-            return data["response"][0];
-        }
-        
-        internal static JArray UsersGet(string user_ids, string fields = "")
-        {
-            Dictionary<string, string> parameters = new Dictionary<string, string>()
+            JObject data = new JObject();
+            try
             {
-                { "user_ids", user_ids },
-                { "fields", fields }
-            };
-
-            JObject data = VkApiUtils.MethodRequest("users.get", parameters, VkApiUtils.service_key);
-            return data["response"];
+                data = VkApiUtils.MethodRequest("users.get", parameters, VkApiUtils.service_key);
+            }
+            catch (WebException e)
+            {
+                Console.WriteLine(e.Message + "\nПревышено количество пользователей, должно быть <= 350");
+            }
+            
+            return (JArray) data["response"];
         }
 
         /* Метод позволяющий выполнить поиск групп по текстовой строке
@@ -53,7 +54,6 @@ namespace Search
             {
                 if (e.Data.Keys.Cast<short>().Single() == 6)
                 {
-                    // TODO time.sleep(np.random.randint(5, sleep_time))
                     return GroupsSearch(text, count);
                 }
                 else
@@ -73,10 +73,10 @@ namespace Search
 
         /* Метод позволяющий получить всех пользователей группы по id
            Возвращает лист int с id пользователей */
-        internal static List<int> GroupsGetMembers(string group_id, int max_count = 0)
+        internal static List<string> GroupsGetMembers(string group_id, int max_count = 0)
         {
             short offset = 0;
-            List<int> user_ids = new List<int>();
+            List<string> user_ids = new List<string>();
 
             while (max_count == 0 || user_ids.Count <= max_count)
             {
@@ -96,23 +96,26 @@ namespace Search
                 {
                     data = VkApiUtils.MethodRequest("groups.getMembers", parameters, VkApiUtils.service_key);
                 }
+                catch (WebException e)
+                {
+                    Console.WriteLine(e.Message);
+                    return new List<string>();
+                }
                 catch (Exception e)
                 {
                     if (e.Data.Keys.Cast<short>().Single() == 6)
                     {
-                        // TODO time.sleep(np.random.randint(5, sleep_time))
-                        //Thread.sleep(VkApiUtils.sleep_time);
                         return GroupsGetMembers(group_id, max_count);
                     }
                     else
                     {
                         throw e;
                     }
-                }
+                } 
 
                 foreach (JToken user_id in data["response"]["items"])
                 {
-                    user_ids.Add((int) user_id);
+                    user_ids.Add(user_id.ToString());
                 }
 
                 if (data["response"]["items"].Count() < 1000)
@@ -125,9 +128,10 @@ namespace Search
             return user_ids.GetRange(0, max_count);
         }
 
-        /* Метод позволяющий получить информацию о группах по id
+        /* В данный момент не используется
+         * Метод позволяющий получить информацию о группах по id
          * Мы используем для определения, что группа скрытая
-           Возвращает лист int с id скрытых групп */
+           Возвращает лист int с id скрытых групп
         internal static List<int> GroupsGetById(List<int> group_ids)
         {
             Dictionary<string, string> parameters = new Dictionary<string, string>()
@@ -144,7 +148,6 @@ namespace Search
             {
                 if (e.Data.Keys.Cast<short>().Single() == 6)
                 {
-                    // TODO time.sleep(np.random.randint(5, sleep_time))
                     return GroupsGetById(group_ids);
                 }
                 else
@@ -164,10 +167,11 @@ namespace Search
 
             return checked_group_ids;
         }
+        */
 
         /* Метод позволяющий произвести поиск людей по параметрам
            Возвращает лист int с id найденных пользователей */
-        internal static List<int> UsersSearch(string q = "", short count = 1000, short age = 0, byte sex = 0)
+        internal static List<string> UsersSearch(string q = "", short count = 1000, short age = 0, byte sex = 0)
         {
             Dictionary<string, string> parameters = new Dictionary<string, string>()
             {
@@ -188,7 +192,6 @@ namespace Search
             {
                 if (e.Data.Keys.Cast<short>().Single() == 6)
                 {
-                    // TODO time.sleep(np.random.randint(5, sleep_time))
                     return UsersSearch(q, count, age, sex);
                 }
                 else
@@ -197,10 +200,10 @@ namespace Search
                 }
             }
 
-            List<int> user_ids = new List<int>();
+            List<string> user_ids = new List<string>();
             foreach (JToken user in data["response"]["items"])
             {
-                user_ids.Add((int) user["id"]);
+                user_ids.Add(user["id"].ToString());
             }
 
             return user_ids;

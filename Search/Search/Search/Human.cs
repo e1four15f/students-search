@@ -41,9 +41,9 @@ namespace Search
         string photo_100;
         University[] universities;
 
-        public Human(JToken json)
+        public Human(JToken user_data)
         {
-            id = (int) json["id"];
+            //id = (int) user_data["id"];
         }
     }
 
