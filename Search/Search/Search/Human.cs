@@ -23,24 +23,26 @@ namespace Search
         public int graduation_year;
     }
 
-    class Human
+    class Human: ICloneable
     {
-        int id;
-        string first_name;
-        string last_name;
-        bool sex; 
-        string domain;
-        DateTime bdate;
-        City city;
-        string mobile_phone;
-        string home_phone;
+        public int id;
+        public string first_name;
+        public string last_name;
+        public bool sex;
+        public string domain;
+        public DateTime bdate;
+        public City city;
+        public string mobile_phone;
+        public string home_phone;
 
-        string skype;
-        string facebook;
-        string instagram;
+        public string skype;
+        public string facebook;
+        public string instagram;
 
-        string photo_100;
-        University[] universities;
+        public string photo_100;
+        public University[] universities;
+
+        public int plausibility;
 
         public Human(JToken user_data)
         {
@@ -79,6 +81,11 @@ namespace Search
             instagram; string
 
             photo_100; string*/
+        }
+
+        public int CalcPlausibility()
+        {
+            return 100;
         }
 
         public override string ToString()
