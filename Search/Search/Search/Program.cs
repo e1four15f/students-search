@@ -26,8 +26,19 @@ namespace Search
             //Console.WriteLine(String.Join(",", VkApiAdvanced.GetHiddenGroups("миэт").ToArray()));
             //JArray users_data = VkApiMulti.UsersGet(LoadFile("search_users_ids"), VkApiUtils.fields); 
 
-            new DBCreator().Create();
+            JArray users_data = FilesIO.LoadFileJson("users_data");
+            List<Human> users = new List<Human>();
 
+            foreach (JToken user_data in users_data)
+            {
+                if (user_data.Type != JTokenType.Null)
+                {
+                    Human user = new Human(user_data);
+                    users.Add(user);
+                    Console.WriteLine(user);
+                }
+            }
+            
             Console.WriteLine("Done");
             Console.Read();
         }

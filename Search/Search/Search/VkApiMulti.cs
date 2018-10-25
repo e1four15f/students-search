@@ -23,7 +23,10 @@ namespace Search
                 int max_value = i * 350 + 350 > user_ids.Count ? user_ids.Count - i * 350 : 350;
                 foreach (JToken user_data in VkApi.UsersGet(user_ids.GetRange(i * 350, max_value), VkApiUtils.fields))
                 {
-                    users_data.Add(user_data);
+                    if (user_data["deactivated"] == null)
+                    { 
+                        users_data.Add(user_data);
+                    }
                 }
             });
             return users_data;
