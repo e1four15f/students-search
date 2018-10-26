@@ -8,10 +8,25 @@ using System.Threading.Tasks;
 namespace Search
 {
     // TODO Нужно ли в структурах хранить и id, и название?
+    // TODO Разобраться как хранить переменные 
     struct City
     {
         public int city_id;
         public string city_title; 
+    }
+
+    struct Contacts
+    {
+        public string mobile_phone;
+        public string home_phone;
+        public string email;
+    }
+
+    struct Social
+    {
+        public string skype;
+        public string facebook;
+        public string instagram;
     }
 
     struct University
@@ -23,7 +38,7 @@ namespace Search
         public int graduation_year;
     }
 
-    class Human: ICloneable
+    class Human
     {
         public int id;
         public string first_name;
@@ -32,15 +47,10 @@ namespace Search
         public string domain;
         public DateTime bdate;
         public City city;
-        public string mobile_phone;
-        public string home_phone;
-
-        public string skype;
-        public string facebook;
-        public string instagram;
-
+        public Contacts contacts;
+        public Social social;
         public string photo_100;
-        public University[] universities;
+        public List<University> universities;
 
         public int plausibility;
 
@@ -72,17 +82,48 @@ namespace Search
                 city.city_id = (int) user_data["city"]["id"];
                 city.city_title = user_data["city"]["title"].ToString();
             }
-             //city; City
-            //mobile_phone; string
-            //home_phone; string
-            /*
-            skype; string
-            facebook; string
-            instagram; string
 
-            photo_100; string*/
+            contacts.mobile_phone = user_data["mobile_phone"] != null ? user_data["mobile_phone"].ToString() : null;
+            contacts.home_phone = user_data["home_phone"] != null ? user_data["home_phone"].ToString() : null;
+            // TODO Проверить в данных наличие других сетей
+            social.instagram = user_data["instagram"] != null ? user_data["instagram"].ToString() : null;
+            social.skype = user_data["skype"] != null ? user_data["skype"].ToString() : null;
+            social.facebook = user_data["facebook"] != null ? user_data["facebook"].ToString() : null;
+
+            photo_100 = user_data["photo_100"].ToString();
+
+            universities = new List<University>();
+            if (user_data["occupation"] != null && user_data["occupation"]["type"].ToString() == "university")
+            {
+                University occupation = new University();
+                occupation.university_id = (int) user_data["occupation"]["id"];
+                occupation.university_name = user_data["occupation"]["name"].ToString();
+                universities.Add(occupation);
+            }
+            
+            if (user_data["universities"] != null)
+            {
+                foreach (JToken university_data in user_data["universities"])
+                {
+                    if (university_data.Type != JTokenType.Null)
+                    {
+                        University university = new University();
+                        university.university_id = (int) university_data["id"];
+                        university.university_name = university_data["name"].ToString();
+                        if (university_data["faculty"] != null)
+                        {
+                            university.faculty_id = (int) university_data["faculty"];
+                            university.faculty_name = university_data["faculty_name"].ToString();
+                        }
+                        university.graduation_year = university_data["graduation"] != null ? int.Parse(university_data["graduation"].ToString()) : 0;
+                        universities.Add(university);
+                    }
+                }
+            }
+             
         }
 
+        // TODO quick math
         public int CalcPlausibility()
         {
             return 100;
@@ -90,8 +131,12 @@ namespace Search
 
         public override string ToString()
         {
-            string user_info = domain + " " + first_name + " " + last_name + " " + (sex ? "Муж" : "Жен") + " " + bdate.ToShortDateString()
-                + " " + city.city_title;
+            string user_info = domain + " " + first_name + " " + last_name + " " + (sex ? "Муж" : "Жен") + " " + bdate.ToShortDateString() + " " + city.city_title + "\n"
+                + (contacts.mobile_phone != null ? " Моб.телефон:" + contacts.mobile_phone : "") + (contacts.home_phone != null ? " Дом.телефон:" + contacts.home_phone : "")
+                + (social.instagram != null ? " instagram:" + social.instagram : "")
+                + (social.skype != null ? " skype:" + social.skype : "")
+                + (social.facebook != null ? " facebook:" + social.facebook : "") 
+                + "\n";
 
             return user_info;
         }

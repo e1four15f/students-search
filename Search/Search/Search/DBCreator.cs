@@ -38,10 +38,7 @@ namespace Search
             List<Human> users = new List<Human>();
             foreach (JToken user_data in users_data)
             {
-                if (user_data.Type != JTokenType.Null)
-                {
-                    users.Add(new Human(user_data));
-                }
+                users.Add(new Human(user_data));
             }
             full_timer.Stop();
             Console.WriteLine("Создание БД завершено! " + full_timer.Elapsed);
