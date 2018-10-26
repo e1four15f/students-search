@@ -1,0 +1,49 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="WpfApplication1.MainWindow"
+        Title="Поиск" Height="573" Width="947">
+    <Grid>
+        <Menu DockPanel.Dock="Top" Margin="0,0,0,521">
+            <MenuItem Header="_Файл">
+                <MenuItem Header="_Новый список" />
+                <MenuItem Header="_Загрузить список" />
+                <MenuItem Header="_Сохранить список" />
+                <Separator />
+                <MenuItem Header="_Выход" />
+            </MenuItem>
+            <MenuItem Header="_Настройки">
+                <MenuItem Header="_Информация о БД" />
+                <MenuItem Header="_Настройки" />
+            </MenuItem>
+        </Menu>
+        <ListView ItemsSource="{Binding AddedUsersList}" Margin="10,57,713,10">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Name}" Width="100">Имя</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Surname}" Width="100">Фамилия</GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView Margin="231,57,10,35">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn DisplayMemberBinding="{Binding Name}" Width="75" Header="Фото"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Name}" Width="120" Header="Имя"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Surname}" Width="102" Header="Фамилия"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Sex}" Width="30" Header="Пол"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Age}" Width="60" Header="Возраст"/>
+                    <GridViewColumn DisplayMemberBinding="{Binding Fac}" Width="60" Header="Факультет"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Label Content="Список" HorizontalAlignment="Left" Margin="10,26,0,0" VerticalAlignment="Top"/>
+        <Label Content="Результат поиска" HorizontalAlignment="Left" Margin="231,21,0,0" VerticalAlignment="Top" RenderTransformOrigin="3.98,0.558"/>
+        <Button Content="Сделать запрос" HorizontalAlignment="Left" Margin="231,512,0,0" VerticalAlignment="Top" Width="120"/>
+        <Button Content="Добавить в список" HorizontalAlignment="Left" Margin="469,512,0,0" VerticalAlignment="Top" Width="150"/>
+        <Button Content="Удалить из списка" HorizontalAlignment="Left" Margin="779,512,0,0" VerticalAlignment="Top" Width="150"/>
+        <Button Content="Подробная информация"  HorizontalAlignment="Left" Margin="624,512,0,0" VerticalAlignment="Top" Width="150"/>
+        <ScrollBar HorizontalAlignment="Left" Height="448" Margin="911,58,0,0" VerticalAlignment="Top" Width="14"/>
+
+    </Grid>
+</Window>

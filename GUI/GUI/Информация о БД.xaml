@@ -1,0 +1,13 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="WpfApplication1.MainWindow"
+        Title="Информация о БД" Height="143" Width="304">
+    <Grid Margin="0,0,-8,0">
+        <Image HorizontalAlignment="Left" Height="299" Margin="10,-68,0,-24" VerticalAlignment="Top" Width="368"/>
+        <Label Content="Дата создания БД: 10.12.2018, 20:36" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <Label Content="Количество записей в БД: 28945 пользователей" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
+        <Label Content="Размер БД: 54 mb" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top"/>
+
+    </Grid>
+</Window>
