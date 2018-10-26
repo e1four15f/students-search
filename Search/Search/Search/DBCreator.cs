@@ -38,6 +38,10 @@ namespace Search
             List<Human> users = new List<Human>();
             foreach (JToken user_data in users_data)
             {
+                if (public_groups_members_ids.Contains(user_data["id"].ToString()))
+                {
+
+                }
                 users.Add(new Human(user_data));
             }
             full_timer.Stop();
@@ -66,8 +70,8 @@ namespace Search
             };
             Console.WriteLine("GroupsSearch");
             timer.Restart();
-            /* 18947 | 30.22 s */ 
-            List<int> local_not_checked_groups_ids = VkApiMulti.GroupsSearch(words);
+            /* 18947 | 30.22 s */
+            List<int> local_not_checked_groups_ids = VkApiMulti.GroupsSearch(words); //FilesIO.LoadFileInt("local_not_checked_groups_ids");
             timer.Stop();
             FilesIO.SaveFile("Local_not_checked_groups_ids", local_not_checked_groups_ids);
             Console.WriteLine("Найдено " + local_not_checked_groups_ids.Count() + " локальных групп " + timer.Elapsed);

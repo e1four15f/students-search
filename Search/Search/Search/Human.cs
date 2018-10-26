@@ -27,6 +27,8 @@ namespace Search
         public string skype;
         public string facebook;
         public string instagram;
+        public string livejournal;
+        public string twitter;
     }
 
     struct University
@@ -51,6 +53,7 @@ namespace Search
         public Social social;
         public string photo_100;
         public List<University> universities;
+        public string arrived_from;
 
         public int plausibility;
 
@@ -68,7 +71,7 @@ namespace Search
                 {
                     try
                     {
-                        bdate = (splited_date.Length == 3) ? new DateTime(splited_date[2], splited_date[1], splited_date[0]) : new DateTime(2000, splited_date[1], splited_date[0]);
+                        bdate = (splited_date.Length == 3) ? new DateTime(splited_date[2], splited_date[1], splited_date[0]) : new DateTime(DateTime.MinValue.Year, splited_date[1], splited_date[0]);
                     }
                     catch (ArgumentOutOfRangeException e)
                     {
@@ -83,12 +86,14 @@ namespace Search
                 city.city_title = user_data["city"]["title"].ToString();
             }
 
-            contacts.mobile_phone = user_data["mobile_phone"] != null ? user_data["mobile_phone"].ToString() : null;
-            contacts.home_phone = user_data["home_phone"] != null ? user_data["home_phone"].ToString() : null;
-            // TODO Проверить в данных наличие других сетей
+            contacts.mobile_phone = user_data["mobile_phone"] != null && user_data["mobile_phone"].ToString().Length > 8 ? user_data["mobile_phone"].ToString() : null;
+            contacts.home_phone = user_data["home_phone"] != null && user_data["home_phone"].ToString().Length > 8 ? user_data["home_phone"].ToString() : null;
+
             social.instagram = user_data["instagram"] != null ? user_data["instagram"].ToString() : null;
             social.skype = user_data["skype"] != null ? user_data["skype"].ToString() : null;
             social.facebook = user_data["facebook"] != null ? user_data["facebook"].ToString() : null;
+            social.livejournal = user_data["livejournal"] != null ? user_data["livejournal"].ToString() : null;
+            social.twitter = user_data["twitter"] != null ? user_data["twitter"].ToString() : null;
 
             photo_100 = user_data["photo_100"].ToString();
 
@@ -120,7 +125,8 @@ namespace Search
                     }
                 }
             }
-             
+
+            arrived_from = user_data["arrived_from"] != null ? user_data["arrived_from"].ToString() : "Search";
         }
 
         // TODO quick math
@@ -131,18 +137,17 @@ namespace Search
 
         public override string ToString()
         {
-            string user_info = domain + " " + first_name + " " + last_name + " " + (sex ? "Муж" : "Жен") + " " + bdate.ToShortDateString() + " " + city.city_title + "\n"
+            string user_info = domain + " " + first_name + " " + last_name + " " + (sex ? "Муж" : "Жен") + " " + bdate.ToShortDateString() + " " + city.city_title + " " + arrived_from + "\n"
                 + (contacts.mobile_phone != null ? " Моб.телефон:" + contacts.mobile_phone : "") + (contacts.home_phone != null ? " Дом.телефон:" + contacts.home_phone : "")
                 + (social.instagram != null ? " instagram:" + social.instagram : "")
                 + (social.skype != null ? " skype:" + social.skype : "")
-                + (social.facebook != null ? " facebook:" + social.facebook : "") 
+                + (social.facebook != null ? " facebook:" + social.facebook : "")
+                + (social.livejournal != null ? " livejournal:" + social.livejournal : "")
+                + (social.twitter != null ? " twitter:" + social.twitter : "")
                 + "\n";
-
             return user_info;
         }
     }
-
- 
 }
 
 

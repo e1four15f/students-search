@@ -27,7 +27,7 @@ namespace Search
         // Строка запроса для users.get
         public const string fields = "bdate,city,connections,contacts,domain,education,exports,occupation,photo_100,sex,universities";
         // Время засыпания потока при большом количестве запросов
-        public const int sleep_time = 2500; 
+        public const int sleep_time = 3000; 
 
         // Для вывода доп информации в консоль 
         private const bool verbose = true;

@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace Search
 {
@@ -24,32 +25,26 @@ namespace Search
             //Console.WriteLine(String.Join(",", VkApi.UsersSearch("Дима", 10).ToArray())); 
             //Console.WriteLine(VkApiAdvanced.HiddenMietGroupCheck("mp_15a_2016")); 
             //Console.WriteLine(String.Join(",", VkApiAdvanced.GetHiddenGroups("миэт").ToArray()));
-            //JArray users_data = VkApiMulti.UsersGet(LoadFile("search_users_ids"), VkApiUtils.fields); 
+            //JArray users_data = VkApiMulti.UsersGet(FilesIO.LoadFile("search_users_ids"), VkApiUtils.fields);
+            //users_data = VkApiMulti.UsersGet(FilesIO.LoadFile("search_users_ids"), VkApiUtils.fields);
+            //users_data = VkApiMulti.UsersGet(FilesIO.LoadFile("search_users_ids"), VkApiUtils.fields); 
+                                                                // TODO Опять появились deactivated пользователи 
 
-            // TODO Опять появились deactivated пользователи 
             JArray users_data = FilesIO.LoadFileJson("users_data");
             List<Human> users = new List<Human>();
 
             foreach (JToken user_data in users_data)
             {
-                /*
-                if (user_data["universities"] != null)
-                {
-                    foreach (JToken university in user_data["universities"])
-                    {
-                        if (university.Type != JTokenType.Null)
-                        {
-                            //Console.WriteLine(user_data);
-                            Console.WriteLine(university);
-                        }
-                    }
-                }
-                */ 
-                Human user = new Human(user_data);
-                users.Add(user);
+                //Human user = new Human(user_data);
+                //users.Add(user);
+                //Console.WriteLine(user);
+                if (user_data["arrived_from"] != null)
+                Console.WriteLine(user_data["arrived_from"]);
             }
+            
             Console.WriteLine("Done");
             Console.Read();
         }
+       
     }
 }

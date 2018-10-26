@@ -13,7 +13,7 @@ namespace Search
     abstract class FilesIO
     {
         // TODO Генерировать уникальный идентификатор 
-        private const string postfix = "_24_10_2018";
+        private const string postfix = "_26_10_2018";
 
         // TODO Разобраться куда запихнуть сохранение/загрузку файлов
         /* IO */
@@ -40,8 +40,8 @@ namespace Search
             }
             Console.WriteLine(filename + " was saved!");
         }
-        /*
-        public static List<int> LoadFile(string filename)
+
+        internal static List<int> LoadFileInt(string filename)
         {
             string file = File.ReadAllText("data/" + filename + postfix);
             List<int> list = new List<int>();
@@ -52,8 +52,8 @@ namespace Search
             Console.WriteLine(filename + " was loaded!");
             return list;
         }
-        */
-        internal static List<string> LoadFile(string filename)
+        
+        internal static List<string> LoadFileString(string filename)
         {
             string file = File.ReadAllText("data/" + filename + postfix);
             List<string> list = new List<string>();
