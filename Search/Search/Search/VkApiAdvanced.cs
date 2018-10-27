@@ -10,7 +10,7 @@ namespace Search
     abstract class VkApiAdvanced
     {
         /* Метод проверяющий скрытую группу на принадлежность к миэту по участникам
-         * Группа считается миэтовской, если в группе, где меньше 75 человек найдётся 5 человек из миэта
+         * Группа считается миэтовской, если в группе, где меньше 75 человек найдётся 8 человек из миэта
            Возвращает информацию об участниках, если она миэтовская */
         internal static JArray LocalMietGroupCheck(string local_group_id)
         {
@@ -20,68 +20,45 @@ namespace Search
             {
                 return null;
             }
-            JArray users_data = VkApi.UsersGet(user_ids, VkApiUtils.fields);
-
-            for (int i = 0; i < users_data.Count; i++)
+            JArray users_data = VkApi.UsersGet(user_ids, VkApiUtils.fields, local_group_id);
+                
+            foreach (JToken user_data in users_data)
             {
-                if (users_data[i]["deactivated"] != null || users_data[i].Type == JTokenType.Null)
+                // TODO Определить оптимальное значение для pivot
+                if (pivot == 8)
                 {
-                    users_data.RemoveAt(i);
+                    return users_data;
                 }
-                else
+                
+                if (user_data["occupation"] != null && (string) user_data["occupation"]["id"] == "241")
                 {
-                    users_data[i]["arrived_from"] = local_group_id;
-                    if (users_data[i]["occupation"] != null && (string) users_data[i]["occupation"]["id"] == "241")
-                    {
-                        pivot++;
-                        continue;
-                    }
+                    pivot++;
+                    continue;
+                }
 
-                    if (users_data[i]["universities"] != null)
+                if (user_data["universities"] != null) 
+                { 
+                    foreach (JToken university in user_data["universities"])
                     {
-                        foreach (JToken university in users_data[i]["universities"])
+                        if ((string) university["id"] == "241")
                         {
-                            if ((string) university["id"] == "241")
-                            {
-                                pivot++;
-                                break;
-                            }
+                            pivot++;
+                            break;
                         }
                     }
                 }
             }
-            
-            // TODO Определить оптимальное значение для pivot
-            if (pivot == 8)
-            {
-                return users_data;
-            }
-            
+
             return null;
         }
 
-        /* В данный момент не используется
-         * Метод для нахождения скрытых групп по строке запроса
-           Возвращает лист int с id скрытых групп 
-        internal static List<int> GetHiddenGroups(string word, short count = 1000)
+        /* Метод позволюющий получить информацию об участниках группы 
+           Возвращает информацию об участниках */
+        internal static JArray GroupsGetMembers(string local_group_id, int max_count = 0)
         {
-            HashSet<int> hidden_group_ids = new HashSet<int>();
-
-            List<int> group_ids = VkApi.GroupsSearch(word, count);
-            for (int i = 0; i < group_ids.Count; i += 4)
-            {
-                List<int> part_group_ids = group_ids.GetRange(i, Math.Min(4, group_ids.Count - i));
-                if (part_group_ids.Count > 0)
-                {
-                    foreach (int group_id in VkApi.GroupsGetById(part_group_ids))
-                    {
-                        hidden_group_ids.Add(group_id);
-                    }
-                }
-            } 
-
-            return hidden_group_ids.ToList<int>();
+            List<string> user_ids = VkApi.GroupsGetMembers(local_group_id, max_count);
+            JArray users_data = VkApiMulti.UsersGet(user_ids, VkApiUtils.fields, local_group_id);
+            return users_data;
         }
-        */
     }
 }

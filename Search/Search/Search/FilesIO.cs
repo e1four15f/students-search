@@ -13,7 +13,7 @@ namespace Search
     abstract class FilesIO
     {
         // TODO Генерировать уникальный идентификатор 
-        private const string postfix = "_26_10_2018";
+        private const string postfix = "_27_10_2018";
 
         // TODO Разобраться куда запихнуть сохранение/загрузку файлов
         /* IO */

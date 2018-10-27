@@ -126,7 +126,7 @@ namespace Search
                 }
             }
 
-            arrived_from = user_data["arrived_from"] != null ? user_data["arrived_from"].ToString() : "Search";
+            arrived_from = user_data["arrived_from"].ToString();
         }
 
         // TODO quick math

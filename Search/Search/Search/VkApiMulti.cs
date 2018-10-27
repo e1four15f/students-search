@@ -15,20 +15,19 @@ namespace Search
 
         /* Метод позволяющий получить подробную информацию о пользователях в листе int по id
            Возвращает массив json с информацией всех пользователей */
-        internal static JArray UsersGet(List<string> user_ids, string fields = "") 
+        internal static JArray UsersGet(List<string> user_ids, string fields = "", string arrived_from = "") 
         {
             JArray users_data = new JArray();
             Parallel.For (0, user_ids.Count / 350 + 1, i =>
             {
                 int max_value = i * 350 + 350 > user_ids.Count ? user_ids.Count - i * 350 : 350;
-                foreach (JToken user_data in VkApi.UsersGet(user_ids.GetRange(i * 350, max_value), VkApiUtils.fields))
+                JArray ranged_users_data = VkApi.UsersGet(user_ids.GetRange(i * 350, max_value), VkApiUtils.fields, arrived_from);
+                for (int j = 0; j < ranged_users_data.Count; j++)
                 {
-                    if (user_data["deactivated"] == null && user_data.Type != JTokenType.Null)
-                    { 
-                        users_data.Add(user_data);
-                    }
+                    lock (users_data) users_data.Add(ranged_users_data[j]);
                 }
             });
+            
             return users_data;
         }
         
@@ -50,7 +49,7 @@ namespace Search
                     Thread.Sleep(VkApiUtils.sleep_time);
                     foreach (int group_id in VkApi.GroupsSearch(text, count))
                     {
-                        group_ids.Add(group_id);
+                        lock (group_ids) group_ids.Add(group_id);
                     }
                 }
             });
@@ -60,17 +59,26 @@ namespace Search
 
         /* Метод позволяющий получить всех пользователей из групп в листе string
            Возвращает лист int с id всех пользователей */
-        internal static List<string> GroupsGetMembers(List<string> group_ids, int max_count = 0) 
+        internal static JArray GroupsGetMembers(List<string> group_ids, int max_count = 0) 
         {
-            HashSet<string> user_ids = new HashSet<string>();
+            List<string> unique_ids = new List<string>();
+            
+            JArray users_data = new JArray();
             Parallel.ForEach (group_ids, group_id =>
             {
-                foreach (string user_id in VkApi.GroupsGetMembers(group_id, max_count))
+                JArray group_users_data = VkApiAdvanced.GroupsGetMembers(group_id, max_count);
+                for (int i = 0; i < group_users_data.Count; i++)
                 {
-                    user_ids.Add(user_id);
+                    string id = group_users_data[i]["id"].ToString();
+                    if (!unique_ids.Contains(id))
+                    {
+                        unique_ids.Add(id);
+                        lock (users_data) users_data.Add(group_users_data[i]);
+                    }
                 }
             });
-            return user_ids.ToList<string>();
+
+            return users_data;
         }
         
         /* Метод позволяющий произвести поиск людей по всем параметрам
@@ -86,10 +94,11 @@ namespace Search
                 {
                     foreach (string user_id in VkApi.UsersSearch(q, count, (short) age, (byte) sex))
                     {
-                        user_ids.Add(user_id);
+                        lock (user_ids) user_ids.Add(user_id);
                     }
                 }
             });
+            
             return user_ids.ToList<string>();
         }
 
@@ -103,8 +112,9 @@ namespace Search
             for (int i = 0; i < local_groups_ids.Count; i += 64)
             {
                 splited_local_groups_ids.Add(local_groups_ids.GetRange(i, Math.Min(64, local_groups_ids.Count - i)));
-            } 
+            }
 
+            List<string> unique_ids = new List<string>();
             JArray users_data = new JArray();
             Parallel.ForEach(splited_local_groups_ids, part_local_group_id =>
             {
@@ -113,28 +123,20 @@ namespace Search
                     JArray group_data = VkApiAdvanced.LocalMietGroupCheck(local_group_id);
                     if (group_data != null)
                     {
-                        users_data = new JArray(users_data.Union(group_data));
+                        for (int i = 0; i < group_data.Count; i++)
+                        {
+                            string id = group_data[i]["id"].ToString();
+                            if (!unique_ids.Contains(id))
+                            {
+                                unique_ids.Add(id);
+                                lock (users_data) users_data.Add(group_data[i]);
+                            }
+                        }
                     }
                 }
             });
+
             return users_data;
         }
-
-        /* В данный момент не используется
-         * Метод для нахождения скрытых групп по текстовым строкам из листа string
-           Возвращает лист int с id скрытых групп 
-        internal static List<int> GetHiddenGroups(List<string> words, short count = 1000)
-        {
-            HashSet<int> group_ids = new HashSet<int>();
-            Parallel.ForEach (words, word =>
-            {
-                foreach (int group_id in VkApiAdvanced.GetHiddenGroups(word, count))
-                {
-                    group_ids.Add(group_id);
-                }
-            });
-            return group_ids.ToList<int>();
-        }
-        */
     }
 }

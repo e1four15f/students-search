@@ -12,10 +12,8 @@ namespace Search
     {
         /* Метод позволяющий получить подробную информацию о пользователях по листу string с id
            Возвращает массив json с информацией пользователей */
-        internal static JArray UsersGet(List<string> user_ids, string fields = "")
-        {
-            JArray users_data = new JArray();
-            
+        internal static JArray UsersGet(List<string> user_ids, string fields = "", string arrived_from = "Пусто")
+        {   
             Dictionary<string, string> parameters = new Dictionary<string, string>()
             {
                 { "user_ids", String.Join(",", String.Join(",", user_ids)) },
@@ -30,9 +28,20 @@ namespace Search
             catch (WebException e)
             {
                 Console.WriteLine(e.Message + "\nПревышено количество пользователей, должно быть <= 350");
+                return null; 
             }
-            
-            return (JArray) data["response"];
+
+            JArray users_data = (JArray) data["response"];
+            for (int i = 0; i < users_data.Count; i++)
+            {
+                users_data[i]["arrived_from"] = arrived_from;
+                if (users_data[i]["deactivated"] != null || users_data[i].Type == JTokenType.Null)
+                {
+                    users_data.RemoveAt(i);
+                    i--;
+                }
+            }
+            return users_data;
         }
 
         /* Метод позволяющий выполнить поиск групп по текстовой строке
@@ -127,47 +136,6 @@ namespace Search
             
             return user_ids.GetRange(0, max_count);
         }
-
-        /* В данный момент не используется
-         * Метод позволяющий получить информацию о группах по id
-         * Мы используем для определения, что группа скрытая
-           Возвращает лист int с id скрытых групп
-        internal static List<int> GroupsGetById(List<int> group_ids)
-        {
-            Dictionary<string, string> parameters = new Dictionary<string, string>()
-            {
-                { "group_ids", String.Join(",", group_ids) },
-                { "type", "group" }
-            };
-            JObject data;
-            try
-            {
-                data = VkApiUtils.MethodRequest("groups.getById", parameters, VkApiUtils.service_key);
-            }
-            catch (Exception e)
-            {
-                if (e.Data.Keys.Cast<short>().Single() == 6)
-                {
-                    return GroupsGetById(group_ids);
-                }
-                else
-                {
-                    throw e;
-                }
-            }
-
-            List<int> checked_group_ids = new List<int>();
-            foreach (JToken group in data["response"])
-            {
-                if ((int) group["is_closed"] == 1 && group["deactivated"] == null)
-                {
-                    checked_group_ids.Add((int) group["id"]);
-                }
-            }
-
-            return checked_group_ids;
-        }
-        */
 
         /* Метод позволяющий произвести поиск людей по параметрам
            Возвращает лист int с id найденных пользователей */

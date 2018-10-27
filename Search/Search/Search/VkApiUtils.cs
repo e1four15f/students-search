@@ -27,7 +27,7 @@ namespace Search
         // Строка запроса для users.get
         public const string fields = "bdate,city,connections,contacts,domain,education,exports,occupation,photo_100,sex,universities";
         // Время засыпания потока при большом количестве запросов
-        public const int sleep_time = 3000; 
+        public const int sleep_time = 8000; 
 
         // Для вывода доп информации в консоль 
         private const bool verbose = true;
@@ -130,7 +130,7 @@ namespace Search
                 short error_code = (short) data["error"]["error_code"];
                 if (error_code == 6)
                 {
-                    Thread.Sleep(sleep_time);
+                    Thread.Sleep(new Random().Next(sleep_time / 2, sleep_time)); //Thread.Sleep(sleep_time);
                 }
                 Exception e = new Exception(string.Format("{0} : {1}", error_code, error_msg));
                 Console.WriteLine(e.Message);
