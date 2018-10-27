@@ -1,152 +1,141 @@
-﻿	struct Group{
-		int quantity;					//численность группы
-		string name;					//имя группы
-		string url;						//адрес группы
-	};
+﻿using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using AnalyzeAndProcess;
 
-	class Human : ICloneable{
-		public int Id			{get;}			//ID человека
-		public int Age			{get;}
-		public int Plausibility {get; set;}		//оценка правдоподобности
-		public string Name		{get;}
-		public string Surname	{get;}
-		public string Nickname	{get;}
-		public string Skype		{get;}
-		public string Email		{get;}
-		public string University{get;}
-		public string MoblilePhone{get;}
-		public string HomePhone {get;}
-		public string[] Sites	{get;}			//сайты, которые нашлись с помощью операторов google
-		public Group [] Groups	{get;}			//массив групп с численностью, названием и ссылкой на группу
-		public bool 	Gender	{get;}
-		public Human [] Friends {get;}			//друзья данного человека. Нужно будет строить связи людей по этому массиву
-		public DateTime DateOfGraduation{get;}	//дата выпуска
-		public DateTime DateOfBirth{get;}		//дата рождения
-		public string[] Other	{get;}
-		
-		
-		
-		public Human(){
-		/* Cтандартный конструктор
- 		 * инициализирует только Id в -1
- 		 * это покажет, что объект пустой
- 		 * */
-			id = -1;
-		}
- 		
-		public Human(int 	id,
- 		             int 	age,
- 		             string name,
- 		             string surname,
- 		             string nickname,
- 		             string skype,
- 		             string email,
- 		             string university,
- 		             string mobilePhone,
- 		             string homePhone,
- 		             string[] sites,
- 		             Group [] groups,
- 		             bool	  gender,
- 		             Human [] friends,
- 		             DateTime graduation,
- 		             DateTime birth,
- 		             string[] other){
- 		/*	Полный конструктор, со всеми параметрами
- 		 *  | отсутствующую информацию передавать в 
- 		 *  | конструктор стандартным значением
- 		 */
-	 		Id = id;
-	 		Age = age;
-	 		Name	 = name;
-	 		Surname	 = surname;
-	 		Nickname = nickname;
-	 		Email	 = email;
-	 		University 	= university;
-	 		MobilePhone = mobilePhone;
-	 		HomePhone	= homePhone;
-	 		Sites 		= sites;
-	 		Groups		= groups;
-	 		Gender		= gender;
-	 		Friends		= friends;
-	 		DateOfGraduation = graduation;
-	 		DateOfBirth	= birth;
-	 		Other		= other;
- 		}
-		
-		public Human(int 	id,
- 		             int 	age,
- 		             string name,
- 		             string surname,
- 		             string nickname,
- 		             Group [] groups,
- 		             bool	  gender,
- 		             Human [] friends,
- 		             DateTime birth,
- 		             string[] other){
- 		/*	Укороченный конструктор, с основными параметрами
- 		 *  | отсутствующую информацию передавать в 
- 		 *  | конструктор стандартным значением
- 		 */
-	 		Id = id;
-	 		Age = age;
-	 		Name	 = name;
-	 		Surname	 = surname;
-	 		Nickname = nickname;
-	 		Groups		= groups;
-	 		Gender		= gender;
-	 		Friends		= friends;
-	 		DateOfBirth	= birth;
-	 		Other		= other;
- 		}
-		
-		public Human(int 	id,
- 		             string name,
- 		             string surname,
- 		             Group [] groups,
- 		             bool	  gender,
- 		             DateTime birth,
- 		             string[] other){
- 		/*	Минимальный конструктор, с критически малым
- 		 *  | отсутствующую информацию передавать в 
- 		 *  | конструктор стандартным значением
- 		 */
-	 		Id = id;
-	 		Name	 = name;
-	 		Surname	 = surname;
-	 		Groups		= groups;
-	 		Gender		= gender;
-	 		DateOfBirth	= birth;
-	 		Other		= other;
- 		}
-		
-		
-		public override Human Clone(){
-			/*Функция клонирования возвращает this*/
-			return this;
-		}
-		
-		public void SetDateOfGraduation(DateTime graduation){
-			DateOfGraduation = graduation;
-		}
-		
-		public void SetDateOfBirth(DateTime birth){
-			DateOfGraduation = birth;
-		}
-		
-		public void SetDates(DateTime graduation,DateTime birth){
-			/*Функция позволяет коротенечко задать сразу обе даты*/
-			SetDateOfGraduation(graduation);
-			SetDateOfBirth(birth);
-		}
-		
-		
-		public int CalcPlausibility(){
-			return 100;
-		}
-		
+namespace HumanData
+{
+    // TODO Нужно ли в структурах хранить и id, и название?
+    // я думаю, что нужно, для вывода информации
+    struct City
+    {
+        public int city_id;
+        public string city_title; 
+    }
 
-		bool StudentLookUp(/*Name, Surname, age*/);//проверяет наличие данного человека в базе данных. true - есть, false - нет
-		bool /*изменяет (Sites)*/ GoogleLookUp(/*Name, Surname, SkypeNickname, Email, MobilePhone,HomePhone*/);//поиск дополнительных мест обитания человека
-		bool /*изменяет (groups)*/ GroupLookUp(/*groups*/);
-	}
-	
+    struct University
+    {
+        public int university_id;
+        public string university_name;
+        public int faculty_id;
+        public string faculty_name;
+        
+        //TODO может вынести из класса?
+        public int graduation_year;
+    }
+
+    class Human
+    {
+        public int id;
+        public string first_name;
+        public string last_name;
+        public bool sex;
+        public string domain;
+        public DateTime bdate;
+        public City city;
+        public string mobile_phone;
+        public string home_phone;
+
+        public string skype;
+        public string facebook;
+        public string instagram;
+
+        public string photo_100;
+        public List<University> universities;
+
+        public int plausibility;
+
+        public Human(JToken user_data)
+        {
+            id = (int) user_data["id"];
+            first_name = user_data["first_name"].ToString();
+            last_name = user_data["last_name"].ToString();
+            sex = (int) user_data["sex"] == 2 ? true : false;
+            domain = user_data["domain"].ToString();
+
+            if (user_data["bdate"] != null)
+            {
+                int[] splited_date = user_data["bdate"].ToString().Split('.').Select(Int32.Parse).ToArray();
+                {
+                    try
+                    {
+                        bdate = (splited_date.Length == 3) ? new DateTime(splited_date[2], splited_date[1], splited_date[0]) : new DateTime(2000, splited_date[1], splited_date[0]);
+                    }
+                    catch (ArgumentOutOfRangeException e)
+                    {
+                        Console.WriteLine("Невозможно получить год рождения id:" + user_data["id"] + " bdate:" + user_data["bdate"]);
+                    }
+                }
+            }
+
+            if (user_data["city"] != null)
+            {
+                city.city_id = (int) user_data["city"]["id"];
+                city.city_title = user_data["city"]["title"].ToString();
+            }
+             //city; City
+            //mobile_phone; string
+            //home_phone; string
+            /*
+            skype; string
+            facebook; string
+            instagram; string
+
+            photo_100; string*/
+        }
+
+        //если внести graduation_year в Human, то надо убрать передачу аргумента
+        public int CalcPlausibility(DateTime graduation)
+        {
+        	plausibility = 0;
+			
+        	if(AnalyzeData.IsPresent(last_name, first_name, bdate, graduation,ref plausibility));
+			
+        	if(city.city_title.ToLower().Equals("зеленоград"))
+        		plausibility += 2;
+			else if(city.city_title.ToLower().Equals("москва"))
+				plausibility++;
+			
+			//TODO пусть дефолтным будет миэт, тогда, думаю, graduation_year нужно будет из него вынести
+			if(universities.Contains(default(University)))
+				plausibility += 20;
+			else 
+				plausibility -= 2;
+			
+            return plausibility;
+        }
+
+        public override string ToString()
+        {
+            string user_info = domain + " " + first_name + " " + last_name + " " + (sex ? "Муж" : "Жен") + " " + bdate.ToShortDateString()
+                + " " + city.city_title;
+
+            return user_info;
+        }
+    }
+
+ 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
