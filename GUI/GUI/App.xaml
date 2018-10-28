@@ -4,7 +4,5 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
-        <BitmapImage x:Key="miet_logo" CreateOptions="IgnoreImageCache" CacheOption="OnLoad" UriSource="C:\Users\User.WIN-R720AVM79PA\Documents\Visual Studio 2013\Projects\students-search\GUI\GUI\img\miet_logo.png"/>
-
     </Application.Resources>
 </Application>
