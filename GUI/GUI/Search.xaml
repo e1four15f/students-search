@@ -6,22 +6,51 @@
         mc:Ignorable="d"
         ResizeMode="CanMinimize" 
         Title="Поиск" Height="575" Width="950">
+
+    <Window.Resources>
+        <RoutedUICommand x:Key="MenuNewList"/>
+        <RoutedUICommand x:Key="MenuLoadList"/>
+        <RoutedUICommand x:Key="MenuSaveList"/>
+        <RoutedUICommand x:Key="MenuLoadDB"/>
+        <RoutedUICommand x:Key="MenuExit"/>
+        <RoutedUICommand x:Key="MenuDBInfo"/>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource MenuNewList}" Executed="MenuNewList"/>
+        <CommandBinding Command="{StaticResource MenuLoadList}" Executed="MenuLoadList"/>
+        <CommandBinding Command="{StaticResource MenuSaveList}" Executed="MenuSaveList"/>
+        <CommandBinding Command="{StaticResource MenuLoadDB}" Executed="MenuLoadDB"/>
+        <CommandBinding Command="{StaticResource MenuExit}" Executed="MenuExit"/>
+        <CommandBinding Command="{StaticResource MenuDBInfo}" Executed="MenuDBInfo"/>
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Control" Key="N" Command="{Binding Source={StaticResource MenuNewList}}"/>
+        <KeyBinding Modifiers="Control" Key="O" Command="{Binding Source={StaticResource MenuLoadList}}"/>
+        <KeyBinding Modifiers="Control" Key="S" Command="{Binding Source={StaticResource MenuSaveList}}"/>
+        <KeyBinding Modifiers="Control+Shift" Key="O" Command="{Binding Source={StaticResource MenuLoadDB}}"/>
+        <KeyBinding Modifiers="Alt" Key="F4" Command="{Binding Source={StaticResource MenuExit}}"/>
+        <KeyBinding Modifiers="Control" Key="I" Command="{Binding Source={StaticResource MenuDBInfo}}"/>
+    </Window.InputBindings>
+    
     <Grid>
         <Menu DockPanel.Dock="Top" Height="30" Margin="0,0,0,515" FontSize="14">
             <MenuItem Header="_Файл">
-                <MenuItem Header="_Новый список"/>
-                <MenuItem Header="_Загрузить список"/>
-                <MenuItem Header="_Сохранить список"/>
+                <MenuItem Header="_Новый список" InputGestureText="Ctrl+N" Click="MenuNewList"/>
+                <MenuItem Header="_Загрузить список" InputGestureText="Ctrl+O" Click="MenuLoadList"/>
+                <MenuItem Header="_Сохранить список" InputGestureText="Ctrl+S" Click="MenuSaveList"/>
                 <Separator/>
-                <MenuItem Header="_Выход"/>
+                <MenuItem Header="_Загрузить БД" InputGestureText="Ctrl+Shift+O" Click="MenuLoadDB"/>
+                <Separator/>
+                <MenuItem Header="_Выход" InputGestureText="Alt+F4" Click="MenuExit"/>
             </MenuItem>
             <MenuItem Header="_Настройки">
-                <MenuItem Header="_Информация о БД"/>
-                <MenuItem Header="_Настройки"/>
+                <MenuItem Header="_Информация о БД" InputGestureText="Ctrl+I" Click="MenuDBInfo"/>
+                <MenuItem Header="_Настройки" InputGestureText="Саня, придумай что за настройки здесь будут"/>
             </MenuItem>
         </Menu>
-        
-        <ListView ItemsSource="{Binding AddedUsersList}" Margin="10,57,713,10">
+
+        <Label Content="Список" HorizontalAlignment="Left" Margin="10,20,0,0" VerticalAlignment="Top"/>
+        <ListView ItemsSource="{Binding AddedUsersList}" Margin="10,45,715,10">
             <ListView.View>
                 <GridView>
                     <GridViewColumn DisplayMemberBinding="{Binding Path=Name}" Width="100">Имя</GridViewColumn>
@@ -29,24 +58,29 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <ListView Margin="231,57,10,35">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn DisplayMemberBinding="{Binding Name}" Width="75" Header="Фото"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Name}" Width="120" Header="Имя"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Surname}" Width="102" Header="Фамилия"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Sex}" Width="30" Header="Пол"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Age}" Width="60" Header="Возраст"/>
-                    <GridViewColumn DisplayMemberBinding="{Binding Fac}" Width="60" Header="Факультет"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <Label Content="Список" HorizontalAlignment="Left" Margin="10,26,0,0" VerticalAlignment="Top"/>
-        <Label Content="Результат поиска" HorizontalAlignment="Left" Margin="231,21,0,0" VerticalAlignment="Top" RenderTransformOrigin="3.98,0.558"/>
-        <Button Content="Сделать запрос" HorizontalAlignment="Left" Margin="231,512,0,0" VerticalAlignment="Top" Width="120" Click="ButtonMakeRequest"/>
-        <Button Content="Добавить в список" HorizontalAlignment="Left" Margin="469,512,0,0" VerticalAlignment="Top" Width="150" Click="ButtonAddToList"/>
-        <Button Content="Удалить из списка" HorizontalAlignment="Left" Margin="779,512,0,0" VerticalAlignment="Top" Width="150" Click="ButtonRemoveFromList"/>
-        <Button Content="Подробная информация"  HorizontalAlignment="Left" Margin="624,512,0,0" VerticalAlignment="Top" Width="150" Click="ButtonMoreInfo"/>
-        <ScrollBar HorizontalAlignment="Left" Height="448" Margin="911,58,0,0" VerticalAlignment="Top" Width="14"/>
+
+        <Label Content="Результат поиска" HorizontalAlignment="Left" Margin="230,20,0,0" VerticalAlignment="Top"/>
+        <ListBox ItemsSource="{Binding}" SelectedItem="{Binding SelectedHuman, RelativeSource={RelativeSource AncestorType=Window}}" Margin="230,45,10,35">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel>
+                        <Image Source="{Binding photo_100}" Width="100" Height="100"    ></Image>
+                        <StackPanel Margin="10,0,0,0">
+                            <TextBlock Text="{Binding first_name}" VerticalAlignment="Center" FontSize="16"/>
+                            <TextBlock Text="{Binding last_name}" VerticalAlignment="Center" FontSize="16"/>
+                            <TextBlock Text="{Binding domain}" VerticalAlignment="Center" FontSize="14"/>
+                            <TextBlock Text="{Binding sex}" VerticalAlignment="Center" FontSize="14"/>
+                            <TextBlock Text="{Binding bdate}" VerticalAlignment="Center" FontSize="14"/>
+                        </StackPanel>
+                    </DockPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+        <Button Content="Сделать запрос" HorizontalAlignment="Left" Margin="230,505,0,0" VerticalAlignment="Top" Width="120" Click="ButtonMakeRequest"/>
+        <Button Content="Добавить в список" HorizontalAlignment="Left" Margin="465,505,0,0" VerticalAlignment="Top" Width="150" Click="ButtonAddToList"/>
+        <Button Content="Подробная информация" HorizontalAlignment="Left" Margin="620,505,0,0" VerticalAlignment="Top" Width="150" Click="ButtonMoreInfo"/>
+        <Button Content="Удалить из списка" HorizontalAlignment="Left" Margin="775,505,0,0" VerticalAlignment="Top" Width="150" Click="ButtonRemoveFromList"/>
+        
     </Grid>
 </Window>

@@ -1,7 +1,12 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,32 +25,131 @@ namespace GUI
     /// </summary>
     public partial class Search : Window
     {
+        private List<Human> users = new List<Human>();
+        public Human SelectedHuman { get; set; }
+
         public Search()
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
         }
 
+        // TODO Разобраться с ошибкой Build Exception
+        private void Update(string filename)
+        {
+            foreach (JToken user_data in LoadFileJson(filename))
+            {
+                users.Add(new Human(user_data));
+            }
+            this.DataContext = users;
+        }
+
+        /* Кнопки */
         private void ButtonMakeRequest(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Кнопка: Сделать запрос");
+            Console.WriteLine(this.ToString() + ": Сделать запрос");
             MakeRequest make_request = new MakeRequest();
             make_request.ShowDialog();
         }
 
         private void ButtonAddToList(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Кнопка: Добавить в список");
+            Console.WriteLine(this.ToString() + ": Добавить в список");
         }
 
         private void ButtonRemoveFromList(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Кнопка: Удалить из списка");
+            Console.WriteLine(this.ToString() + ": Удалить из списка");
         }
 
         private void ButtonMoreInfo(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Кнопка: Подробная информация");
+            Console.WriteLine(this.ToString() + ": Подробная информация");
+            try
+            { 
+                MessageBox.Show(SelectedHuman.ToString());
+            } 
+            catch (NullReferenceException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        
+        protected override void OnClosed(EventArgs e)
+        {
+            Console.WriteLine(this.ToString() + ": Закрытие окна");
+            App.Current.MainWindow.Show();
+            base.OnClosed(e);
+        }
+
+        /* Временный метод пока нет бд */
+        private static JArray LoadFileJson(string filename)
+        {
+            JArray data = new JArray();
+            using (StreamReader file = File.OpenText(filename))
+            {
+                using (JsonTextReader reader = new JsonTextReader(file))
+                {
+                    data = JArray.Load(reader);
+                }
+            }
+            Console.WriteLine(filename + " was loaded!");
+            return data;
+        }
+
+        // TODO Возможно стоит объеденить методы с прошлым меню
+        /* Меню */
+        private void MenuNewList(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine(this.ToString() + ": Новый список");
+            Search search = new Search();
+            this.Close();
+            App.Current.MainWindow.Hide();
+            search.Show();
+        }
+
+        private void MenuLoadList(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine(this.ToString() + ": Загрузить список");
+            OpenFileDialog open_file_dialog = new OpenFileDialog();
+            open_file_dialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+            open_file_dialog.ShowDialog();
+            Console.WriteLine(this.ToString() + ": Загружен список: " + open_file_dialog.FileName);
+        }
+
+        private void MenuSaveList(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine(this.ToString() + ": Сохранить список");
+            SaveFileDialog save_file_dialog = new SaveFileDialog();
+            save_file_dialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+            save_file_dialog.ShowDialog();
+            Console.WriteLine(this.ToString() + ": Сохранён список: " + save_file_dialog.FileName);
+        }
+
+        private void MenuLoadDB(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine(this.ToString() + ": Загрузить БД");
+            OpenFileDialog open_file_dialog = new OpenFileDialog();
+            open_file_dialog.Filter = "Text files (*.json)|*.json|All files (*.*)|*.*";
+            open_file_dialog.ShowDialog();
+            if (open_file_dialog.FileName != "")
+            {
+                Update(open_file_dialog.FileName);
+                Console.WriteLine(this.ToString() + ": Загружен список: " + open_file_dialog.FileName);
+            }
+        }
+
+        private void MenuExit(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine(this.ToString() + ": Выход");
+            this.Close();
+        }
+
+        private void MenuDBInfo(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine(this.ToString() + ": Информация о БД");
+            AboutDB about_db = new AboutDB();
+            about_db.ShowDialog();
         }
     }
 }

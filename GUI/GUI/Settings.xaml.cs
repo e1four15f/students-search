@@ -27,12 +27,12 @@ namespace GUI
 
         private void ButtonChangeLocalGroupsKeywords(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Кнопка: Изменить список ключевых слов для поиска локальных групп");
+            Console.WriteLine(this.ToString() + ": Изменить список ключевых слов для поиска локальных групп");
         }
 
         private void ButtonChangePublicGroupsKeywords(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Кнопка: Изменить список ключевых слов для поиска публичных групп");
+            Console.WriteLine(this.ToString() + ": Изменить список ключевых слов для поиска публичных групп");
         }
     }
 }

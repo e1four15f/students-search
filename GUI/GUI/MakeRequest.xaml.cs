@@ -43,7 +43,7 @@ namespace GUI
 
         private void ButtonSearch(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Кнопка: Найти, Параметры: "
+            Console.WriteLine(this.ToString() + ": Найти, Параметры: "
                 + first_name.Text + ":"
                 + last_name.Text + ":"
                 + (sex ? "Мужчина:" : "Женщина:")
@@ -54,7 +54,7 @@ namespace GUI
 
         private void ButtonClear(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Кнопка: Очистить");
+            Console.WriteLine(this.ToString() + ": Очистить");
             first_name.Text = "";
             last_name.Text = "";
             faculty_name.Text = "";
@@ -64,6 +64,7 @@ namespace GUI
 
         private void RadioButtonChecked(object sender, RoutedEventArgs e)
         {
+            Console.WriteLine(this.ToString() + ": Переключатель");
             RadioButton radio_button = (RadioButton) sender;
             sex = radio_button.Content.ToString() == "Мужчина" ? true : false;
         }

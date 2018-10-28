@@ -27,7 +27,7 @@ namespace GUI
 
         private void ButtonCreateDB(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Кнопка: Сформировать БД");
+            Console.WriteLine(this.ToString() + ": Сформировать БД");
         }
     }
 }
