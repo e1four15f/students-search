@@ -4,21 +4,25 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        ResizeMode="CanMinimize"
-        Title="Настройки" Height="295" Width="425">
+        ResizeMode="NoResize"
+        Title="Настройки" Height="295" Width="430">
     <Grid>
+        <!-- TODO Полностью переделать -->
         <Label Content="Социальные сети" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="211,71,0,0" TextWrapping="Wrap" Text="ID приложения ВК" VerticalAlignment="Top" Width="195"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="211,100,0,0" TextWrapping="Wrap" Text="Сервисный ключ приложения ВК" VerticalAlignment="Top" Width="195"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="211,128,0,0" TextWrapping="Wrap" Text="Логин ВК" VerticalAlignment="Top" Width="195"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="211,156,0,0" TextWrapping="Wrap" Text="Пароль ВК" VerticalAlignment="Top" Width="195"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="11,72,0,0" TextWrapping="Wrap" Text="ID приложения OК" VerticalAlignment="Top" Width="195"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="11,100,0,0" TextWrapping="Wrap" Text="Сервисный ключ приложения OK" VerticalAlignment="Top" Width="195"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="11,128,0,0" TextWrapping="Wrap" Text="Логин OК" VerticalAlignment="Top" Width="195"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="11,156,0,0" TextWrapping="Wrap" Text="Пароль OК" VerticalAlignment="Top" Width="195"/>
-        <Label Content="Одноклассники" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
-        <Label Content="ВКонтакте" HorizontalAlignment="Left" Margin="211,41,0,0" VerticalAlignment="Top"/>
-        <Button Content="Изменить список ключевых слов для поиска локальных групп" HorizontalAlignment="Left" Margin="10,209,0,0" VerticalAlignment="Top" Width="395" Click="ButtonChangeLocalGroupsKeywords"/>
-        <Button Content="Изменить список ключевых слов для поиска публичных групп" HorizontalAlignment="Left" Margin="10,234,0,-2" VerticalAlignment="Top" Width="395" Click="ButtonChangePublicGroupsKeywords"/>
+
+        <Label Content="ВКонтакте" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="11,70,0,0" TextWrapping="Wrap" Text="ID приложения ВК" VerticalAlignment="Top" Width="195"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="11,100,0,0" TextWrapping="Wrap" Text="Сервисный ключ приложения ВК" VerticalAlignment="Top" Width="195"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="11,130,0,0" TextWrapping="Wrap" Text="Логин ВК" VerticalAlignment="Top" Width="195"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="11,160,0,0" TextWrapping="Wrap" Text="Пароль ВК" VerticalAlignment="Top" Width="195"/>
+
+        <Label Content="Одноклассники" HorizontalAlignment="Left" Margin="210,40,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="211,70,0,0" TextWrapping="Wrap" Text="ID приложения OК" VerticalAlignment="Top" Width="195"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="211,100,0,0" TextWrapping="Wrap" Text="Сервисный ключ приложения OK" VerticalAlignment="Top" Width="195"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="211,130,0,0" TextWrapping="Wrap" Text="Логин OК" VerticalAlignment="Top" Width="195"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="211,160,0,0" TextWrapping="Wrap" Text="Пароль OК" VerticalAlignment="Top" Width="195"/>
+
+        <Button Content="Изменить список ключевых слов для поиска локальных групп" HorizontalAlignment="Left" Margin="10,200,0,0" VerticalAlignment="Top" Width="395" Click="ButtonChangeLocalGroupsKeywords"/>
+        <Button Content="Изменить список ключевых слов для поиска публичных групп" HorizontalAlignment="Left" Margin="10,225,0,0" VerticalAlignment="Top" Width="395" Click="ButtonChangePublicGroupsKeywords"/>
     </Grid>
 </Window>

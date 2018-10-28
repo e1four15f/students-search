@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,6 +27,7 @@ namespace GUI
             InitializeComponent();
         }
 
+        /* Кнопки */
         private void ButtonAboutDB(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("Кнопка: Информация о БД");
@@ -58,6 +60,52 @@ namespace GUI
             Console.WriteLine("Кнопка: Сформировать БД");
             CreateDB create_db = new CreateDB();
             create_db.ShowDialog();
+        }
+
+        /* Меню */
+        private void MenuNewList(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Menu: Новый список");
+            Search search = new Search();
+            search.ShowDialog();
+        }
+
+        private void MenuLoadList(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Menu: загрузить список");
+            OpenFileDialog open_file_dialog = new OpenFileDialog();
+            open_file_dialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+            open_file_dialog.ShowDialog();
+            Console.WriteLine("Загружен список: " + open_file_dialog.FileName);
+        }
+
+        private void MenuLoadDB(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Menu: Загрузить БД");
+            OpenFileDialog open_file_dialog = new OpenFileDialog();
+            open_file_dialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+            open_file_dialog.ShowDialog();
+            Console.WriteLine("Загружена БД: " + open_file_dialog.FileName);
+        }
+
+        private void MenuExit(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Menu: Выход");
+            this.Close();
+        }
+
+        private void MenuDBInfo(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Menu: Информация о БД");
+            AboutDB about_db = new AboutDB();
+            about_db.ShowDialog();
+        }
+
+        private void MenuSettings(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Menu: Настройки");
+            Settings settings = new Settings();
+            settings.ShowDialog();
         }
     }
 }

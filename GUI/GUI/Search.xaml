@@ -7,19 +7,20 @@
         ResizeMode="CanMinimize" 
         Title="Поиск" Height="575" Width="950">
     <Grid>
-        <Menu DockPanel.Dock="Top" Height="20" Margin="0,0,0,515" >
+        <Menu DockPanel.Dock="Top" Height="30" Margin="0,0,0,515" FontSize="14">
             <MenuItem Header="_Файл">
-                <MenuItem Header="_Новый список" />
-                <MenuItem Header="_Загрузить список" />
-                <MenuItem Header="_Сохранить список" />
-                <Separator />
-                <MenuItem Header="_Выход" />
+                <MenuItem Header="_Новый список"/>
+                <MenuItem Header="_Загрузить список"/>
+                <MenuItem Header="_Сохранить список"/>
+                <Separator/>
+                <MenuItem Header="_Выход"/>
             </MenuItem>
             <MenuItem Header="_Настройки">
-                <MenuItem Header="_Информация о БД" />
-                <MenuItem Header="_Настройки" />
+                <MenuItem Header="_Информация о БД"/>
+                <MenuItem Header="_Настройки"/>
             </MenuItem>
         </Menu>
+        
         <ListView ItemsSource="{Binding AddedUsersList}" Margin="10,57,713,10">
             <ListView.View>
                 <GridView>

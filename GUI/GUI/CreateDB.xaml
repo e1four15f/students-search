@@ -4,17 +4,20 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" 
-        ResizeMode="CanMinimize"
+        ResizeMode="NoResize"
         Title="Сформировать БД" Height="215" Width="300">
     <Grid>
-        <Button Content="Сформировать БД" HorizontalAlignment="Left" Margin="12,148,0,0" VerticalAlignment="Top" Width="250" Height="25" Click="ButtonCreateDB"/>
-        <CheckBox Content="ВКонтакте" HorizontalAlignment="Left" Margin="19,96,0,0" VerticalAlignment="Top"/>
-        <CheckBox Content="Одноклассники" HorizontalAlignment="Left" Margin="19,116,0,0" VerticalAlignment="Top"/>
-        <Label Content="Социальные сети" HorizontalAlignment="Left" Margin="12,65,0,0" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="58" Width="325">
-            Предупреждение! <LineBreak/> Создание БД может занять от 15 до 40 минут в зависимости от настроек программы.
+        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="60" Width="325">
+            <Span FontWeight="Bold">Предупреждение!</Span> <LineBreak/> Создание БД может занять от 15 до 40 минут в зависимости от настроек программы.
         </TextBlock>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="150,104,0,0" TextWrapping="Wrap" Text="50" VerticalAlignment="Top" Width="120"/>
-        <Label Content="Количество процессов" HorizontalAlignment="Left" Margin="144,73,0,0" VerticalAlignment="Top"/>
+
+        <Label Content="Социальные сети" HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top"/>
+        <CheckBox Content="ВКонтакте" HorizontalAlignment="Left" Margin="20,95,0,0" VerticalAlignment="Top"/>
+        <CheckBox Content="Одноклассники" HorizontalAlignment="Left" Margin="20,115,0,0" VerticalAlignment="Top"/>
+        
+        <Label Content="TODO" HorizontalAlignment="Left" Margin="145,65,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Height="25" Margin="150,95,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" FontSize="16"/>
+        
+        <Button Content="Сформировать БД" HorizontalAlignment="Left" Margin="15,145,0,0" VerticalAlignment="Top" Width="250" Height="25" Click="ButtonCreateDB"/>
     </Grid>
 </Window>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,20 +20,79 @@ namespace GUI
     /// </summary>
     public partial class MakeRequest : Window
     {
+        //private string current_placeholder;
+        private TextBox first_name;
+        private TextBox last_name;
+        private TextBox faculty_name;
+        private TextBox chair_name;
+        private TextBox graduation_year;
+
+        private bool sex;
+
         public MakeRequest()
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
+
+            first_name = (TextBox) this.FindName("FirstName");
+            last_name = (TextBox) this.FindName("LastName");
+            faculty_name = (TextBox) this.FindName("FacultyName");
+            chair_name = (TextBox) this.FindName("ChairName");
+            graduation_year = (TextBox) this.FindName("GraduationYear");
         }
 
         private void ButtonSearch(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Кнопка: Найти");
+            Console.WriteLine("Кнопка: Найти, Параметры: "
+                + first_name.Text + ":"
+                + last_name.Text + ":"
+                + (sex ? "Мужчина:" : "Женщина:")
+                + faculty_name.Text + ":"
+                + chair_name.Text + ":"
+                + graduation_year.Text);
         }
 
         private void ButtonClear(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("Кнопка: Очистить");
+            first_name.Text = "";
+            last_name.Text = "";
+            faculty_name.Text = "";
+            chair_name.Text = "";
+            graduation_year.Text = "";
         }
+
+        private void RadioButtonChecked(object sender, RoutedEventArgs e)
+        {
+            RadioButton radio_button = (RadioButton) sender;
+            sex = radio_button.Content.ToString() == "Мужчина" ? true : false;
+        }
+
+        private void TextNumberValidation(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
+        // TODO Сделать плейсхолдеры для полей 
+        /*
+        private void TextPreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            Console.WriteLine("TextPreviewMouseUp " + sender);
+            TextBox text_box = (TextBox) sender;
+            current_placeholder = text_box.Text;
+            text_box.Text = "";
+        }
+
+        private void TextLostFocus(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("TextLostFocus " + sender);
+            TextBox text_box = (TextBox) sender;
+            if (text_box.Text == "")
+            {
+                text_box.Text = current_placeholder;
+            }
+        }
+        */ 
     }
 }
