@@ -21,7 +21,30 @@ namespace GUI
     {
         public Search()
         {
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
+        }
+
+        private void ButtonMakeRequest(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Кнопка: Сделать запрос");
+            MakeRequest make_request = new MakeRequest();
+            make_request.ShowDialog();
+        }
+
+        private void ButtonAddToList(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Кнопка: Добавить в список");
+        }
+
+        private void ButtonRemoveFromList(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Кнопка: Удалить из списка");
+        }
+
+        private void ButtonMoreInfo(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Кнопка: Подробная информация");
         }
     }
 }

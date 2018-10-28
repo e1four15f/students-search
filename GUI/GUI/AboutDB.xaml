@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         mc:Ignorable="d" 
+        ResizeMode="CanMinimize"
         Title="Информация о БД" Height="145" Width="305">
     <Grid>
         <Image HorizontalAlignment="Left" Height="299" Margin="10,-68,0,-24" VerticalAlignment="Top" Width="368"/>

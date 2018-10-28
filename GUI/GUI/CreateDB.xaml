@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" 
+        ResizeMode="CanMinimize"
         Title="Сформировать БД" Height="215" Width="300">
     <Grid>
-        <Button Content="Сформировать БД" HorizontalAlignment="Left" Margin="12,148,0,0" VerticalAlignment="Top" Width="250" Height="25"/>
+        <Button Content="Сформировать БД" HorizontalAlignment="Left" Margin="12,148,0,0" VerticalAlignment="Top" Width="250" Height="25" Click="ButtonCreateDB"/>
         <CheckBox Content="ВКонтакте" HorizontalAlignment="Left" Margin="19,96,0,0" VerticalAlignment="Top"/>
         <CheckBox Content="Одноклассники" HorizontalAlignment="Left" Margin="19,116,0,0" VerticalAlignment="Top"/>
         <Label Content="Социальные сети" HorizontalAlignment="Left" Margin="12,65,0,0" VerticalAlignment="Top"/>

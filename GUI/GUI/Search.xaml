@@ -3,10 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" 
+        mc:Ignorable="d"
+        ResizeMode="CanMinimize" 
         Title="Поиск" Height="575" Width="950">
     <Grid>
-        <Menu DockPanel.Dock="Top" Margin="0,0,0,521">
+        <Menu DockPanel.Dock="Top" Height="20" Margin="0,0,0,515" >
             <MenuItem Header="_Файл">
                 <MenuItem Header="_Новый список" />
                 <MenuItem Header="_Загрузить список" />
@@ -41,10 +42,10 @@
         </ListView>
         <Label Content="Список" HorizontalAlignment="Left" Margin="10,26,0,0" VerticalAlignment="Top"/>
         <Label Content="Результат поиска" HorizontalAlignment="Left" Margin="231,21,0,0" VerticalAlignment="Top" RenderTransformOrigin="3.98,0.558"/>
-        <Button Content="Сделать запрос" HorizontalAlignment="Left" Margin="231,512,0,0" VerticalAlignment="Top" Width="120"/>
-        <Button Content="Добавить в список" HorizontalAlignment="Left" Margin="469,512,0,0" VerticalAlignment="Top" Width="150"/>
-        <Button Content="Удалить из списка" HorizontalAlignment="Left" Margin="779,512,0,0" VerticalAlignment="Top" Width="150"/>
-        <Button Content="Подробная информация"  HorizontalAlignment="Left" Margin="624,512,0,0" VerticalAlignment="Top" Width="150"/>
+        <Button Content="Сделать запрос" HorizontalAlignment="Left" Margin="231,512,0,0" VerticalAlignment="Top" Width="120" Click="ButtonMakeRequest"/>
+        <Button Content="Добавить в список" HorizontalAlignment="Left" Margin="469,512,0,0" VerticalAlignment="Top" Width="150" Click="ButtonAddToList"/>
+        <Button Content="Удалить из списка" HorizontalAlignment="Left" Margin="779,512,0,0" VerticalAlignment="Top" Width="150" Click="ButtonRemoveFromList"/>
+        <Button Content="Подробная информация"  HorizontalAlignment="Left" Margin="624,512,0,0" VerticalAlignment="Top" Width="150" Click="ButtonMoreInfo"/>
         <ScrollBar HorizontalAlignment="Left" Height="448" Margin="911,58,0,0" VerticalAlignment="Top" Width="14"/>
     </Grid>
 </Window>

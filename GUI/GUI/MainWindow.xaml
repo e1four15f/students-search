@@ -4,15 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         mc:Ignorable="d"
+        ResizeMode="CanMinimize"
         Title="Начальный экран" Height="352" Width="525">
     <Grid>
-        <Button Content="Поиск" HorizontalAlignment="Left" Margin="10,189,0,0" VerticalAlignment="Top" Width="145"/>
-        <Button Content="Сформировать БД" HorizontalAlignment="Left" Margin="10,214,0,0" VerticalAlignment="Top" Width="145"/>
-        <Button Content="Информация о БД" HorizontalAlignment="Left" Margin="10,239,0,0" VerticalAlignment="Top" Width="145"/>
-        <Button Content="Настройки" HorizontalAlignment="Left" Margin="10,264,0,0" VerticalAlignment="Top" Width="145"/>
-        <Image HorizontalAlignment="Left" Height="299" Margin="160,10,0,0" VerticalAlignment="Top" Width="347"/>
-        <Button Content="Выход" HorizontalAlignment="Left" Margin="10,289,0,0" VerticalAlignment="Top" Width="145"/>
-        <Menu DockPanel.Dock="Top" Margin="0,0,0,295" >
+        <Button Content="Поиск" HorizontalAlignment="Left" Margin="10,189,0,0" VerticalAlignment="Top" Width="145" Click="ButtonSearch"/>
+        <Button Content="Сформировать БД" HorizontalAlignment="Left" Margin="10,214,0,0" VerticalAlignment="Top" Width="145" Click="ButtonCreateDB"/>
+        <Button Content="Информация о БД" HorizontalAlignment="Left" Margin="10,239,0,0" VerticalAlignment="Top" Width="145" Click="ButtonAboutDB"/>
+        <Button Content="Настройки" HorizontalAlignment="Left" Margin="10,264,0,0" VerticalAlignment="Top" Width="145" Click="ButtonSettings"/>
+        <Image Source="{DynamicResource miet_logo}" HorizontalAlignment="Left" Height="280" Margin="194,29,0,0" VerticalAlignment="Top" Width="325"/>
+        <Button Content="Выход" HorizontalAlignment="Left" Margin="10,289,0,0" VerticalAlignment="Top" Width="145" Click="ButtonExit"/>
+        <Menu DockPanel.Dock="Top" Height="20" Margin="0,0,0,295" >
             <MenuItem Header="_Файл">
                 <MenuItem Header="_Новый список" />
                 <MenuItem Header="_Загрузить список" />

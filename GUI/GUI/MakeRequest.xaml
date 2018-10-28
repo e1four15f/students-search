@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" 
+        ResizeMode="CanMinimize"
         Title="Запрос" Height="280" Width="350">
     <Grid>
         <Label HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top">
@@ -29,7 +30,7 @@
         <TextBox HorizontalAlignment="Left" Height="23" Margin="149,155,0,0" TextWrapping="Wrap" Text="Введите направление" VerticalAlignment="Top" Width="180"/>
         <Label Content="Год выпуска" HorizontalAlignment="Left" Margin="10,182,0,0" VerticalAlignment="Top"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="149,186,0,0" TextWrapping="Wrap" Text="Введите год" VerticalAlignment="Top" Width="180"/>
-        <Button Content="Найти" HorizontalAlignment="Left" Margin="50,220,0,0" VerticalAlignment="Top" Width="152"/>
-        <Button Content="Очистить" HorizontalAlignment="Left" Margin="223,220,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.053,0.55"/>
+        <Button Content="Найти" HorizontalAlignment="Left" Margin="50,220,0,0" VerticalAlignment="Top" Width="152" Click="ButtonSearch"/>
+        <Button Content="Очистить" HorizontalAlignment="Left" Margin="223,220,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.053,0.55" Click="ButtonClear"/>
     </Grid>
 </Window>

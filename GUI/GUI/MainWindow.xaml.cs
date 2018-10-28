@@ -22,7 +22,42 @@ namespace GUI
     {
         public MainWindow()
         {
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
+        }
+
+        private void ButtonAboutDB(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Кнопка: Информация о БД");
+            AboutDB about_db = new AboutDB();
+            about_db.ShowDialog();
+        }
+
+        private void ButtonSearch(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Кнопка: Поиск");
+            Search search = new Search();
+            search.ShowDialog();
+        }
+
+        private void ButtonExit(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Кнопка: Выход");
+            this.Close();
+        }
+
+        private void ButtonSettings(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Кнопка: Настройки");
+            Settings settings = new Settings();
+            settings.ShowDialog();
+        }
+
+        private void ButtonCreateDB(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Кнопка: Сформировать БД");
+            CreateDB create_db = new CreateDB();
+            create_db.ShowDialog();
         }
     }
 }

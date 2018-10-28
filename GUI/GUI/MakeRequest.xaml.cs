@@ -21,7 +21,18 @@ namespace GUI
     {
         public MakeRequest()
         {
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
+        }
+
+        private void ButtonSearch(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Кнопка: Найти");
+        }
+
+        private void ButtonClear(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Кнопка: Очистить");
         }
     }
 }

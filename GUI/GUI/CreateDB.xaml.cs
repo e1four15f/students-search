@@ -21,7 +21,13 @@ namespace GUI
     {
         public CreateDB()
         {
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
+        }
+
+        private void ButtonCreateDB(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("Кнопка: Сформировать БД");
         }
     }
 }

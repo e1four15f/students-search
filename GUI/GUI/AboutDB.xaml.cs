@@ -21,6 +21,7 @@ namespace GUI
     {
         public AboutDB()
         {
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
         }
     }
