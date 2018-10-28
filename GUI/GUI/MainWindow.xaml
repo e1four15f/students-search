@@ -1,16 +1,18 @@
-﻿<Window
+﻿<Window x:Class="GUI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="WpfApplication1.MainWindow"
-        Title="Начальный экран" Height="350" Width="525">
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        mc:Ignorable="d"
+        Title="Начальный экран" Height="352" Width="525">
     <Grid>
-        <Button Content="Поиск" HorizontalAlignment="Left" Margin="10,189,0,0" VerticalAlignment="Top" Width="145" Click="Button_Click"/>
+        <Button Content="Поиск" HorizontalAlignment="Left" Margin="10,189,0,0" VerticalAlignment="Top" Width="145"/>
         <Button Content="Сформировать БД" HorizontalAlignment="Left" Margin="10,214,0,0" VerticalAlignment="Top" Width="145"/>
         <Button Content="Информация о БД" HorizontalAlignment="Left" Margin="10,239,0,0" VerticalAlignment="Top" Width="145"/>
         <Button Content="Настройки" HorizontalAlignment="Left" Margin="10,264,0,0" VerticalAlignment="Top" Width="145"/>
         <Image HorizontalAlignment="Left" Height="299" Margin="160,10,0,0" VerticalAlignment="Top" Width="347"/>
         <Button Content="Выход" HorizontalAlignment="Left" Margin="10,289,0,0" VerticalAlignment="Top" Width="145"/>
-        <Menu DockPanel.Dock="Top" Margin="0,0,0,299">
+        <Menu DockPanel.Dock="Top" Margin="0,0,0,295" >
             <MenuItem Header="_Файл">
                 <MenuItem Header="_Новый список" />
                 <MenuItem Header="_Загрузить список" />
@@ -24,6 +26,5 @@
                 <MenuItem Header="_Настройки" />
             </MenuItem>
         </Menu>
-
     </Grid>
 </Window>
