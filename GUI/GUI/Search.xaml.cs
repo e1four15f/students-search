@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -25,22 +26,38 @@ namespace GUI
     /// </summary>
     public partial class Search : Window
     {
-        private List<Human> users = new List<Human>();
+        private List<Human> users;
+        private List<String> social;
         public Human SelectedHuman { get; set; }
 
+        private ListBox response_list_box = new ListBox();
+        
         public Search()
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
+            response_list_box = (ListBox) FindName("ResponseListBox");
+            //Update("data/full.json");
         }
 
         // TODO Разобраться с ошибкой Build Exception
         private void Update(string filename)
         {
+            users = new List<Human>();
             foreach (JToken user_data in LoadFileJson(filename))
             {
                 users.Add(new Human(user_data));
             }
+            // TODO Выбрать оптимальное значение 
+            if (users.Count < 1000)
+            {
+                response_list_box.SetValue(ScrollViewer.CanContentScrollProperty, false);
+            }
+            else
+            {
+                response_list_box.SetValue(ScrollViewer.CanContentScrollProperty, true);
+            }
+            
             this.DataContext = users;
         }
 
@@ -150,6 +167,12 @@ namespace GUI
             Console.WriteLine(this.ToString() + ": Информация о БД");
             AboutDB about_db = new AboutDB();
             about_db.ShowDialog();
+        }
+
+        private void HyperlinkRequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
         }
     }
 }

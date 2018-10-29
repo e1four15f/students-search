@@ -37,22 +37,46 @@ namespace GUI
         public string university_name;
         public int faculty_id;
         public string faculty_name;
+        public int chair_id;
+        public string chair_name;
         public int graduation_year;
     }
 
     public class Human
     {
-        public int id { get; set; }
+        public int id; // TODO Если будет несколько сетей, то можно запутаться в ID
         public string first_name { get; set; }
         public string last_name { get; set; }
-        public bool sex { get; set; }
+        public bool sex; 
+        public string Sex { get { return sex ? "Мужчина" : "Женщина"; } }
         public string domain { get; set; }
         public DateTime bdate { get; set; }
+        public string BDate { get { return bdate != new DateTime() ? bdate.Year > DateTime.MinValue.Year ? bdate.ToShortDateString() : bdate.Day + "." + bdate.Month : ""; } }
+
         public City city;
+        public string city_title { get { return city.city_title; } }
+
         public Contacts contacts;
-        public Social social;
-        public string photo_100 { get; set; }
+        public string mobile_phone { get { return contacts.mobile_phone != null ? "Моб. " + contacts.mobile_phone : ""; } }
+        public string home_phone { get { return contacts.home_phone != null ? "Дом. " + contacts.home_phone : ""; } }
+        public string email { get { return contacts.email; } }
+
+        public Social social; // TODO // TODO Odnoklassniki
+        public string skype { get { return social.skype != null ? "skype:" + social.skype + "?call" : null; } }
+        public string facebook { get { return social.facebook != null ? "https://www.facebook.com/" + social.facebook : null; } } 
+        public string instagram { get { return social.instagram != null ? "https://www.instagram.com/" + social.instagram : null; } }
+        public string livejournal { get { return social.livejournal != null ? "https://" + social.livejournal + ".livejournal.com/" : null; } }
+        public string twitter { get { return social.twitter != null ? "https://twitter.com/" + social.twitter : null; } }
+        public string vk { get { return "https://vk.com/" + domain; } } // TODO Потом вк не всегда будет 
+
+        // TODO Показывается первый университет в списке, в нём не всегда полная информация 
         public List<University> universities { get; set; }
+        public string university_name { get { return universities.Count > 0 ? universities[0].university_name : ""; } }
+        public string faculty_name { get { return universities.Count > 0 ? universities[0].faculty_name : ""; } }
+        public string chair_name { get { return universities.Count > 0 ? universities[0].chair_name : ""; } }
+        public string graduation_year { get { return (universities.Count > 0 && universities[0].graduation_year > 0) ? "Год окончания " + universities[0].graduation_year : ""; } }
+
+        public string photo_100 { get; set; }
         public string arrived_from { get; set; }
 
         public int plausibility { get; set; }
@@ -88,6 +112,7 @@ namespace GUI
 
             contacts.mobile_phone = user_data["mobile_phone"] != null && user_data["mobile_phone"].ToString().Length > 8 ? user_data["mobile_phone"].ToString() : null;
             contacts.home_phone = user_data["home_phone"] != null && user_data["home_phone"].ToString().Length > 8 ? user_data["home_phone"].ToString() : null;
+            contacts.email = user_data["email"] != null ? user_data["email"].ToString() : null;
 
             social.instagram = user_data["instagram"] != null ? user_data["instagram"].ToString() : null;
             social.skype = user_data["skype"] != null ? user_data["skype"].ToString() : null;
@@ -98,6 +123,23 @@ namespace GUI
             photo_100 = user_data["photo_100"].ToString();
 
             universities = new List<University>();
+
+            if (user_data["universities"] != null)
+            {
+                foreach (JToken university_data in user_data["universities"])
+                {
+                    if (university_data.Type != JTokenType.Null)
+                    {
+                        AddUniversity(university_data);
+                    }
+                }
+            }
+
+            if (user_data["university"] != null)
+            {
+                AddUniversity(user_data);
+            }
+
             if (user_data["occupation"] != null && user_data["occupation"]["type"].ToString() == "university")
             {
                 University occupation = new University();
@@ -105,28 +147,36 @@ namespace GUI
                 occupation.university_name = user_data["occupation"]["name"].ToString();
                 universities.Add(occupation);
             }
-            
-            if (user_data["universities"] != null)
-            {
-                foreach (JToken university_data in user_data["universities"])
-                {
-                    if (university_data.Type != JTokenType.Null)
-                    {
-                        University university = new University();
-                        university.university_id = (int) university_data["id"];
-                        university.university_name = university_data["name"].ToString();
-                        if (university_data["faculty"] != null)
-                        {
-                            university.faculty_id = (int) university_data["faculty"];
-                            university.faculty_name = university_data["faculty_name"].ToString();
-                        }
-                        university.graduation_year = university_data["graduation"] != null ? int.Parse(university_data["graduation"].ToString()) : 0;
-                        universities.Add(university);
-                    }
-                }
-            }
 
             arrived_from = user_data["arrived_from"].ToString();
+        }
+
+        private void AddUniversity(JToken university_data)
+        {
+            University university = new University();
+            if (university_data["university"] == null)
+            {
+                university.university_id = (int) university_data["id"];
+                university.university_name = university_data["name"].ToString();
+            }
+            else
+            {
+                university.university_id = (int) university_data["university"];
+                university.university_name = university_data["university_name"].ToString();
+            }
+            
+            if (university_data["faculty"] != null)
+            {
+                university.faculty_id = (int)university_data["faculty"];
+                university.faculty_name = university_data["faculty_name"].ToString();
+            }
+            if (university_data["chair"] != null)
+            {
+                university.chair_id = (int)university_data["chair"];
+                university.chair_name = university_data["chair_name"].ToString();
+            }
+            university.graduation_year = university_data["graduation"] != null ? int.Parse(university_data["graduation"].ToString()) : 0;
+            universities.Add(university);
         }
 
         // TODO quick math

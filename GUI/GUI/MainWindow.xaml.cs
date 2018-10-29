@@ -71,7 +71,7 @@ namespace GUI
             this.Hide();
             search.Show();
         }
-
+            
         private void MenuLoadList(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(this.ToString() + ": загрузить список");
