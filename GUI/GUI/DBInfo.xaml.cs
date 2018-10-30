@@ -19,14 +19,16 @@ namespace GUI
     /// </summary>
     public partial class AboutDB : Window
     {
-        private static DateTime db_date_of_creation = DateTime.Now;
-        private static int db_users_count = new Random().Next(10000, 100000);
-        private static int db_size_in_mb = new Random().Next(1, 1000);
-        
-        public AboutDB()
+        private DateTime db_date_of_creation = DateTime.Now;
+        private int db_users_count = new Random().Next(10000, 100000);
+        private int db_size_in_mb = new Random().Next(1, 1000);
+
+        public AboutDB(int db_users_count = 0)
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
+
+            this.db_users_count = db_users_count;
 
             Label date_of_creation = (Label) this.FindName("DateOfCreation");
             Label users_count = (Label) this.FindName("UsersCount");

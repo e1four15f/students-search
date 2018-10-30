@@ -15,6 +15,8 @@
         <RoutedUICommand x:Key="MenuExit"/>
         <RoutedUICommand x:Key="MenuDBInfo"/>
 
+        <RoutedUICommand x:Key="ButtonMakeRequest"/>
+
         <!-- TODO Возможно можно сократить код -->
         <Style TargetType="Hyperlink" x:Key="vk_link">
             <Setter Property="NavigateUri" Value="{Binding vk}" />
@@ -115,6 +117,8 @@
         <CommandBinding Command="{StaticResource MenuLoadDB}" Executed="MenuLoadDB"/>
         <CommandBinding Command="{StaticResource MenuExit}" Executed="MenuExit"/>
         <CommandBinding Command="{StaticResource MenuDBInfo}" Executed="MenuDBInfo"/>
+
+        <CommandBinding Command="{StaticResource ButtonMakeRequest}" Executed="ButtonMakeRequest"/>
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Modifiers="Control" Key="N" Command="{Binding Source={StaticResource MenuNewList}}"/>
@@ -123,6 +127,8 @@
         <KeyBinding Modifiers="Control+Shift" Key="O" Command="{Binding Source={StaticResource MenuLoadDB}}"/>
         <KeyBinding Modifiers="Alt" Key="F4" Command="{Binding Source={StaticResource MenuExit}}"/>
         <KeyBinding Modifiers="Control" Key="I" Command="{Binding Source={StaticResource MenuDBInfo}}"/>
+
+        <KeyBinding Key="Enter" Command="{Binding Source={StaticResource ButtonMakeRequest}}"/>
     </Window.InputBindings>
 
     <Grid>
@@ -168,6 +174,7 @@
 -->
         <!-- Результат поиска -->
         <Label Content="Результат поиска" HorizontalAlignment="Left" Margin="230,20,0,0" VerticalAlignment="Top"/>
+        <Label Name="ResponseInfo" HorizontalAlignment="Left" Margin="340,20,0,0" VerticalAlignment="Top"/>
         <ListBox Name="ResponseListBox" 
                  SelectedItem="{Binding SelectedHuman, RelativeSource={RelativeSource AncestorType=Window}}"  
                  Margin="230,45,10,35" ScrollViewer.HorizontalScrollBarVisibility="Disabled">

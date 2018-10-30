@@ -34,11 +34,11 @@ namespace GUI
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
 
-            first_name = (TextBox) this.FindName("FirstName");
-            last_name = (TextBox) this.FindName("LastName");
-            faculty_name = (TextBox) this.FindName("FacultyName");
-            chair_name = (TextBox) this.FindName("ChairName");
-            graduation_year = (TextBox) this.FindName("GraduationYear");
+            first_name = (TextBox) FindName("FirstName");
+            last_name = (TextBox) FindName("LastName");
+            faculty_name = (TextBox) FindName("FacultyName");
+            chair_name = (TextBox) FindName("ChairName");
+            graduation_year = (TextBox) FindName("GraduationYear");
         }
 
         private void ButtonSearch(object sender, RoutedEventArgs e)
@@ -50,6 +50,7 @@ namespace GUI
                 + faculty_name.Text + ":"
                 + chair_name.Text + ":"
                 + graduation_year.Text);
+            this.Close();
         }
 
         private void ButtonClear(object sender, RoutedEventArgs e)
