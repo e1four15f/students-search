@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace GUI
@@ -110,8 +111,10 @@ namespace GUI
                 city.city_title = user_data["city"]["title"].ToString();
             }
 
-            contacts.mobile_phone = user_data["mobile_phone"] != null && user_data["mobile_phone"].ToString().Length > 8 ? user_data["mobile_phone"].ToString() : null;
-            contacts.home_phone = user_data["home_phone"] != null && user_data["home_phone"].ToString().Length > 8 ? user_data["home_phone"].ToString() : null;
+            contacts.mobile_phone = user_data["mobile_phone"] != null && user_data["mobile_phone"].ToString().Length > 8 
+                ? Regex.Replace(user_data["mobile_phone"].ToString(), @"\t|\n|\r", "") : null;
+            contacts.home_phone = user_data["home_phone"] != null && user_data["home_phone"].ToString().Length > 8
+                ? Regex.Replace(user_data["home_phone"].ToString(), @"\t|\n|\r", "") : null;
             contacts.email = user_data["email"] != null ? user_data["email"].ToString() : null;
 
             social.instagram = user_data["instagram"] != null ? user_data["instagram"].ToString() : null;
@@ -168,12 +171,12 @@ namespace GUI
             if (university_data["faculty"] != null)
             {
                 university.faculty_id = (int)university_data["faculty"];
-                university.faculty_name = university_data["faculty_name"].ToString();
+                university.faculty_name = Regex.Replace(university_data["faculty_name"].ToString(), @"\t|\n|\r", "");
             }
             if (university_data["chair"] != null)
             {
-                university.chair_id = (int)university_data["chair"];
-                university.chair_name = university_data["chair_name"].ToString();
+                university.chair_id = (int) university_data["chair"];
+                university.chair_name = Regex.Replace(university_data["chair_name"].ToString(), @"\t|\n|\r", "");
             }
             university.graduation_year = university_data["graduation"] != null ? int.Parse(university_data["graduation"].ToString()) : 0;
             universities.Add(university);

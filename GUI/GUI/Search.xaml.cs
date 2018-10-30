@@ -3,12 +3,14 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,21 +29,25 @@ namespace GUI
     public partial class Search : Window
     {
         private List<Human> users;
-        private List<String> social;
+        private ObservableCollection<Human> selected_users;
         public Human SelectedHuman { get; set; }
+        public Human SelectedListItem { get; set; }
 
         private ListBox response_list_box = new ListBox();
+        private ListBox selected_users_list_box = new ListBox();
         
         public Search()
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
             response_list_box = (ListBox) FindName("ResponseListBox");
-            //Update("data/full.json");
+            selected_users_list_box = (ListBox) FindName("SelectedUsersListBox");
+            selected_users = new ObservableCollection<Human>();
+            UpdateResponse("data/full.json");
         }
 
-        // TODO Разобраться с ошибкой Build Exception
-        private void Update(string filename)
+        // TODO Разобраться с ошибкой ArgumentOutOfRange
+        private void UpdateResponse(string filename)
         {
             users = new List<Human>();
             foreach (JToken user_data in LoadFileJson(filename))
@@ -57,8 +63,47 @@ namespace GUI
             {
                 response_list_box.SetValue(ScrollViewer.CanContentScrollProperty, true);
             }
-            
-            this.DataContext = users;
+
+            response_list_box.ItemsSource = users;
+        }
+
+        private void AddSelectedUsers(Human new_user)
+        {
+            // TODO При одноклассниках стоит использовать другую проверку
+            if (selected_users.Where(x => x.id == new_user.id).ToList().Count() == 0)
+            {
+                selected_users.Add(new_user);
+                selected_users_list_box.ItemsSource = selected_users;
+            }
+            else
+            {
+                Console.WriteLine("Данный пользователь уже находится в списке");
+            }
+        }
+
+        private void RemoveSelectedUsers(Human new_user)
+        {
+            if (selected_users.Count > 0)
+            {
+                // TODO Это плохое решение задачи
+                try
+                {
+                    // TODO При одноклассниках стоит использовать другую проверку
+                    if (selected_users.Where(x => x.id == new_user.id).ToList().Count() == 1)
+                    {
+                        selected_users.Remove(new_user);
+                        selected_users_list_box.ItemsSource = selected_users;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Что-то пошло не так");
+                    }
+                }
+                catch (NullReferenceException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
         }
 
         /* Кнопки */
@@ -72,11 +117,13 @@ namespace GUI
         private void ButtonAddToList(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(this.ToString() + ": Добавить в список");
+            AddSelectedUsers(SelectedHuman);
         }
 
         private void ButtonRemoveFromList(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(this.ToString() + ": Удалить из списка");
+            RemoveSelectedUsers(SelectedListItem);
         }
 
         private void ButtonMoreInfo(object sender, RoutedEventArgs e)
@@ -110,7 +157,6 @@ namespace GUI
                     data = JArray.Load(reader);
                 }
             }
-            Console.WriteLine(filename + " was loaded!");
             return data;
         }
 
@@ -151,7 +197,7 @@ namespace GUI
             open_file_dialog.ShowDialog();
             if (open_file_dialog.FileName != "")
             {
-                Update(open_file_dialog.FileName);
+                UpdateResponse(open_file_dialog.FileName);
                 Console.WriteLine(this.ToString() + ": Загружен список: " + open_file_dialog.FileName);
             }
         }
