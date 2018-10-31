@@ -30,7 +30,7 @@ namespace GUI
     /// </summary>
     public partial class Search : Window
     {
-        private List<Human> db_users;
+        private static List<Human> db_users;
         private ObservableCollection<Human> response_users;
         private ObservableCollection<Human> selected_users;
 
@@ -59,7 +59,7 @@ namespace GUI
             LoadDB("data/full.json");
             UpdateResponse(db_users);
             */
-            LoadDB("data/users_data_27_10_2018.json");
+            db_users = new DBCreator().LoadDB("data/users_data_27_10_2018.json");
             /* Для теста 
             List<Human> random_users = new List<Human>();
             Random rnd = new Random();
@@ -90,52 +90,6 @@ namespace GUI
             response_list_box.ItemsSource = response_users;
         }
 
-        /* Временный метод пока нет бд */
-        private void LoadDB(string filename)
-        {
-            db_users = new List<Human>();
-            foreach (JToken user_data in LoadFileJson(filename))
-            {
-                db_users.Add(new Human(user_data));
-            }
-        }
-
-        /* Временный метод пока нет бд */
-        private static JArray LoadFileJson(string filename)
-        {
-            JArray data = new JArray();
-            using (StreamReader file = File.OpenText(filename))
-            {
-                using (JsonTextReader reader = new JsonTextReader(file))
-                {
-                    data = JArray.Load(reader);
-                }
-            }
-            return data;
-        }
-
-        /* Вызывает окно сохранения списка и проверяет сохранён ли файл */
-        private bool SaveListDialog()
-        {
-            SaveFileDialog save_file_dialog = new SaveFileDialog();
-            // TODO Придумать расширения для файлов
-            save_file_dialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-            save_file_dialog.ShowDialog();
-
-            if (save_file_dialog.FileName.Count() != 0)
-            {
-                saved = true;
-                this.Title = saved ? this.Title.Remove(this.Title.Length - 1) : this.Title + "*";
-                Console.WriteLine(this.ToString() + ": Сохранён список: " + save_file_dialog.FileName);
-                return true;
-            }
-            else
-            {
-                Console.WriteLine(this.ToString() + ": Отмена сохранения");
-                return false;
-            }
-        }
-
         /* Кнопки */
         /* Открывает окно создания запроса к бд */
         private void ButtonMakeRequest(object sender, RoutedEventArgs e)
@@ -146,21 +100,24 @@ namespace GUI
 
             Console.WriteLine(make_request.FirstName.Text + " : " + make_request.LastName.Text);
             /* Временное решение пока нет бд*/
-            List<Human> criterion_users = new List<Human>();
-            foreach (Human user in db_users)
-            {
-                bool criterion = false;
-                criterion = make_request.FirstName.Text != "" ? user.first_name == make_request.FirstName.Text : true;
-                criterion &= make_request.LastName.Text != "" ? user.last_name == make_request.LastName.Text : true;
-                if (criterion)
+            if (db_users != null)
+            { 
+                List<Human> criterion_users = new List<Human>();
+                foreach (Human user in db_users)
                 {
-                    criterion_users.Add(user);
+                    bool criterion = false;
+                    criterion = make_request.FirstName.Text != "" ? user.first_name == make_request.FirstName.Text : true;
+                    criterion &= make_request.LastName.Text != "" ? user.last_name == make_request.LastName.Text : true;
+                    if (criterion)
+                    {
+                        criterion_users.Add(user);
+                    }
                 }
-            }
-            Console.WriteLine(criterion_users.Count);
-            if (criterion_users.Count != db_users.Count)
-            {
-                UpdateResponse(criterion_users);
+                Console.WriteLine(criterion_users.Count);
+                if (criterion_users.Count != db_users.Count)
+                {
+                    UpdateResponse(criterion_users);
+                }
             }
         }
 
@@ -251,7 +208,7 @@ namespace GUI
                     "Exit", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 if (dialog == MessageBoxResult.Yes)
                 {
-                    if (SaveListDialog())
+                    if (MenuController.SaveList(this, saved))
                     {
                         Console.WriteLine(this.ToString() + ": Выход с сохранением списка");
                         saved = true;
@@ -284,75 +241,41 @@ namespace GUI
             e.Handled = true;
         }
 
-        // TODO Возможно стоит объеденить методы с прошлым меню
         /* Меню */
         /* Создаёт новую панель поиска */
         private void MenuNewList(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(this.ToString() + ": Новый список");
-            this.Close();
-            if (saved)
-            {
-                App.Current.MainWindow.Hide();
-                new Search().Show();
-            }
+            MenuController.NewList(this, saved);
         }
 
-        // TODO Доделать логику
         /* Загружает список */
         private void MenuLoadList(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(this.ToString() + ": Загрузить список");
-            OpenFileDialog open_file_dialog = new OpenFileDialog();
-            open_file_dialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-            open_file_dialog.ShowDialog();
-            if (open_file_dialog.FileName != "")
-            {
-                this.Close();
-                if (saved)
-                {
-                    Console.WriteLine(this.ToString() + ": Загружен список: " + open_file_dialog.FileName);
-                    // TODO Читать файл и передавать его как новый параметр конструктору
-                    new Search(System.IO.Path.GetFileNameWithoutExtension(open_file_dialog.FileName)).Show();
-                }
-            }
+            MenuController.LoadList(this, saved);
         }
 
         /* Сохраняет список */
         private void MenuSaveList(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(this.ToString() + ": Сохранить список");
-            SaveListDialog();
+            saved = MenuController.SaveList(this, saved);
         }
 
         /* Загружает БД */
         private void MenuLoadDB(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(this.ToString() + ": Загрузить БД");
-            OpenFileDialog open_file_dialog = new OpenFileDialog();
-            open_file_dialog.Filter = "Text files (*.json)|*.json|All files (*.*)|*.*";
-            open_file_dialog.ShowDialog();
-            if (open_file_dialog.FileName != "")
-            {
-                LoadDB(open_file_dialog.FileName);
-                Console.WriteLine(this.ToString() + ": Загружена БД: " + open_file_dialog.FileName);
-            }
+            MenuController.LoadDB(this);
         }
 
         /* Информация о БД */
         private void MenuDBInfo(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(this.ToString() + ": Информация о БД");
-            // TODO мб нужно добавить обьект бд с мета информацией и передавать его
-            AboutDB about_db = new AboutDB(db_users.Count);
-            about_db.ShowDialog();
+            MenuController.DBInfo(this);
         }
 
         /* Выход */
         private void MenuExit(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(this.ToString() + ": Выход");
-            this.Close();
+            MenuController.Exit(this);
         }
     }
 }

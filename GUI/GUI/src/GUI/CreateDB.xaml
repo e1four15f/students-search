@@ -14,14 +14,14 @@
             <DockPanel>
                 <StackPanel Margin="20,0">
                     <Label Content="Социальные сети"/>
-                    <CheckBox Content="ВКонтакте" Margin="5"/>
-                    <CheckBox Content="Одноклассники" Margin="5"/>
+                    <CheckBox Content="ВКонтакте" Margin="5" IsChecked="True"/>
+                    <CheckBox Content="Одноклассники" Margin="5" IsEnabled="False"/>
                 </StackPanel>
                 <StackPanel Margin="20,0">
                     <Label Content="Виды поиска"/>
-                    <CheckBox Content="Поиск по локальным группам" Margin="5"/>
-                    <CheckBox Content="Поиск по публичным группам" Margin="5"/>
-                    <CheckBox Content="Поиск по наличию вуза в профиле" Margin="5"/>
+                    <CheckBox Name="LocalGroups" Content="Поиск по локальным группам" Margin="5"/>
+                    <CheckBox Name="PublicGroups" Content="Поиск по публичным группам" Margin="5"/>
+                    <CheckBox Name="Search" Content="Поиск по наличию вуза в профиле" Margin="5"/>
                 </StackPanel>
             </DockPanel>
             <Button Content="Сформировать БД" HorizontalAlignment="Center" Margin="0,20" Width="250" Click="ButtonCreateDB" FontSize="14"/>

@@ -8,57 +8,53 @@
         Title="Поиск выпускников 😎" Height="360" Width="500">
 
     <Window.Resources>
-        <RoutedUICommand x:Key="MenuNewList"/>
+        <RoutedUICommand x:Key="NewList"/>
         <RoutedUICommand x:Key="MenuLoadList"/>
         <RoutedUICommand x:Key="MenuLoadDB"/>
-        <RoutedUICommand x:Key="MenuExit"/>
-        <RoutedUICommand x:Key="MenuDBInfo"/>
-        <RoutedUICommand x:Key="MenuSettings"/>
-
-        <RoutedUICommand x:Key="ButtonSearch"/>
+        <RoutedUICommand x:Key="Exit"/>
+        <RoutedUICommand x:Key="DBInfo"/>
+        <RoutedUICommand x:Key="Settings"/>
     </Window.Resources>
     <Window.CommandBindings>
-        <CommandBinding Command="{StaticResource MenuNewList}" Executed="MenuNewList"/>
+        <CommandBinding Command="{StaticResource NewList}" Executed="NewList"/>
         <CommandBinding Command="{StaticResource MenuLoadList}" Executed="MenuLoadList"/>
         <CommandBinding Command="{StaticResource MenuLoadDB}" Executed="MenuLoadDB"/>
-        <CommandBinding Command="{StaticResource MenuExit}" Executed="MenuExit"/>
-        <CommandBinding Command="{StaticResource MenuDBInfo}" Executed="MenuDBInfo"/>
-        <CommandBinding Command="{StaticResource MenuSettings}" Executed="MenuSettings"/>
-
-        <CommandBinding Command="{StaticResource ButtonSearch}" Executed="ButtonSearch"/>
+        <CommandBinding Command="{StaticResource Exit}" Executed="Exit"/>
+        <CommandBinding Command="{StaticResource DBInfo}" Executed="DBInfo"/>
+        <CommandBinding Command="{StaticResource Settings}" Executed="Settings"/>
     </Window.CommandBindings>
     <Window.InputBindings>
-        <KeyBinding Modifiers="Control" Key="N" Command="{Binding Source={StaticResource MenuNewList}}"/>
+        <KeyBinding Modifiers="Control" Key="N" Command="{Binding Source={StaticResource NewList}}"/>
         <KeyBinding Modifiers="Control" Key="O" Command="{Binding Source={StaticResource MenuLoadList}}"/>
         <KeyBinding Modifiers="Control+Shift" Key="O" Command="{Binding Source={StaticResource MenuLoadDB}}"/>
-        <KeyBinding Modifiers="Alt" Key="F4" Command="{Binding Source={StaticResource MenuExit}}"/>
-        <KeyBinding Modifiers="Control" Key="I" Command="{Binding Source={StaticResource MenuDBInfo}}"/>
-        <KeyBinding Modifiers="Control" Key="S" Command="{Binding Source={StaticResource MenuSettings}}"/>
+        <KeyBinding Modifiers="Alt" Key="F4" Command="{Binding Source={StaticResource Exit}}"/>
+        <KeyBinding Modifiers="Control" Key="I" Command="{Binding Source={StaticResource DBInfo}}"/>
+        <KeyBinding Modifiers="Control" Key="S" Command="{Binding Source={StaticResource Settings}}"/>
 
-        <KeyBinding Key="Enter" Command="{Binding Source={StaticResource ButtonSearch}}"/>
+        <KeyBinding Key="Enter" Command="{Binding Source={StaticResource NewList}}"/>
     </Window.InputBindings>
 
     <Grid>
-        <Button Content="Поиск" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top" Width="145" Click="ButtonSearch" FontSize="14"/>
+        <Button Content="Поиск" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top" Width="145" Click="NewList" FontSize="14"/>
         <Button Content="Сформировать БД" HorizontalAlignment="Left" Margin="10,215,0,0" VerticalAlignment="Top" Width="145" Click="ButtonCreateDB" FontSize="14"/>
-        <Button Content="Информация о БД" HorizontalAlignment="Left" Margin="10,240,0,0" VerticalAlignment="Top" Width="145" Click="ButtonAboutDB" FontSize="14"/>
-        <Button Content="Настройки" HorizontalAlignment="Left" Margin="10,265,0,0" VerticalAlignment="Top" Width="145" Click="ButtonSettings" FontSize="14"/>
-        <Button Content="Выход" HorizontalAlignment="Left" Margin="10,290,0,0" VerticalAlignment="Top" Width="145" Click="ButtonExit" FontSize="14"/>
+        <Button Content="Информация о БД" HorizontalAlignment="Left" Margin="10,240,0,0" VerticalAlignment="Top" Width="145" Click="DBInfo" FontSize="14"/>
+        <Button Content="Настройки" HorizontalAlignment="Left" Margin="10,265,0,0" VerticalAlignment="Top" Width="145" Click="Settings" FontSize="14"/>
+        <Button Content="Выход" HorizontalAlignment="Left" Margin="10,290,0,0" VerticalAlignment="Top" Width="145" Click="Exit" FontSize="14"/>
 
         <Image HorizontalAlignment="Left" Height="280" Margin="190,30,0,0" VerticalAlignment="Top" Width="325" Source="/GUI;component/img/miet_logo.png"/>
         
         <Menu DockPanel.Dock="Top" Height="30" Margin="0,0,0,300" FontSize="14">
             <MenuItem Header="_Файл">
-                <MenuItem Header="_Новый список" InputGestureText="Ctrl+N" Click="MenuNewList"/>
+                <MenuItem Header="_Новый список" InputGestureText="Ctrl+N" Click="NewList"/>
                 <MenuItem Header="_Загрузить список" InputGestureText="Ctrl+O" Click="MenuLoadList"/>
                 <Separator />
                 <MenuItem Header="_Загрузить БД" InputGestureText="Ctrl+Shift+O" Click="MenuLoadDB"/>
                 <Separator />
-                <MenuItem Header="_Выход" InputGestureText="Alt+F4"  Click="MenuExit"/>
+                <MenuItem Header="_Выход" InputGestureText="Alt+F4"  Click="Exit"/>
             </MenuItem>
             <MenuItem Header="_Настройки">
-                <MenuItem Header="_Информация о БД" InputGestureText="Ctrl+I" Click="MenuDBInfo"/>
-                <MenuItem Header="_Настройки" InputGestureText="Ctrl+S" Click="MenuSettings"/>
+                <MenuItem Header="_Информация о БД" InputGestureText="Ctrl+I" Click="DBInfo"/>
+                <MenuItem Header="_Настройки" InputGestureText="Ctrl+S" Click="Settings"/>
             </MenuItem>
         </Menu>
     </Grid>

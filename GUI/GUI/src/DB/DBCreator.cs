@@ -20,14 +20,14 @@ namespace DB
 
         /* Метод для старта сбора данных пользователей с vk
            Возвращает лист Human */
-        public List<Human> Create()
+        public List<Human> Create(bool local_groups = true, bool public_groups = true, bool search = true)
         {
             Stopwatch full_timer = new Stopwatch();
             full_timer.Start();
             
-            JArray local_users_data = LocalGroupsSearch();                         
-            JArray public_groups_members_data = PublicGroupsSearch();   
-            JArray search_users_data = DefaultUsersSearch();
+            JArray local_groups_members_data = local_groups ? LocalGroupsSearch() : new JArray();                         
+            JArray public_groups_members_data = public_groups ? PublicGroupsSearch() : new JArray();   
+            JArray search_users_data = search ? DefaultUsersSearch() : new JArray();
             /*
             JArray local_users_data = FilesIO.LoadFileJson("local_users_data");
             JArray public_groups_members_data = FilesIO.LoadFileJson("public_groups_members_data");     
@@ -38,7 +38,7 @@ namespace DB
 
             timer.Start();
             /* 00:00:04.7994276 */
-            foreach (JArray data in new List<JArray>() { local_users_data, public_groups_members_data, search_users_data })
+            foreach (JArray data in new List<JArray>() { local_groups_members_data, public_groups_members_data, search_users_data })
             {
                 Parallel.For (0, data.Count, i => 
                 {
@@ -102,12 +102,12 @@ namespace DB
             Console.WriteLine("LocalMietGroupCheck");
             timer.Restart();
             /* 7517 | 8 min 59.31 s */ 
-            JArray local_users_data = VkApiMulti.LocalMietGroupCheck(local_not_checked_groups_ids.Select(x => x.ToString()).ToList());
+            JArray local_groups_members_data = VkApiMulti.LocalMietGroupCheck(local_not_checked_groups_ids.Select(x => x.ToString()).ToList());
             timer.Stop();
-            FilesIO.SaveFileJson("local_users_data", local_users_data);
-            Console.WriteLine("Получена информация о " + local_users_data.Count() + " пользователях в локальных миэтовских группах " + timer.Elapsed);
+            FilesIO.SaveFileJson("local_users_data", local_groups_members_data);
+            Console.WriteLine("Получена информация о " + local_groups_members_data.Count() + " пользователях в локальных миэтовских группах " + timer.Elapsed);
 
-            return local_users_data;
+            return local_groups_members_data;
         }
 
         /* Метод для сбора id пользователей с публичных групп
@@ -154,6 +154,17 @@ namespace DB
             Console.WriteLine("Получена информация о " + search_users_data.Count() + " пользователях из миэта по поиску " + timer.Elapsed);
 
             return search_users_data;
+        }
+
+        /* Временный метод пока нет бд */
+        public List<Human> LoadDB(string filename)
+        {
+            List<Human> db_users = new List<Human>();
+            foreach (JToken user_data in FilesIO.LoadFileJson(filename))
+            {
+                db_users.Add(new Human(user_data));
+            }
+            return db_users;
         }
     }
 }

@@ -33,32 +33,31 @@ namespace WebApi
         private const bool verbose = true;
 
         // Метод для проверки user_key
-        internal static void Auth()
+        internal static bool Auth(string user_key = "")
         {
-            bool auth = false;
-            do
+            if (user_key != "")
             {
-                Console.WriteLine("Авторизация...");
-                try
+                VkApiUtils.user_key = user_key;
+            }
+            
+            Console.WriteLine("Авторизация..." + VkApiUtils.user_key);
+            
+            try
+            {
+                VkApi.UsersSearch("Павел Дуров", 1);
+                if (user_key != "")
                 {
-                    VkApi.UsersSearch("Павел Дуров", 1);
-                    auth = true;
-                    Console.WriteLine("Успешно!");
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Пройдите по ссылке");
-                    Console.WriteLine("https://oauth.vk.com/authorize?client_id=" + client_id + "&display=page&redirect_uri=http://vk.com&scope=offline&response_type=token&v=" + version);
-                    Console.Write("Введите user_key: ");
-                    user_key = Console.ReadLine();
-
                     Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
                     config.AppSettings.Settings["user_key"].Value = user_key;
                     config.Save(ConfigurationSaveMode.Modified);
                     ConfigurationManager.RefreshSection("appSettings");
-                    auth = false;
-                }
-            } while (!auth);
+                }   
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
 
         // Метод для посылки запроса по url
@@ -74,24 +73,6 @@ namespace WebApi
                     using (StreamReader reader = new StreamReader(stream))
                     {
                         return reader.ReadToEnd();
-                    }
-                }
-            }
-        }
-
-        // Мб придётся юзать такой асинхронный метод 
-        private static async Task<string> SendRequestAsync(string url)
-        {
-            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-
-            using (HttpWebResponse response = (HttpWebResponse) await request.GetResponseAsync()) 
-            {
-                using (Stream stream = response.GetResponseStream()) 
-                {
-                    using (StreamReader reader = new StreamReader(stream)) 
-                    {  
-                        return await reader.ReadToEndAsync();
                     }
                 }
             }
@@ -130,17 +111,12 @@ namespace WebApi
                 short error_code = (short) data["error"]["error_code"];
                 if (error_code == 6)
                 {
-                    Thread.Sleep(new Random().Next(sleep_time / 2, sleep_time)); //Thread.Sleep(sleep_time);
+                    Thread.Sleep(new Random().Next(sleep_time / 2, sleep_time)); 
                 }
                 Exception e = new Exception(string.Format("{0} : {1}", error_code, error_msg));
                 Console.WriteLine(e.Message);
                 e.Data.Add(error_code, error_msg);
                 throw e;
-            }
-
-            if (verbose)
-            { 
-            //    Console.WriteLine(method_name);// + '\n' + data + '\n');
             }
             return data;
         }

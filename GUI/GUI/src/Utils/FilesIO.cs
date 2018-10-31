@@ -13,7 +13,7 @@ namespace Utils
     abstract class FilesIO
     {
         // TODO Генерировать уникальный идентификатор 
-        private const string postfix = "_27_10_2018";
+        private const string postfix = "_01_11_2018";
 
         // TODO Разобраться куда запихнуть сохранение/загрузку файлов
         /* IO */
@@ -67,15 +67,23 @@ namespace Utils
 
         internal static JArray LoadFileJson(string filename)
         {
+            Console.WriteLine("Загрузка файла " + filename);
             JArray data = new JArray();
-            using (StreamReader file = File.OpenText("data/" + filename + postfix + ".json"))
+            using (StreamReader file = File.OpenText(filename))
             {
                 using (JsonTextReader reader = new JsonTextReader(file))
                 {
-                    data = JArray.Load(reader);
+                    try
+                    { 
+                        data = JArray.Load(reader);
+                    }
+                    catch (JsonReaderException e)
+                    {
+                        Console.WriteLine("Невозможно прочитать файл!");
+                        return data; 
+                    }
                 }
             }
-            Console.WriteLine(filename + " was loaded!");
             return data;
         }
     }

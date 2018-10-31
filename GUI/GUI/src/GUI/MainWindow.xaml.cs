@@ -14,6 +14,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using WebApi;
+using DB;
+
 namespace GUI
 {
     /// <summary>
@@ -21,93 +24,72 @@ namespace GUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        private bool auth;
+
         public MainWindow()
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
-        }
-        // TODO Возможно стоит сделать отдельные методы, чтобы код не повторялся 
-        /* Кнопки */
-        private void ButtonSearch(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine(this.ToString() + ": Поиск");
-            Search search = new Search();
-            this.Hide();
-            search.Show();
+
+            auth = false;
         }
 
+        /* Кнопки */
+        /* Формирует бд */
         private void ButtonCreateDB(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(this.ToString() + ": Сформировать БД");
-            CreateDB create_db = new CreateDB();
-            create_db.ShowDialog();
-        }
+            if (!auth)
+            {
+                auth = VkApiUtils.Auth();
+            }
 
-        private void ButtonAboutDB(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine(this.ToString() + ": Информация о БД");
-            AboutDB about_db = new AboutDB();
-            about_db.ShowDialog();
-        }
-
-        private void ButtonSettings(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine(this.ToString() + ": Настройки");
-            Settings settings = new Settings();
-            settings.ShowDialog();
-        }
-
-        private void ButtonExit(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine(this.ToString() + ": Выход");
-            this.Close();
+            if (auth)
+            {
+                new CreateDB().ShowDialog();
+            }
+            else 
+            {
+                new Login().ShowDialog(); 
+            }
         }
 
         /* Меню */
-        private void MenuNewList(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine(this.ToString() + ": Новый список");
-            Search search = new Search();
-            this.Hide();
-            search.Show();
-        }
-            
+        /* Загружает список */
         private void MenuLoadList(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(this.ToString() + ": загрузить список");
-            OpenFileDialog open_file_dialog = new OpenFileDialog();
-            open_file_dialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-            open_file_dialog.ShowDialog();
-            Console.WriteLine(this.ToString() + ": Загружен список: " + open_file_dialog.FileName);
+            MenuController.LoadList(this);
         }
 
+        /* Загружает БД */
         private void MenuLoadDB(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(this.ToString() + ": Загрузить БД");
-            OpenFileDialog open_file_dialog = new OpenFileDialog();
-            open_file_dialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-            open_file_dialog.ShowDialog();
-            Console.WriteLine(this.ToString() + ": Загружена БД: " + open_file_dialog.FileName);
+            MenuController.LoadDB(this);
         }
 
-        private void MenuExit(object sender, RoutedEventArgs e)
+        /* Общие обработчики */
+        /* Создаёт новую панель поиска */
+        private void NewList(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(this.ToString() + ": Выход");
-            this.Close();
+            MenuController.NewList(this);
         }
 
-        private void MenuDBInfo(object sender, RoutedEventArgs e)
+        /* Информация о БД */
+        private void DBInfo(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(this.ToString() + ": Информация о БД");
-            AboutDB about_db = new AboutDB();
-            about_db.ShowDialog();
+            MenuController.DBInfo(this);
         }
 
-        private void MenuSettings(object sender, RoutedEventArgs e)
+        /* Настройки */
+        private void Settings(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(this.ToString() + ": Настройки");
-            Settings settings = new Settings();
-            settings.ShowDialog();
+            MenuController.Settings(this);
+        }
+
+        /* Выход */
+        private void Exit(object sender, RoutedEventArgs e)
+        {
+            MenuController.Exit(this);
         }
     }
 }
