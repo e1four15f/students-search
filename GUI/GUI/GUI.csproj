@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
@@ -74,7 +75,12 @@
     <Compile Include="src\GUI\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="src\DB\DBCreator.cs" />
+    <Compile Include="src\Utils\FilesIO.cs" />
     <Compile Include="src\WebApi\VkApi.cs" />
+    <Compile Include="src\WebApi\VkApiAdvanced.cs" />
+    <Compile Include="src\WebApi\VkApiMulti.cs" />
+    <Compile Include="src\WebApi\VkApiUtils.cs" />
     <Page Include="src\GUI\DBInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

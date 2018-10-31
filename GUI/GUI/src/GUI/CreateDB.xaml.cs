@@ -30,8 +30,7 @@ namespace GUI
         private void ButtonCreateDB(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(this.ToString() + ": Сформировать БД");
-            new VkApi().ShowMessage("Хуй");
-
+            //VkApiUtils.Auth();
         }
     }
 }
