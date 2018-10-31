@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace GUI
+namespace DB
 {
     // TODO Нужно ли в структурах хранить и id, и название?
     // TODO Разобраться как хранить переменные 

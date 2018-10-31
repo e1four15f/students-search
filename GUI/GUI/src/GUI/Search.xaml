@@ -220,37 +220,37 @@
                                     <DockPanel Width="400" Height="34">  
                                         <TextBlock Style="{StaticResource vk_block}"> 
                                             <Hyperlink Style="{StaticResource vk_link}" RequestNavigate="HyperlinkRequestNavigate" TextDecorations="None">  
-                                                <Image Width="32" Height="32" Margin="2,0" Source="img/vk_logo.png"/>
+                                                <Image Width="32" Height="32" Margin="2,0" Source="/GUI;component/img/vk_logo.png"/>
                                             </Hyperlink>
                                         </TextBlock> 
 
                                         <TextBlock Style="{StaticResource facebook_block}"> 
                                             <Hyperlink Style="{StaticResource facebook_link}" RequestNavigate="HyperlinkRequestNavigate" TextDecorations="None">     
-                                                <Image Width="32" Height="32" Margin="2,0" Source="img/facebook_logo.png"/>
+                                                <Image Width="32" Height="32" Margin="2,0" Source="/GUI;component/img/facebook_logo.png"/>
                                             </Hyperlink>
                                         </TextBlock> 
 
                                         <TextBlock Style="{StaticResource instagram_block}">  
                                             <Hyperlink Style="{StaticResource instagram_link}" RequestNavigate="HyperlinkRequestNavigate" TextDecorations="None">   
-                                                <Image Width="32" Height="32" Margin="2,0" Source="img/instagram_logo.png"/>
+                                                <Image Width="32" Height="32" Margin="2,0" Source="/GUI;component/img/instagram_logo.png"/>
                                             </Hyperlink>
                                         </TextBlock> 
                                          
                                         <TextBlock Style="{StaticResource twitter_block}"> 
                                             <Hyperlink Style="{StaticResource twitter_link}" RequestNavigate="HyperlinkRequestNavigate" TextDecorations="None">   
-                                                <Image Width="32" Height="32" Margin="2,0" Source="img/twitter_logo.png"/>
+                                                <Image Width="32" Height="32" Margin="2,0" Source="/GUI;component/img/twitter_logo.png"/>
                                             </Hyperlink>
                                         </TextBlock> 
 
                                         <TextBlock Style="{StaticResource livejournal_block}"> 
                                             <Hyperlink Style="{StaticResource livejournal_link}" RequestNavigate="HyperlinkRequestNavigate" TextDecorations="None">   
-                                                <Image Width="32" Height="32" Margin="2,0" Source="img/livejournal_logo.png"/>
+                                                <Image Width="32" Height="32" Margin="2,0" Source="/GUI;component/img/livejournal_logo.png"/>
                                             </Hyperlink>
                                         </TextBlock>
                                                       
                                         <TextBlock Style="{StaticResource skype_block}">       
                                             <Hyperlink Style="{StaticResource skype_link}" RequestNavigate="HyperlinkRequestNavigate" TextDecorations="None">   
-                                                <Image Width="32" Height="32" Margin="2,0" Source="img/skype_logo.png"/>
+                                                <Image Width="32" Height="32" Margin="2,0" Source="/GUI;component/img/skype_logo.png"/>
                                             </Hyperlink>
                                         </TextBlock>
                                     </DockPanel>

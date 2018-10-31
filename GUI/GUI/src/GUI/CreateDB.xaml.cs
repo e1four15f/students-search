@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using WebApi;
+
 namespace GUI
 {
     /// <summary>
@@ -28,6 +30,8 @@ namespace GUI
         private void ButtonCreateDB(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(this.ToString() + ": Сформировать БД");
+            new VkApi().ShowMessage("Хуй");
+
         }
     }
 }
