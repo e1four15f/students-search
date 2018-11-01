@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using DB;
+
 namespace GUI
 {
     /// <summary>
@@ -19,24 +21,30 @@ namespace GUI
     /// </summary>
     public partial class AboutDB : Window
     {
-        private DateTime db_date_of_creation = DateTime.Now;
-        private int db_users_count = new Random().Next(10000, 100000);
-        private int db_size_in_mb = new Random().Next(1, 1000);
-
-        public AboutDB(int db_users_count = 0)
+        public AboutDB(DBConteiner db = null)
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
 
-            this.db_users_count = db_users_count;
+            if (db == null || db.Users() == null)
+            {
+                Label date_of_creation = (Label) FindName("DateOfCreation");
 
-            Label date_of_creation = (Label) this.FindName("DateOfCreation");
-            Label users_count = (Label) this.FindName("UsersCount");
-            Label size_in_mb = (Label) this.FindName("SizeInMb");
+                date_of_creation.Content = "База данных не загружена!";
+                date_of_creation.FontSize = 20;
+                date_of_creation.HorizontalAlignment = HorizontalAlignment.Center;
+                date_of_creation.Foreground = new SolidColorBrush(Colors.Red);
+            }
+            else
+            { 
+                Label date_of_creation = (Label) FindName("DateOfCreation");
+                Label users_count = (Label) FindName("UsersCount");
+                Label size_in_mb = (Label) FindName("SizeInMb");
 
-            date_of_creation.Content = "Дата создания БД: " + db_date_of_creation;
-            users_count.Content = "Количество записей в БД: " + db_users_count + " пользователей";
-            size_in_mb.Content = "Размер БД: " + db_size_in_mb + " мб";
+                date_of_creation.Content = "Дата создания БД: " + db.Info().LastWriteTime;
+                users_count.Content = "Количество записей в БД: " + db.Users().Count + " пользователей";
+                size_in_mb.Content = "Размер БД: " + Math.Round(db.Info().Length / Math.Pow(2, 20), 2) + " мб";
+            }
         }
     }
 }

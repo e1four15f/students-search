@@ -17,11 +17,13 @@ namespace DB
     class DBCreator
     {
         private static Stopwatch timer = new Stopwatch();
+        private string filename;
 
         /* Метод для старта сбора данных пользователей с vk
            Возвращает лист Human */
-        public List<Human> Create(bool local_groups = true, bool public_groups = true, bool search = true)
+        public List<Human> Create(string filename, bool local_groups = true, bool public_groups = true, bool search = true)
         {
+            this.filename = filename;
             Stopwatch full_timer = new Stopwatch();
             full_timer.Start();
             
@@ -56,7 +58,7 @@ namespace DB
             
             timer.Stop();
             Console.WriteLine("Всего получено информация о " + users_data.Count() + " пользователях из миэта " + timer.Elapsed);
-            FilesIO.SaveFileJson("users_data", users_data);
+            FilesIO.SaveFileJson(filename, users_data);
 
             List<Human> users = new List<Human>();
             Parallel.ForEach(users_data, user_data =>
@@ -96,7 +98,7 @@ namespace DB
             /* 18954 | 1 min 0.40 s */
             List<int> local_not_checked_groups_ids = VkApiMulti.GroupsSearch(words); 
             timer.Stop();
-            FilesIO.SaveFile("Local_not_checked_groups_ids", local_not_checked_groups_ids);
+            //FilesIO.SaveFile("Local_not_checked_groups_ids", local_not_checked_groups_ids);
             Console.WriteLine("Найдено " + local_not_checked_groups_ids.Count() + " локальных групп " + timer.Elapsed);
 
             Console.WriteLine("LocalMietGroupCheck");
@@ -104,7 +106,7 @@ namespace DB
             /* 7517 | 8 min 59.31 s */ 
             JArray local_groups_members_data = VkApiMulti.LocalMietGroupCheck(local_not_checked_groups_ids.Select(x => x.ToString()).ToList());
             timer.Stop();
-            FilesIO.SaveFileJson("local_users_data", local_groups_members_data);
+            //FilesIO.SaveFileJson("local_users_data", local_groups_members_data);
             Console.WriteLine("Получена информация о " + local_groups_members_data.Count() + " пользователях в локальных миэтовских группах " + timer.Elapsed);
 
             return local_groups_members_data;
@@ -119,7 +121,7 @@ namespace DB
             /* 335 | 16.42 s */ 
             List<int> public_groups_ids = VkApiMulti.GroupsSearch(new List<string>() { "miet", "миэт" });
             timer.Stop();
-            FilesIO.SaveFile("public_groups_ids", public_groups_ids);
+            //FilesIO.SaveFile("public_groups_ids", public_groups_ids);
             Console.WriteLine("Найдено " + public_groups_ids.Count() + " публичных миэтовских групп " + timer.Elapsed);
 
             Console.WriteLine("GroupsGetMembers");
@@ -127,7 +129,7 @@ namespace DB
             /* 20330 | 54.46 s */
             JArray public_groups_members_data = VkApiMulti.GroupsGetMembers(public_groups_ids.Select(x => x.ToString()).ToList());
             timer.Stop();
-            FilesIO.SaveFileJson("public_groups_members_data", public_groups_members_data);
+            //FilesIO.SaveFileJson("public_groups_members_data", public_groups_members_data);
             Console.WriteLine("Получена информация о " + public_groups_members_data.Count() + " пользователях в публичных миэтовских группах " + timer.Elapsed);
 
             return public_groups_members_data;
@@ -142,7 +144,7 @@ namespace DB
             /* 4129 | 1 min 37.36 s */ 
             List<string> search_users_ids = VkApiMulti.UsersSearch();
             timer.Stop();
-            FilesIO.SaveFile("search_users_ids", search_users_ids);
+            //FilesIO.SaveFile("search_users_ids", search_users_ids);
             Console.WriteLine("Найдено " + search_users_ids.Count() + " пользователей из миэта по поиску " + timer.Elapsed);
 
             Console.WriteLine("UsersGet");
@@ -150,21 +152,10 @@ namespace DB
             /* 4129 | 3.87 s */
             JArray search_users_data = VkApiMulti.UsersGet(search_users_ids, VkApiUtils.fields, "search");
             timer.Stop();
-            FilesIO.SaveFileJson("search_users_data", search_users_data);
+            //FilesIO.SaveFileJson("search_users_data", search_users_data);
             Console.WriteLine("Получена информация о " + search_users_data.Count() + " пользователях из миэта по поиску " + timer.Elapsed);
 
             return search_users_data;
-        }
-
-        /* Временный метод пока нет бд */
-        public List<Human> LoadDB(string filename)
-        {
-            List<Human> db_users = new List<Human>();
-            foreach (JToken user_data in FilesIO.LoadFileJson(filename))
-            {
-                db_users.Add(new Human(user_data));
-            }
-            return db_users;
         }
     }
 }

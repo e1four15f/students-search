@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 
 using WebApi;
 using DB;
+using Microsoft.Win32;
 
 namespace GUI
 {
@@ -41,8 +42,18 @@ namespace GUI
         {
             Console.WriteLine(this.ToString() + ": Сформировать БД :"
                 + local_groups.IsChecked + " : " + public_groups.IsChecked + " : " + search.IsChecked);
-            //new DBCreator().Create(local_groups.IsChecked.Value, public_groups.IsChecked.Value, search.IsChecked.Value);
-            new DBCreator().Create(false, false, false);
+
+            SaveFileDialog save_file_dialog = new SaveFileDialog();
+            // TODO Придумать формат для файлов списка
+            save_file_dialog.Filter = "Text files (*.json)|*.json|All files (*.*)|*.*";
+            save_file_dialog.ShowDialog();
+            if (save_file_dialog.FileName != "")
+            {
+                Console.WriteLine(save_file_dialog.FileName);
+                new DBCreator().Create(save_file_dialog.FileName, 
+                    local_groups.IsChecked.Value, public_groups.IsChecked.Value, search.IsChecked.Value);
+            }
+            
             MessageBox.Show("Создание базы данных закончено", "", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             this.Close();
         }

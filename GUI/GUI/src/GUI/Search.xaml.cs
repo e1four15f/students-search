@@ -30,7 +30,6 @@ namespace GUI
     /// </summary>
     public partial class Search : Window
     {
-        private static List<Human> db_users;
         private ObservableCollection<Human> response_users;
         private ObservableCollection<Human> selected_users;
 
@@ -59,7 +58,7 @@ namespace GUI
             LoadDB("data/full.json");
             UpdateResponse(db_users);
             */
-            db_users = new DBCreator().LoadDB("data/users_data_27_10_2018.json");
+            //MainWindow.db_users = new DBCreator().LoadDB("data/users_data_27_10_2018.json");
             /* Для теста 
             List<Human> random_users = new List<Human>();
             Random rnd = new Random();
@@ -100,21 +99,29 @@ namespace GUI
 
             Console.WriteLine(make_request.FirstName.Text + " : " + make_request.LastName.Text);
             /* Временное решение пока нет бд*/
-            if (db_users != null)
+            if (MainWindow.db.Users() != null)
             { 
                 List<Human> criterion_users = new List<Human>();
-                foreach (Human user in db_users)
+                foreach (Human user in MainWindow.db.Users())
                 {
                     bool criterion = false;
-                    criterion = make_request.FirstName.Text != "" ? user.first_name == make_request.FirstName.Text : true;
-                    criterion &= make_request.LastName.Text != "" ? user.last_name == make_request.LastName.Text : true;
+                    if (make_request.FirstName.Text == "*")
+                    {
+                        criterion = true;
+                    }
+                    else
+                    { 
+                        criterion = make_request.FirstName.Text != "" ? user.first_name == make_request.FirstName.Text : true;
+                        criterion &= make_request.LastName.Text != "" ? user.last_name == make_request.LastName.Text : true;
+                    }
                     if (criterion)
                     {
                         criterion_users.Add(user);
                     }
                 }
                 Console.WriteLine(criterion_users.Count);
-                if (criterion_users.Count != db_users.Count)
+                
+                if (criterion_users.Count != MainWindow.db.Users().Count || make_request.FirstName.Text == "*")
                 {
                     UpdateResponse(criterion_users);
                 }

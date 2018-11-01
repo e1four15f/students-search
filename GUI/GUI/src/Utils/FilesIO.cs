@@ -13,10 +13,11 @@ namespace Utils
     abstract class FilesIO
     {
         // TODO Генерировать уникальный идентификатор 
-        private const string postfix = "_01_11_2018";
+        //private const string postfix = DateTime.Now.ToString();
 
         // TODO Разобраться куда запихнуть сохранение/загрузку файлов
         /* IO */
+        /*
         internal static void SaveFile(string filename, List<int> list)
         {
             File.WriteAllText("data/" + filename + postfix, String.Join(",", list.ToArray()));
@@ -28,10 +29,10 @@ namespace Utils
             File.WriteAllText("data/" + filename + postfix, String.Join(",", list.ToArray()));
             Console.WriteLine(filename + " was saved!");
         }
-
+        */
         internal static void SaveFileJson(string filename, JArray data)
         {
-            using (StreamWriter file = File.CreateText("data/" + filename + postfix + ".json"))
+            using (StreamWriter file = File.CreateText(filename))
             {
                 using (JsonTextWriter writer = new JsonTextWriter(file))
                 {
@@ -40,7 +41,7 @@ namespace Utils
             }
             Console.WriteLine(filename + " was saved!");
         }
-
+        /*
         internal static List<int> LoadFileInt(string filename)
         {
             string file = File.ReadAllText("data/" + filename + postfix);
@@ -63,7 +64,7 @@ namespace Utils
             }
             Console.WriteLine(filename + " was loaded!");
             return list;
-        }
+        }*/
 
         internal static JArray LoadFileJson(string filename)
         {

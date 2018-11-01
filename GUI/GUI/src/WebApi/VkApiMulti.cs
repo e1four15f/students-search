@@ -87,7 +87,7 @@ namespace WebApi
         internal static List<string> UsersSearch(string q = "", short count = 1000, short age_min = 0, short age_max = 120) //, List<short> age = 0, byte sex = 0)
         {
             HashSet<string> user_ids = new HashSet<string>();
-            Parallel.For(1, 2, sex =>
+            Parallel.For(1, 3, sex =>
             {
                 Thread.Sleep(VkApiUtils.sleep_time);
                 for (int age = age_min; age < age_max; age++)

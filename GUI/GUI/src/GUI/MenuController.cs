@@ -85,7 +85,7 @@ namespace GUI
             if (open_file_dialog.FileName != "")
             {
                 // TODO Нужно иметь общий объект AboutDB(db_users.Count);
-                new DBCreator().LoadDB(open_file_dialog.FileName);
+                MainWindow.db.LoadDB(open_file_dialog.FileName);
                 Console.WriteLine(sender.ToString() + ": Загружена БД: " + open_file_dialog.FileName);
             }
             if (sender == App.Current.MainWindow)
@@ -100,7 +100,7 @@ namespace GUI
             Console.WriteLine(sender.ToString() + ": Информация о БД");
             // TODO мб нужно добавить обьект бд с мета информацией и передавать его
             // TODO Нужно иметь общий объект AboutDB(db_users.Count);
-            new AboutDB().ShowDialog();
+            new AboutDB(MainWindow.db).ShowDialog();
         }
 
         /* Настройки */
