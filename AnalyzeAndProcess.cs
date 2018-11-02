@@ -15,6 +15,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using MinimalisticTelnet;
+using Newtonsoft.Json;
 
 namespace AnalyzeAndProcess
 {
@@ -40,8 +41,8 @@ namespace AnalyzeAndProcess
 	}
 
 
-	public delegate bool Searcher(string query, string nickname, ref List<string> profiles);
-	        /*
+	public delegate bool Searcher(string query, string nickname, string user_agent, ref List<string> profiles);
+	         /*
 	         	Функции обращения к поисковику одинаковые - под капотом:
 	         	1. Получение страницы по запросу (query + nickname)
 	         	2. Вычленение ссылок из полученной страницы
@@ -59,7 +60,11 @@ namespace AnalyzeAndProcess
 								for(int i = 0; i < sites.Length; i++){
 				возможно стоит изменить на while, тк вычленение сайтов иногда (возможно часто) проглатывает мусор, но нужно помнить,
 				что while сильно замедлит программу
-	         */	
+				
+                в foreach(string dnw2contain in ignore) проверяется, содержит ли ссылка слова, с которыми не надо включать в лог
+                в for(int i = 0; i < sites.Length; i++) проверяется, содержит ли ссылка слова, с которыми НУЖНО включать в лог
+               
+	         */
 	        
 	abstract class ProcessData{
 	    //TODO сделать методы для обращения к поставляемой с софтом БД
@@ -218,141 +223,175 @@ namespace AnalyzeAndProcess
         static string[] ignore = { "webcache", "wiki", "google", "bing", "yandex", "rambler", "microsoft" };
 		
        	
-		static bool Google	(string query, string nickname, ref List<string> profiles){
+	
+		static bool Google	(string query, string nickname, string user_agent, ref List<string> profiles){
         	
             WebClient client = new WebClient();
-            client.Headers.Add ("user-agent", "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
+            client.Headers.Add ("user-agent", user_agent);
             string html;
 			try{
-				html =  client.DownloadString(query + nickname).ToLower(); //System.Text.Encoding.UTF8.GetString(client.DownloadData(query + nickname)).ToLower();
-				}
+				html =  System.Text.Encoding.UTF8.GetString(client.DownloadData(query + nickname)).ToLower();//client.DownloadString(query + nickname).ToLower(); //
+			}
 			catch(Exception e){
-            	
 				html = null;
 			}
         	
-            if(html == null)
+            if(html == null){
             	return false;
+            }
             		
-			for(int i = 0; i < sites.Length; i++){
+			for(int j = 0; j < 20; j++){
 			/*вычленяем в googled_url ссылку из всего html*/
 			string get_url = "/url?q=";
 			html = html.Substring(html.IndexOf(get_url)+get_url.Length);
 			string googled_url = html.Substring(0,html.IndexOf("&amp"));
 
-            foreach(string dnw2contain in ignore)
-            if (googled_url.Contains(sites[i]) && !googled_url.Contains(dnw2contain))
-                if (!profiles.Contains(googled_url)){
-            	lock(profile_locker)
-                    profiles.Add(googled_url);
-                }
+			foreach(string dnw2contain in ignore){
+				if(googled_url.Contains(dnw2contain))
+					goto upper_for;
+            }
+			for(int i = 0; i < sites.Length; i++){
+				if (googled_url.Contains(sites[i]))
+		                if (!profiles.Contains(googled_url)){
+		            	lock(profile_locker)
+		                    profiles.Add(googled_url);
+				}
+			}
+            upper_for:
+	            	continue;
             }
             
             return true;
 		}
 		
-		static bool Bing	(string query, string nickname, ref List<string> profiles){
+		static bool Bing	(string query, string nickname, string user_agent, ref List<string> profiles){
         	WebClient client = new WebClient();
-            client.Headers.Add ("user-agent", "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
+        	client.Headers.Add ("user-agent", user_agent);
             string html;
 			try{
 				html =  client.DownloadString(query + nickname).ToLower(); //System.Text.Encoding.UTF8.GetString(client.DownloadData(query + nickname)).ToLower();
 				}
 			catch(Exception e){
-				
 				html = null;
 			}
-        	
-            if(html == null)
+            
+        	if(html == null){
             	return false;
-        	
-			for(int i = 0; i < sites.Length; i++){
+            }
+			for(int j = 0; j < 20; j++){
 			/*вычленяем в googled_url ссылку из всего html*/
 			string get_url = "<a href=\"";
 			html = html.Substring(html.IndexOf(get_url)+get_url.Length);
-			string googled_url = html.Substring(0,html.IndexOf("\""));
+			string googled_url = html.Substring(0,html.IndexOf("&amp"));
 
-            foreach(string dnw2contain in ignore)
-            if (googled_url.Contains(sites[i]) && !googled_url.Contains(dnw2contain))
-                if (!profiles.Contains(googled_url)){
-            	lock(profile_locker)
-                    profiles.Add(googled_url);
-                }
+			foreach(string dnw2contain in ignore){
+				if(googled_url.Contains(dnw2contain))
+					goto upper_for;
+            }
+			for(int i = 0; i < sites.Length; i++){
+				if (googled_url.Contains(sites[i]))
+		                if (!profiles.Contains(googled_url)){
+		            	lock(profile_locker)
+		                    profiles.Add(googled_url);
+				}
+			}
+            upper_for:
+	            	continue;
             }
             
             return true;
 		}
 		
-        static bool Yandex	(string query, string nickname, ref List<string> profiles){
+        static bool Yandex	(string query, string nickname, string user_agent, ref List<string> profiles){
         	WebClient client = new WebClient();
-            client.Headers.Add ("user-agent", "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
+        	client.Headers.Add ("user-agent", user_agent);
             string html;
 			try{
             	html =  System.Text.Encoding.UTF8.GetString(client.DownloadData(query + nickname)).ToLower(); //System.Text.Encoding.UTF8.GetString(client.DownloadData(google + nickname)).ToLower();
-				}
+			}
 			catch(Exception e){
 				html = null;
 			}
-        	
-            if(html == null)
+        	if(html == null){
             	return false;
+            }
             
             /*пропустить джаваскрипт*/
             html = html.Substring(html.IndexOf("</script><div class=\""));
             
-			for(int i = 0; i < sites.Length; i++){
+			for(int j = 0; j < 20; j++){
 			/*вычленяем в googled_url ссылку из всего html*/
 			string get_url = "target=_blank href=\"";
 			html = html.Substring(html.IndexOf(get_url)+get_url.Length);
-			string googled_url = html.Substring(0,html.IndexOf("\""));
+			string googled_url = html.Substring(0,html.IndexOf("&amp"));
 
-            foreach(string dnw2contain in ignore)
-            if (googled_url.Contains(sites[i]) && !googled_url.Contains(dnw2contain))
-                if (!profiles.Contains(googled_url)){
-            	lock(profile_locker)
-                    profiles.Add(googled_url);
-                }
+			foreach(string dnw2contain in ignore){
+				if(googled_url.Contains(dnw2contain))
+					goto upper_for;
+            }
+			for(int i = 0; i < sites.Length; i++){
+				if (googled_url.Contains(sites[i]))
+		                if (!profiles.Contains(googled_url)){
+		            	lock(profile_locker)
+		                    profiles.Add(googled_url);
+				}
+			}
+            upper_for:
+	            	continue;
             }
             return true;
 		}
         
-        static bool Rambler	(string query, string nickname, ref List<string> profiles){
+        static bool Rambler	(string query, string nickname, string user_agent, ref List<string> profiles){
         	WebClient client = new WebClient();
-            client.Headers.Add ("user-agent", "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
+        	client.Headers.Add ("user-agent", user_agent);
             string html;
 			try{
 				html =  client.DownloadString(query + nickname).ToLower(); //System.Text.Encoding.UTF8.GetString(client.DownloadData(query + nickname)).ToLower();
-				}
+			}
 			catch(Exception e){
 				html = null;
 			}
-        	
-            if(html == null)
+        	if(html == null){
             	return false;
+            }
             
-			for(int i = 0; i < sites.Length; i++){
+			for(int j = 0; j < 20; j++){
 			/*вычленяем в googled_url ссылку из всего html*/
 			string get_url = "href=\"";
 			html = html.Substring(html.IndexOf(get_url)+get_url.Length);
-			string googled_url = html.Substring(0,html.IndexOf("\""));
+			string googled_url = html.Substring(0,html.IndexOf("&amp"));
 
-            foreach(string dnw2contain in ignore)
-            if (googled_url.Contains(sites[i]) && !googled_url.Contains(dnw2contain))
-                if (!profiles.Contains(googled_url)){
-            	lock(profile_locker)
-                    profiles.Add(googled_url);
-                }
+			foreach(string dnw2contain in ignore){
+				if(googled_url.Contains(dnw2contain))
+					goto upper_for;
+            }
+			for(int i = 0; i < sites.Length; i++){
+				if (googled_url.Contains(sites[i]))
+		                if (!profiles.Contains(googled_url)){
+		            	lock(profile_locker)
+		                    profiles.Add(googled_url);
+				}
+			}
+            upper_for:
+	            	continue;
             }
             return true;
 		}
         
-		
-        public static string[] SearchInNet(Human human)
+		static string[] SearchInNet(Human human, List<string> user_agents)
         {
-            /*делает запросы в поисковики по кастомному айди и возвращает массив найденных сайтов*/
+            /*функция скачивания страницы пользователя*/
             WebClient client = new WebClient();
+            
+            /*кастомный id страницы*/
+            string nickname;
+
             /*строка, скачиваемая WebClient*/
             string html;
+
+            /*строка для поиска кастомного id в html, полученном от vk*/
+            string get_nick = "<ya:URI rdf:resource=\"http://vk.com/".ToLower();
             
             /*строки запроса для поисковиков*/
             string[] search_queries = {"https://www.google.ru/search?q=",
@@ -365,6 +404,31 @@ namespace AnalyzeAndProcess
             /*лист с найденной информацией по нику*/
             List<string> profiles = new List<string>();
             
+
+            /*пытаемся скачать страницу вк*/
+            try
+            {
+                /*.NET работает с UTF16, не забывайте!*/
+                html = client.DownloadString("https://vk.com/foaf.php?id=" + id).ToLower();
+            }
+            catch (Exception e)
+            {
+                html = null;
+            }
+
+            /*страница вк не скачалась - выходим*/
+            if (html == null)
+                return null;
+
+            /*вычленяем никнейм из html*/
+            html = html.Substring(html.IndexOf(get_nick) + get_nick.Length);
+            nickname = html.Substring(0, html.IndexOf("\"/>"));
+
+            
+            /*если в нике есть id и цифры, то, скорее всего это id**** , а по нему мало что можно найти*/
+            if (nickname.Contains("id") && nickname.Any(char.IsDigit))
+            	return null;
+			
             /*Словарь для хранения функций, которые скачивают данные из определенного поисковика*/
             Dictionary<int, Searcher> call_search =  new Dictionary<int, Searcher>();
             call_search.Add(0, new Searcher(Google));
@@ -378,12 +442,18 @@ namespace AnalyzeAndProcess
             /* Уверен, можно было бы придумать крутой алгоритм для максимизирования запросов к одному поисковику
                но я просто использую рандом, чтобы им не надоедать. обращаясь к случайному поисковику*/
             int dice;
+            string user_agent;
             do{
             	dice = new Random().Next(0,3);
             	call_search.TryGetValue(dice,out current_searcher);
-            }while(!current_searcher(search_queries[dice], human.domain, ref profiles));
+            	
+            	int random_user_agent = new Random().Next(0,user_agents.Count);
+            	/*достаем в user_agent случайный user-agent из листа*/
+            	user_agent = user_agents[random_user_agent];
+            }while(!current_searcher(search_queries[dice], human.domain, user_agent, ref profiles));
 
             return profiles.ToArray();
         }
+		
 	}
 }
