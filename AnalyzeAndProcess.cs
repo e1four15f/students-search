@@ -381,53 +381,16 @@ namespace AnalyzeAndProcess
         
 		static string[] SearchInNet(Human human, List<string> user_agents)
         {
-            /*функция скачивания страницы пользователя*/
-            WebClient client = new WebClient();
-            
-            /*кастомный id страницы*/
-            string nickname;
-
-            /*строка, скачиваемая WebClient*/
-            string html;
-
-            /*строка для поиска кастомного id в html, полученном от vk*/
-            string get_nick = "<ya:URI rdf:resource=\"http://vk.com/".ToLower();
             
             /*строки запроса для поисковиков*/
             string[] search_queries = {"https://www.google.ru/search?q=",
             						 "https://www.yandex.ru/search/?lr=213&text=",
             						 "https://www.bing.com/search?q=",
             						 "https://nova.rambler.ru/search?query="};
-			          
-
 
             /*лист с найденной информацией по нику*/
             List<string> profiles = new List<string>();
-            
-
-            /*пытаемся скачать страницу вк*/
-            try
-            {
-                /*.NET работает с UTF16, не забывайте!*/
-                html = client.DownloadString("https://vk.com/foaf.php?id=" + id).ToLower();
-            }
-            catch (Exception e)
-            {
-                html = null;
-            }
-
-            /*страница вк не скачалась - выходим*/
-            if (html == null)
-                return null;
-
-            /*вычленяем никнейм из html*/
-            html = html.Substring(html.IndexOf(get_nick) + get_nick.Length);
-            nickname = html.Substring(0, html.IndexOf("\"/>"));
-
-            
-            /*если в нике есть id и цифры, то, скорее всего это id**** , а по нему мало что можно найти*/
-            if (nickname.Contains("id") && nickname.Any(char.IsDigit))
-            	return null;
+           
 			
             /*Словарь для хранения функций, которые скачивают данные из определенного поисковика*/
             Dictionary<int, Searcher> call_search =  new Dictionary<int, Searcher>();
@@ -452,6 +415,11 @@ namespace AnalyzeAndProcess
             	user_agent = user_agents[random_user_agent];
             }while(!current_searcher(search_queries[dice], human.domain, user_agent, ref profiles));
 
+             foreach(string url in profiles)
+            	/*выкидывает из profles url`ы, содержащие какой-нибудь мусор*/
+            	if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            		profiles.Remove(url);
+             
             return profiles.ToArray();
         }
 		
