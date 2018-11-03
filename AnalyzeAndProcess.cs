@@ -423,5 +423,99 @@ namespace AnalyzeAndProcess
             return profiles.ToArray();
         }
 		
+		
+		/********************************************************************/
+		
+		//делегат для вычленения данных
+		delegate string IsolateData(string start, string end, ref string origin_text);
+		
+		//структура для собрания информации из контактов
+		struct ShallowHuman{
+			public string id;
+			public string description;
+			public string extra_info;
+		}
+		
+		public static List<ShallowHuman> GetContacts(string group_url){
+			//функция получает на вход адрес группы, а на выходе выдает лист с контактами группы
+			WebClient client = new WebClient();
+			client.Headers.Add ("user-agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17 QIHU 360EE");
+
+			string html;
+			string cycles;
+			string 					filter2contacts = "<aside aria-label=\"Контакты\">".ToLower();
+			Tuple<string, string> 	filter2count	= new Tuple<string, string>("<span class=\"header_count fl_l\">","</span>");
+			string				 	filter_person	= "<div class=\"fl_l thumb\">";
+			Tuple<string, string> 	filter_id		= new Tuple<string, string>("<div class=\"people_name\"><a href=\"/","\">");
+			Tuple<string, string>	filter_descr	= new Tuple<string, string>("<div class=\"people_desc\">", "</div>");
+			Tuple<string, string>	filter_extra	= new Tuple<string, string>("<div class=\"people_extra\">","</div>");
+			
+			//анонимная функция для вычленения данных
+			IsolateData isolate = (string start_str, string end_str, ref string origin_text) =>{
+					int end;
+					try{
+						origin_text = origin_text.Substring(origin_text.IndexOf(start_str) + start_str.Length);
+						end = origin_text.IndexOf(end_str);
+						string isolated = origin_text.Substring(0, end);
+						
+						//<br> будет заменен на ;
+						return isolated.Replace("<br>", ";");
+					}
+					catch(Exception e){
+						return null;
+					}
+			};
+			
+			
+			try{
+				//скачиваем страницу группы
+				html = client.DownloadString(group_url).ToLower();
+				//и скипаем данные до контактов
+				html = html.Substring(html.IndexOf(filter2contacts));
+			}
+			catch(Exception e){
+				return null;
+			}
+			
+			try{
+				//получаем кол-во людей в контактах
+				cycles = html.Substring(html.IndexOf(filter2count.Item1) + filter2count.Item1.Length);
+				cycles = cycles.Substring(0,cycles.IndexOf(filter2count.Item2));
+			}
+			catch(Exception e){
+				return null;
+			}
+			
+			
+			List<ShallowHuman> contacts = new List<ShallowHuman>();
+			ShallowHuman contact;
+			
+			
+			
+			for(int i = 0, count = int.Parse(cycles); i < count; i++){
+				try{
+					html = html.Substring(html.IndexOf(filter_person));
+				}
+				catch(Exception e){				
+					continue;
+				}
+				contact.id				= isolate(filter_id.Item1, filter_id.Item2, ref html);
+				
+				if(html.Contains(filter_descr.Item1))
+					contact.description	= isolate(filter_descr.Item1, filter_descr.Item2, ref html);
+				else
+					contact.description	= null;
+				
+				
+				if(html.Contains(filter_extra.Item1))
+					contact.extra_info	= isolate(filter_extra.Item1, filter_extra.Item2, ref html);
+				else
+					contact.extra_info	= null;
+				contacts.Add(contact);
+			}
+			
+			return contacts;
+		}
+		
 	}
 }
