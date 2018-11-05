@@ -430,7 +430,7 @@ namespace AnalyzeAndProcess
 		delegate string IsolateData(string start, string end, ref string origin_text);
 		
 		//структура для собрания информации из контактов
-		struct ShallowHuman{
+		public struct ShallowHuman{
 			public string id;
 			public string description;
 			public string extra_info;
