@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,16 +20,24 @@ namespace GUI
     /// </summary>
     public partial class AboutDB : Window
     {
-        private DateTime db_date_of_creation = DateTime.Now;
-        private int db_users_count = new Random().Next(10000, 100000);
-        private int db_size_in_mb = new Random().Next(1, 1000);
+        private DatabaseAPI db;
+        private FileInfo dbFile;
 
-        public AboutDB(int db_users_count = 0)
+        private DateTime db_date_of_creation;
+        private long db_users_count;
+        private long db_size_in_mb;
+
+        public AboutDB()
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
 
-            this.db_users_count = db_users_count;
+            db = new DatabaseAPI(DatabaseAPI.DEFAULT_DB);
+            dbFile = db.getDBFileInfo();
+
+            db_date_of_creation = dbFile.CreationTime;
+            db_users_count = db.getUserCount();
+            db_size_in_mb = dbFile.Length / 1024 / 1024;
 
             Label date_of_creation = (Label) this.FindName("DateOfCreation");
             Label users_count = (Label) this.FindName("UsersCount");

@@ -53,11 +53,21 @@ namespace GUI
             response_info = (Label) FindName("ResponseInfo");
             saved = true;
             this.Title = current_file;
+
+            /* SQLite tests zone
+            */
+            //CopyDB("data/users_data_27_10_2018.json");
+            LoadDB();
+            //LoadDBOld("data/users_data_27_10_2018.json");
+            UpdateResponse(db_users);
+
             /*
             LoadDB("data/full.json");
             UpdateResponse(db_users);
             */
-            LoadDB("data/users_data_27_10_2018.json");
+
+            // LoadDB("data/users_data_27_10_2018.json");
+
             /* Для теста 
             List<Human> random_users = new List<Human>();
             Random rnd = new Random();
@@ -73,7 +83,9 @@ namespace GUI
         /* Обновляет окно результатов поиска пользователей */
         private void UpdateResponse(List<Human> users_from_db)
         {
+            // old
             response_users = new ObservableCollection<Human>(users_from_db); //new List<Human>();
+
             // TODO Выбрать оптимальное значение 
             if (response_users.Count < 1000)
             {
@@ -86,11 +98,62 @@ namespace GUI
 
             response_info.Content = "Найденно " + response_users.Count + " пользователей";
             response_list_box.ItemsSource = response_users;
+
+            
+
+            //response_users = new ObservableCollection<Human>(users_from_db); //new List<Human>();
+
+            // new
+            /*
+            // TODO Выбрать оптимальное значение 
+            if (users_from_db.Count < 1000)
+            {
+                response_list_box.SetValue(ScrollViewer.CanContentScrollProperty, false);
+            }
+            else
+            {
+                response_list_box.SetValue(ScrollViewer.CanContentScrollProperty, true);
+            }
+
+            response_info.Content = "Найденно " + users_from_db.Count + " пользователей";
+            response_list_box.ItemsSource = users_from_db;
+            */
+        }
+
+        /* Слушатель изменений списка отобажаемых пользователей */
+
+        private void CopyDB(string jsonFilename)
+        {
+            DatabaseAPI db = new DatabaseAPI(DatabaseAPI.DEFAULT_DB);
+
+            int counter = 0;
+            foreach (JToken user_data in LoadFileJson(jsonFilename))
+            {
+                db.addUser(new Human(user_data));
+            }
+
+            Console.WriteLine("Копирование завершено!");
         }
 
         /* Временный метод пока нет бд */
-        private void LoadDB(string filename)
+        private void LoadDB()
         {
+            // Жуйсон-вёрджин
+            /*
+            db_users = new List<Human>();
+            foreach (JToken user_data in LoadFileJson(filename))
+            {
+                db_users.Add(new Human(user_data));
+            }
+            */
+
+            // БД-чад
+            db_users = new DatabaseAPI(DatabaseAPI.DEFAULT_DB).getAllUsers();
+        }
+
+        private void LoadDBOld(string filename)
+        {
+            // Жуйсон-вёрджин
             db_users = new List<Human>();
             foreach (JToken user_data in LoadFileJson(filename))
             {
@@ -143,18 +206,11 @@ namespace GUI
             make_request.ShowDialog();
 
             Console.WriteLine(make_request.FirstName.Text + " : " + make_request.LastName.Text);
+            
             /* Временное решение пока нет бд*/
-            List<Human> criterion_users = new List<Human>();
-            foreach (Human user in db_users)
-            {
-                bool criterion = false;
-                criterion = make_request.FirstName.Text != "" ? user.first_name == make_request.FirstName.Text : true;
-                criterion &= make_request.LastName.Text != "" ? user.last_name == make_request.LastName.Text : true;
-                if (criterion)
-                {
-                    criterion_users.Add(user);
-                }
-            }
+            // UPD Биде есть
+            List<Human> criterion_users = new DatabaseAPI(DatabaseAPI.DEFAULT_DB).search(make_request);
+
             Console.WriteLine(criterion_users.Count);
             if (criterion_users.Count != db_users.Count)
             {
@@ -170,7 +226,8 @@ namespace GUI
             try
             {
                 // TODO При одноклассниках стоит использовать другую проверку
-                if (selected_users.Where(x => x.id == SelectedHuman.id).ToList().Count() == 0)
+                // UPD Для БД нужен был свой индекс типа ObjectId, здесь использую его
+                if (selected_users.Where(x => x._id == SelectedHuman._id).ToList().Count() == 0)
                 {
                     selected_users.Add(SelectedHuman);
                     selected_users_list_box.ItemsSource = selected_users;
@@ -201,7 +258,8 @@ namespace GUI
                 try
                 {
                     // TODO При одноклассниках стоит использовать другую проверку
-                    if (selected_users.Where(x => x.id == SelectedListItem.id).ToList().Count() == 1)
+                    // UPD Для БД нужен был свой индекс типа ObjectId, здесь использую его
+                    if (selected_users.Where(x => x._id == SelectedListItem._id).ToList().Count() == 1)
                     {
                         selected_users.Remove(SelectedListItem);
                         selected_users_list_box.ItemsSource = selected_users;
@@ -220,6 +278,7 @@ namespace GUI
                 {
                     Console.WriteLine(ex.Message);
                 }
+                
             }
         }
 
@@ -332,7 +391,7 @@ namespace GUI
             open_file_dialog.ShowDialog();
             if (open_file_dialog.FileName != "")
             {
-                LoadDB(open_file_dialog.FileName);
+                //LoadDB(open_file_dialog.FileName);
                 Console.WriteLine(this.ToString() + ": Загружена БД: " + open_file_dialog.FileName);
             }
         }
@@ -342,7 +401,7 @@ namespace GUI
         {
             Console.WriteLine(this.ToString() + ": Информация о БД");
             // TODO мб нужно добавить обьект бд с мета информацией и передавать его
-            AboutDB about_db = new AboutDB(db_users.Count);
+            AboutDB about_db = new AboutDB();
             about_db.ShowDialog();
         }
 

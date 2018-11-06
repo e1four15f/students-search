@@ -27,7 +27,8 @@ namespace GUI
         private TextBox chair_name;
         private TextBox graduation_year;
 
-        private bool sex;
+        private bool isMan;
+        private bool isWoman;
 
         public MakeRequest()
         {
@@ -46,7 +47,7 @@ namespace GUI
             Console.WriteLine(this.ToString() + ": Найти, Параметры: "
                 + first_name.Text + ":"
                 + last_name.Text + ":"
-                + (sex ? "Мужчина:" : "Женщина:")
+                + (isMan ? isWoman ? "Мужчина:" : "Женщина:" : "Пол неопределён")
                 + faculty_name.Text + ":"
                 + chair_name.Text + ":"
                 + graduation_year.Text);
@@ -62,14 +63,15 @@ namespace GUI
             chair_name.Text = "";
             graduation_year.Text = "";
         }
-
+        // Радиобаттоны не нужны
+        /*
         private void RadioButtonChecked(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(this.ToString() + ": Переключатель");
             RadioButton radio_button = (RadioButton) sender;
             sex = radio_button.Content.ToString() == "Мужчина" ? true : false;
         }
-
+        */
         private void TextNumberValidation(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9]+");
