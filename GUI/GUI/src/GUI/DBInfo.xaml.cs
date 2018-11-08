@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,12 +22,30 @@ namespace GUI
     /// </summary>
     public partial class AboutDB : Window
     {
-        public AboutDB(DBConteiner db = null)
+        private DatabaseAPI db;
+        private FileInfo dbFile;
+
+        private DateTime db_date_of_creation;
+        private long db_users_count;
+        private long db_size_in_mb;
+
+        public AboutDB()
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
+            // TODO Нужна ли проверка if (db == null || db.Users() == null) для вывода, что нет бд?
+            db = new DatabaseAPI(DatabaseAPI.DEFAULT_DB);
+            dbFile = db.getDBFileInfo();
 
-            if (db == null || db.Users() == null)
+            db_date_of_creation = dbFile.CreationTime;
+            db_users_count = db.getUserCount();
+            db_size_in_mb = dbFile.Length / 1024 / 1024;
+
+            DateOfCreation.Content = "Дата создания БД: " + db_date_of_creation;
+            UsersCount.Content = "Количество записей в БД: " + db_users_count + " пользователей";
+            SizeInMb.Content = "Размер БД: " + db_size_in_mb + " мб";
+            /*
+             if (db == null || db.Users() == null)
             {
                 Label date_of_creation = (Label) FindName("DateOfCreation");
 
@@ -35,16 +54,7 @@ namespace GUI
                 date_of_creation.HorizontalAlignment = HorizontalAlignment.Center;
                 date_of_creation.Foreground = new SolidColorBrush(Colors.Red);
             }
-            else
-            { 
-                Label date_of_creation = (Label) FindName("DateOfCreation");
-                Label users_count = (Label) FindName("UsersCount");
-                Label size_in_mb = (Label) FindName("SizeInMb");
-
-                date_of_creation.Content = "Дата создания БД: " + db.Info().LastWriteTime;
-                users_count.Content = "Количество записей в БД: " + db.Users().Count + " пользователей";
-                size_in_mb.Content = "Размер БД: " + Math.Round(db.Info().Length / Math.Pow(2, 20), 2) + " мб";
-            }
+             */
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿    using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,55 +21,45 @@ namespace GUI
     public partial class MakeRequest : Window
     {
         //private string current_placeholder;
-        private TextBox first_name;
-        private TextBox last_name;
-        private TextBox faculty_name;
-        private TextBox chair_name;
-        private TextBox graduation_year;
-
-        private bool sex;
+        private bool isMan;
+        private bool isWoman;
 
         public MakeRequest()
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
-
-            first_name = (TextBox) FindName("FirstName");
-            last_name = (TextBox) FindName("LastName");
-            faculty_name = (TextBox) FindName("FacultyName");
-            chair_name = (TextBox) FindName("ChairName");
-            graduation_year = (TextBox) FindName("GraduationYear");
         }
 
         private void ButtonSearch(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(this.ToString() + ": Найти, Параметры: "
-                + first_name.Text + ":"
-                + last_name.Text + ":"
-                + (sex ? "Мужчина:" : "Женщина:")
-                + faculty_name.Text + ":"
-                + chair_name.Text + ":"
-                + graduation_year.Text);
+                + FirstName.Text + ":"
+                + LastName.Text + ":"
+                + (isMan ? isWoman ? "Мужчина:" : "Женщина:" : "Пол неопределён")
+                + FacultyName.Text + ":"
+                + ChairName.Text + ":"
+                + GraduationYear.Text);
             this.Close();
         }
 
         private void ButtonClear(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(this.ToString() + ": Очистить");
-            first_name.Text = "";
-            last_name.Text = "";
-            faculty_name.Text = "";
-            chair_name.Text = "";
-            graduation_year.Text = "";
+            FirstName.Text = "";
+            LastName.Text = "";
+            FacultyName.Text = "";
+            ChairName.Text = "";
+            GraduationYear.Text = "";
         }
-
+        // Радиобаттоны не нужны
+        /*
         private void RadioButtonChecked(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(this.ToString() + ": Переключатель");
             RadioButton radio_button = (RadioButton) sender;
             sex = radio_button.Content.ToString() == "Мужчина" ? true : false;
         }
-
+        */
         private void TextNumberValidation(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9]+");

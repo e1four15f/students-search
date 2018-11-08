@@ -21,34 +21,28 @@ namespace GUI
     /// </summary>
     public partial class Login : Window
     {
-        private Label result;
-        private TextBox token;
-
         public Login()
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
-
-            result = (Label) FindName("Result");
-            token = (TextBox) FindName("Token");
         }
 
         private void ButtonAuth(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(this.ToString() + ": Авторизация");
-            if (VkApiUtils.Auth(token.Text))
+            if (VkApiUtils.Auth(Token.Text))
             {
                 Console.WriteLine(this.ToString() + ": Успешная авторизация");
-                result.Content = "Успешно!";
-                result.Foreground = new SolidColorBrush(Colors.Green);
+                Result.Content = "Успешно!";
+                Result.Foreground = new SolidColorBrush(Colors.Green);
                 this.Close();
             }
             else
             {
                 Console.WriteLine(this.ToString() + ": Ошибка авторизации");
-                result.Content = "Ошибка!";
-                result.FontSize = 20;
-                result.Foreground = new SolidColorBrush(Colors.Red);
+                Result.Content = "Ошибка!";
+                Result.FontSize = 20;
+                Result.Foreground = new SolidColorBrush(Colors.Red);
             }
         }
 

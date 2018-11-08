@@ -78,7 +78,7 @@ namespace Utils
                     { 
                         data = JArray.Load(reader);
                     }
-                    catch (JsonReaderException e)
+                    catch (JsonReaderException)
                     {
                         Console.WriteLine("Невозможно прочитать файл!");
                         return data; 

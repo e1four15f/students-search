@@ -25,7 +25,7 @@ namespace GUI
     public partial class MainWindow : Window
     {
         private bool auth;
-        public static DBConteiner db;
+        public static List<Human> db_users;
 
         public MainWindow()
         {
@@ -33,7 +33,7 @@ namespace GUI
             InitializeComponent();
 
             auth = false;
-            db = new DBConteiner();
+            db_users = new List<Human>();
         }
 
         /* Кнопки */

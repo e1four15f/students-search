@@ -36,10 +36,6 @@ namespace GUI
         public Human SelectedHuman { get; set; }
         public Human SelectedListItem { get; set; }
 
-        private ListBox response_list_box;
-        private ListBox selected_users_list_box;
-        private Label response_info;
-
         private bool saved;
         
         public Search(string current_file = "Новый список")
@@ -47,27 +43,20 @@ namespace GUI
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
 
-            response_list_box = (ListBox) FindName("ResponseListBox");
-            selected_users_list_box = (ListBox) FindName("SelectedUsersListBox");
             selected_users = new ObservableCollection<Human>();
 
-            response_info = (Label) FindName("ResponseInfo");
             saved = true;
             this.Title = current_file;
-            /*
-            LoadDB("data/full.json");
-            UpdateResponse(db_users);
+
+            /* SQLite tests zone
             */
-            //MainWindow.db_users = new DBCreator().LoadDB("data/users_data_27_10_2018.json");
-            /* Для теста 
-            List<Human> random_users = new List<Human>();
-            Random rnd = new Random();
-            for (int i = 0; i < 50; i++)
-            {
-                int r = rnd.Next(db_users.Count);
-                random_users.Add(db_users[r]);
-            }
-            UpdateResponse(random_users);*/
+            //CopyDB("data/users_data_27_10_2018.json");
+            LoadDB();
+            //LoadDBOld("data/users_data_27_10_2018.json");
+            //UpdateResponse(db_users);
+
+            UpdateResponse(MainWindow.db_users);
+
         }
 
         // TODO Разобраться с ошибкой ArgumentOutOfRange
@@ -75,18 +64,90 @@ namespace GUI
         private void UpdateResponse(List<Human> users_from_db)
         {
             response_users = new ObservableCollection<Human>(users_from_db); //new List<Human>();
+
             // TODO Выбрать оптимальное значение 
             if (response_users.Count < 1000)
             {
-                response_list_box.SetValue(ScrollViewer.CanContentScrollProperty, false);
+                ResponseListBox.SetValue(ScrollViewer.CanContentScrollProperty, false);
             }
             else
             {
-                response_list_box.SetValue(ScrollViewer.CanContentScrollProperty, true);
+                ResponseListBox.SetValue(ScrollViewer.CanContentScrollProperty, true);
             }
 
-            response_info.Content = "Найденно " + response_users.Count + " пользователей";
-            response_list_box.ItemsSource = response_users;
+            ResponseInfo.Content = "Найденно " + response_users.Count + " пользователей";
+            // TODO Мб переместить в инит
+            ResponseListBox.ItemsSource = response_users;
+        }
+
+        /* Слушатель изменений списка отобажаемых пользователей */
+
+        private void CopyDB(string jsonFilename)
+        {
+            DatabaseAPI db = new DatabaseAPI(DatabaseAPI.DEFAULT_DB);
+
+            //int counter = 0;
+            foreach (JToken user_data in LoadFileJson(jsonFilename))
+            {
+                db.addUser(new Human(user_data));
+            }
+
+            Console.WriteLine("Копирование завершено!");
+        }
+
+        /* Временный метод пока нет бд */
+        private void LoadDB()
+        {
+            // Жуйсон-вёрджин
+
+            // БД-чад
+            MainWindow.db_users = new DatabaseAPI(DatabaseAPI.DEFAULT_DB).getAllUsers();
+        }
+
+        private void LoadDBOld(string filename)
+        {
+            // Жуйсон-вёрджин
+            MainWindow.db_users = new List<Human>();
+            foreach (JToken user_data in LoadFileJson(filename))
+            {
+                MainWindow.db_users.Add(new Human(user_data));
+            }
+        }
+
+        /* Временный метод пока нет бд */
+        private static JArray LoadFileJson(string filename)
+        {
+            JArray data = new JArray();
+            using (StreamReader file = File.OpenText(filename))
+            {
+                using (JsonTextReader reader = new JsonTextReader(file))
+                {
+                    data = JArray.Load(reader);
+                }
+            }
+            return data;
+        }
+
+        /* Вызывает окно сохранения списка и проверяет сохранён ли файл */
+        private bool SaveListDialog()
+        {
+            SaveFileDialog save_file_dialog = new SaveFileDialog();
+            // TODO Придумать расширения для файлов
+            save_file_dialog.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+            save_file_dialog.ShowDialog();
+
+            if (save_file_dialog.FileName.Count() != 0)
+            {
+                saved = true;
+                this.Title = saved ? this.Title.Remove(this.Title.Length - 1) : this.Title + "*";
+                Console.WriteLine(this.ToString() + ": Сохранён список: " + save_file_dialog.FileName);
+                return true;
+            }
+            else
+            {
+                Console.WriteLine(this.ToString() + ": Отмена сохранения");
+                return false;
+            }
         }
 
         /* Кнопки */
@@ -98,33 +159,13 @@ namespace GUI
             make_request.ShowDialog();
 
             Console.WriteLine(make_request.FirstName.Text + " : " + make_request.LastName.Text);
-            /* Временное решение пока нет бд*/
-            if (MainWindow.db.Users() != null)
-            { 
-                List<Human> criterion_users = new List<Human>();
-                foreach (Human user in MainWindow.db.Users())
-                {
-                    bool criterion = false;
-                    if (make_request.FirstName.Text == "*")
-                    {
-                        criterion = true;
-                    }
-                    else
-                    { 
-                        criterion = make_request.FirstName.Text != "" ? user.first_name == make_request.FirstName.Text : true;
-                        criterion &= make_request.LastName.Text != "" ? user.last_name == make_request.LastName.Text : true;
-                    }
-                    if (criterion)
-                    {
-                        criterion_users.Add(user);
-                    }
-                }
-                Console.WriteLine(criterion_users.Count);
-                
-                if (criterion_users.Count != MainWindow.db.Users().Count || make_request.FirstName.Text == "*")
-                {
-                    UpdateResponse(criterion_users);
-                }
+            
+            // UPD Биде есть
+            List<Human> criterion_users = new DatabaseAPI(DatabaseAPI.DEFAULT_DB).search(make_request);
+            Console.WriteLine(criterion_users.Count);
+            if (criterion_users.Count != MainWindow.db_users.Count)
+            {
+                UpdateResponse(criterion_users);
             }
         }
 
@@ -136,10 +177,11 @@ namespace GUI
             try
             {
                 // TODO При одноклассниках стоит использовать другую проверку
-                if (selected_users.Where(x => x.id == SelectedHuman.id).ToList().Count() == 0)
+                // UPD Для БД нужен был свой индекс типа ObjectId, здесь использую его
+                if (selected_users.Where(x => x._id == SelectedHuman._id).ToList().Count() == 0)
                 {
                     selected_users.Add(SelectedHuman);
-                    selected_users_list_box.ItemsSource = selected_users;
+                    SelectedUsersListBox.ItemsSource = selected_users;
                     if (saved)
                     {
                         this.Title += "*";
@@ -167,10 +209,11 @@ namespace GUI
                 try
                 {
                     // TODO При одноклассниках стоит использовать другую проверку
-                    if (selected_users.Where(x => x.id == SelectedListItem.id).ToList().Count() == 1)
+                    // UPD Для БД нужен был свой индекс типа ObjectId, здесь использую его
+                    if (selected_users.Where(x => x._id == SelectedListItem._id).ToList().Count() == 1)
                     {
                         selected_users.Remove(SelectedListItem);
-                        selected_users_list_box.ItemsSource = selected_users;
+                        SelectedUsersListBox.ItemsSource = selected_users;
                         if (saved)
                         {
                             this.Title += "*";
@@ -186,6 +229,7 @@ namespace GUI
                 {
                     Console.WriteLine(ex.Message);
                 }
+                
             }
         }
 

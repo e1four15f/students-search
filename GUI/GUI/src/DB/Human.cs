@@ -5,76 +5,94 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using LiteDB;
 
 namespace DB
 {
     // TODO Нужно ли в структурах хранить и id, и название?
     // TODO Разобраться как хранить переменные 
-    public struct City
+    public class City
     {
-        public int city_id;
-        public string city_title; 
+        public int city_id { get; set; }
+        public string city_title { get; set; }
     }
 
-    public struct Contacts
+    public class Contacts
     {
-        public string mobile_phone;
-        public string home_phone;
-        public string email;
+        public string mobile_phone { get; set; }
+        public string home_phone { get; set; }
+        public string email { get; set; }
     }
 
-    public struct Social
+    public class Social
     {
-        public string skype;
-        public string facebook;
-        public string instagram;
-        public string livejournal;
-        public string twitter;
+        public string skype { get; set; }
+        public string facebook { get; set; }
+        public string instagram { get; set; }
+        public string livejournal { get; set; }
+        public string twitter { get; set; }
     }
 
-    public struct University
+    public class University
     {
-        public int university_id;
-        public string university_name;
-        public int faculty_id;
-        public string faculty_name;
-        public int chair_id;
-        public string chair_name;
-        public int graduation_year;
+        public int university_id { get; set; }
+        public string university_name { get; set; }
+        public int faculty_id { get; set; }
+        public string faculty_name { get; set; }
+        public int chair_id { get; set; }
+        public string chair_name { get; set; }
+        public int graduation_year { get; set; }
     }
 
     public class Human
     {
+        public ObjectId _id { get; set; }
         public int id; // TODO Если будет несколько сетей, то можно запутаться в ID
         public string first_name { get; set; }
         public string last_name { get; set; }
-        public bool sex; 
+        public bool sex { get; set; }
+        [BsonIgnore]
         public string Sex { get { return sex ? "Мужчина" : "Женщина"; } }
         public string domain { get; set; }
         public DateTime bdate { get; set; }
+        [BsonIgnore]
         public string BDate { get { return bdate != new DateTime() ? bdate.Year > DateTime.MinValue.Year ? bdate.ToShortDateString() : bdate.Day + "." + bdate.Month : ""; } }
 
-        public City city;
+        public City city { get; set; }
+        [BsonIgnore]
         public string city_title { get { return city.city_title; } }
 
-        public Contacts contacts;
+        public Contacts contacts { get; set; }
+        [BsonIgnore]
         public string mobile_phone { get { return contacts.mobile_phone != null ? "Моб. " + contacts.mobile_phone : ""; } }
+        [BsonIgnore]
         public string home_phone { get { return contacts.home_phone != null ? "Дом. " + contacts.home_phone : ""; } }
+        [BsonIgnore]
         public string email { get { return contacts.email; } }
 
-        public Social social; // TODO // TODO Odnoklassniki
+        public Social social { get; set; } // TODO // TODO Odnoklassniki
+        [BsonIgnore]
         public string skype { get { return social.skype != null ? "skype:" + social.skype + "?call" : null; } }
-        public string facebook { get { return social.facebook != null ? "https://www.facebook.com/" + social.facebook : null; } } 
+        [BsonIgnore]
+        public string facebook { get { return social.facebook != null ? "https://www.facebook.com/" + social.facebook : null; } }
+        [BsonIgnore]
         public string instagram { get { return social.instagram != null ? "https://www.instagram.com/" + social.instagram : null; } }
+        [BsonIgnore]
         public string livejournal { get { return social.livejournal != null ? "https://" + social.livejournal + ".livejournal.com/" : null; } }
+        [BsonIgnore]
         public string twitter { get { return social.twitter != null ? "https://twitter.com/" + social.twitter : null; } }
+        [BsonIgnore]
         public string vk { get { return "https://vk.com/" + domain; } } // TODO Потом вк не всегда будет 
 
         // TODO Показывается первый университет в списке, в нём не всегда полная информация 
         public List<University> universities { get; set; }
+        [BsonIgnore]
         public string university_name { get { return universities.Count > 0 ? universities[0].university_name : ""; } }
+        [BsonIgnore]
         public string faculty_name { get { return universities.Count > 0 ? universities[0].faculty_name : ""; } }
+        [BsonIgnore]
         public string chair_name { get { return universities.Count > 0 ? universities[0].chair_name : ""; } }
+        [BsonIgnore]
         public string graduation_year { get { return (universities.Count > 0 && universities[0].graduation_year > 0) ? "Год окончания " + universities[0].graduation_year : ""; } }
 
         public string photo_100 { get; set; }
@@ -82,6 +100,27 @@ namespace DB
 
         public int plausibility { get; set; }
 
+        public Human()
+        {
+            id = 0;
+            first_name = null;
+            last_name = null;
+            sex = false;
+            domain = null;
+            bdate = new DateTime();
+
+            city = new City();
+
+
+            contacts = new Contacts();
+
+            social = new Social();
+
+            photo_100 = null;
+            arrived_from = null;
+
+            plausibility = 0;
+        }
         public Human(JToken user_data)
         {
             id = (int) user_data["id"];
@@ -89,6 +128,10 @@ namespace DB
             last_name = user_data["last_name"].ToString();
             sex = (int) user_data["sex"] == 2 ? true : false;
             domain = user_data["domain"].ToString();
+
+            city = new City();
+            social = new Social();
+            contacts = new Contacts();
 
             if (user_data["bdate"] != null)
             {
@@ -98,7 +141,7 @@ namespace DB
                     {
                         bdate = (splited_date.Length == 3) ? new DateTime(splited_date[2], splited_date[1], splited_date[0]) : new DateTime(DateTime.MinValue.Year, splited_date[1], splited_date[0]);
                     }
-                    catch (ArgumentOutOfRangeException e)
+                    catch (ArgumentOutOfRangeException)
                     {
                         Console.WriteLine("Невозможно получить год рождения id:" + user_data["id"] + " bdate:" + user_data["bdate"]);
                     }

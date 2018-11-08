@@ -23,25 +23,17 @@ namespace GUI
     /// </summary>
     public partial class CreateDB : Window
     {
-        private CheckBox local_groups;
-        private CheckBox public_groups;
-        private CheckBox search;
-
         public CreateDB()
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
             InitializeComponent();
-
-            local_groups = (CheckBox) FindName("LocalGroups");
-            public_groups = (CheckBox) FindName("PublicGroups");
-            search = (CheckBox) FindName("Search");
         }
 
         // TODO Выводить информацию на экран
         private void ButtonCreateDB(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(this.ToString() + ": Сформировать БД :"
-                + local_groups.IsChecked + " : " + public_groups.IsChecked + " : " + search.IsChecked);
+                + LocalGroups.IsChecked + " : " + PublicGroups.IsChecked + " : " + Search.IsChecked);
 
             SaveFileDialog save_file_dialog = new SaveFileDialog();
             // TODO Придумать формат для файлов списка
@@ -50,8 +42,8 @@ namespace GUI
             if (save_file_dialog.FileName != "")
             {
                 Console.WriteLine(save_file_dialog.FileName);
-                new DBCreator().Create(save_file_dialog.FileName, 
-                    local_groups.IsChecked.Value, public_groups.IsChecked.Value, search.IsChecked.Value);
+                new DBCreator().Create(save_file_dialog.FileName,
+                    LocalGroups.IsChecked.Value, PublicGroups.IsChecked.Value, Search.IsChecked.Value);
             }
             
             MessageBox.Show("Создание базы данных закончено", "", MessageBoxButton.OK, MessageBoxImage.Asterisk);
