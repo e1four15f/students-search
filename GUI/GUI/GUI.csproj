@@ -115,6 +115,8 @@
     </Compile>
     <Compile Include="src\DB\DBCreator.cs" />
     <Compile Include="src\Utils\FilesIO.cs" />
+    <Compile Include="src\Utils\AnalyzeAndProcess.cs" />
+    <Compile Include="src\Utils\TelnetInterface.cs" />
     <Compile Include="src\WebApi\VkApi.cs" />
     <Compile Include="src\WebApi\VkApiAdvanced.cs" />
     <Compile Include="src\WebApi\VkApiMulti.cs" />
