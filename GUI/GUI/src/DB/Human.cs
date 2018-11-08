@@ -100,7 +100,7 @@ namespace DB
         public string photo_100 { get; set; }
         public string arrived_from { get; set; }
 
-        public int plausibility { get; set; }
+        public int plausibility;
 
         public Human()
         {
