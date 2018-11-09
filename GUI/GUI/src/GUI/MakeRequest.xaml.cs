@@ -45,11 +45,15 @@ namespace GUI
         private void ButtonClear(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(this.ToString() + ": Очистить");
+
             FirstName.Text = "";
             LastName.Text = "";
             FacultyName.Text = "";
             ChairName.Text = "";
             GraduationYear.Text = "";
+
+            ManSex.IsChecked = true;
+            FemaleSex.IsChecked = false;
         }
         // Радиобаттоны не нужны
         /*

@@ -163,10 +163,10 @@ namespace GUI
             // UPD Биде есть
             List<Human> criterion_users = new DatabaseAPI(DatabaseAPI.DEFAULT_DB).search(make_request);
             Console.WriteLine(criterion_users.Count);
-            if (criterion_users.Count != MainWindow.db_users.Count)
-            {
+            //if (criterion_users.Count != MainWindow.db_users.Count)
+            //{
                 UpdateResponse(criterion_users);
-            }
+            //}
         }
 
         /* Добавляет выбранного в панели результатов поиска пользователя в список */

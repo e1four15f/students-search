@@ -120,6 +120,12 @@ namespace DB
                     queries.Add(Query.EQ("universities[0].graduation_year", int.Parse(request.GraduationYear.Text)));
                 }
 
+                // Empty request
+                if (queries.Count < 1)
+                {
+                    return getAllUsers();
+                }
+
                 IEnumerable<Human> result = (queries.Count > 1) ? 
                     coll.Find(Query.And(queries.ToArray())) : 
                     coll.Find(queries[0]);        
