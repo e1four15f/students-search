@@ -22,7 +22,6 @@ namespace GUI
     /// </summary>
     public partial class AboutDB : Window
     {
-        private DatabaseAPI db;
         private FileInfo dbFile;
 
         private DateTime db_date_of_creation;
@@ -31,30 +30,28 @@ namespace GUI
 
         public AboutDB()
         {
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
-            // TODO Нужна ли проверка if (db == null || db.Users() == null) для вывода, что нет бд?
-            db = new DatabaseAPI(DatabaseAPI.DEFAULT_DB);
-            dbFile = db.getDBFileInfo();
-
-            db_date_of_creation = dbFile.CreationTime;
-            db_users_count = db.getUserCount();
-            db_size_in_mb = dbFile.Length / 1024 / 1024;
-
-            DateOfCreation.Content = "Дата создания БД: " + db_date_of_creation;
-            UsersCount.Content = "Количество записей в БД: " + db_users_count + " пользователей";
-            SizeInMb.Content = "Размер БД: " + db_size_in_mb + " мб";
-            /*
-             if (db == null || db.Users() == null)
+            if (MainWindow.db == null || MainWindow.db_users.Count == 0) 
             {
-                Label date_of_creation = (Label) FindName("DateOfCreation");
-
-                date_of_creation.Content = "База данных не загружена!";
-                date_of_creation.FontSize = 20;
-                date_of_creation.HorizontalAlignment = HorizontalAlignment.Center;
-                date_of_creation.Foreground = new SolidColorBrush(Colors.Red);
+                DateOfCreation.Content = "База данных не загружена!";
+                DateOfCreation.FontSize = 20;
+                DateOfCreation.HorizontalAlignment = HorizontalAlignment.Center;
+                DateOfCreation.Foreground = new SolidColorBrush(Colors.Red);
             }
-             */
+            else
+            { 
+                dbFile = MainWindow.db.getDBFileInfo();
+
+                db_date_of_creation = dbFile.CreationTime;
+                db_users_count = MainWindow.db_users.Count;
+                db_size_in_mb = dbFile.Length / 1024 / 1024;
+
+                DateOfCreation.Content = "Дата создания БД: " + db_date_of_creation;
+                UsersCount.Content = "Количество записей в БД: " + db_users_count + " пользователей";
+                SizeInMb.Content = "Размер БД: " + db_size_in_mb + " мб";
+            }
         }
+        
     }
 }

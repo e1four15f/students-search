@@ -55,6 +55,8 @@
             <MenuItem Header="_Настройки">
                 <MenuItem Header="_Информация о БД" InputGestureText="Ctrl+I" Click="DBInfo"/>
                 <MenuItem Header="_Настройки" InputGestureText="Ctrl+S" Click="Settings"/>
+                <Separator />
+                <MenuItem Header="_Создатели" Click="About"/>
             </MenuItem>
         </Menu>
     </Grid>

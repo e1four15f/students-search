@@ -145,6 +145,8 @@
             <MenuItem Header="_Настройки">
                 <MenuItem Header="_Информация о БД" InputGestureText="Ctrl+I" Click="MenuDBInfo"/>
                 <MenuItem Header="_Настройки" InputGestureText="Саня, придумай что за настройки здесь будут"/>
+                <Separator />
+                <MenuItem Header="_Создатели" Click="About"/>
             </MenuItem>
         </Menu>
 

@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 
 using WebApi;
 using DB;
+using System.ComponentModel;
 
 namespace GUI
 {
@@ -25,16 +26,25 @@ namespace GUI
     public partial class MainWindow : Window
     {
         private bool auth;
+        public static DatabaseAPI db;
         public static List<Human> db_users;
 
         public MainWindow()
         {
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
 
             auth = false;
+            db = new DatabaseAPI();
             db_users = new List<Human>();
         }
+        // TODO Иногда программа не выходит 
+        /*
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+        */
 
         /* Кнопки */
         /* Формирует бд */
@@ -92,6 +102,12 @@ namespace GUI
         private void Exit(object sender, RoutedEventArgs e)
         {
             MenuController.Exit(this);
+        }
+
+        /* Создатели */
+        private void About(object sender, RoutedEventArgs e)
+        {
+            MenuController.About(this);
         }
     }
 }

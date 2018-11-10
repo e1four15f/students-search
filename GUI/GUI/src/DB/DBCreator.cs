@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 using Utils;
 using WebApi;
+using GUI;
 
 namespace DB
 {
@@ -55,7 +56,7 @@ namespace DB
                     }
                 });
             } 
-            
+
             timer.Stop();
             Console.WriteLine("Всего получено информация о " + users_data.Count() + " пользователях из миэта " + timer.Elapsed);
             FilesIO.SaveFileJson(filename, users_data);
@@ -69,6 +70,10 @@ namespace DB
                 }
             });
             full_timer.Stop();
+
+            MainWindow.db = new DatabaseAPI();
+            MainWindow.db.saveDB(filename);
+            MainWindow.db.addUsers(users);
 
             Console.WriteLine("Создание БД завершено! " + full_timer.Elapsed);
             return users;

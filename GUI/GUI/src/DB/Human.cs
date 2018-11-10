@@ -232,7 +232,7 @@ namespace DB
         {
             plausibility = 0;
 
-            if (AnalyzeData.IsPresent(last_name, first_name, bdate, graduation, ref plausibility)) ;
+            if (AnalyzeData.IsPresent(last_name, first_name, bdate, graduation, ref plausibility));
 
             if (city.city_title.ToLower().Equals("зеленоград"))
                 plausibility += 2;

@@ -5,28 +5,55 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Collections.Concurrent;
 using LiteDB;
 
 using GUI;
+using Utils;
 
 namespace DB
 {
-    class DatabaseAPI
+    public class DatabaseAPI
     {
         public static readonly string DEFAULT_DB = "data/liteDB.ldb";
 
         private string connStr;
 
-        public DatabaseAPI(string connStr)
-        {
-            this.connStr = connStr;
+        public bool corrupted;
 
+        public void saveDB(string connStr)
+        {
+            File.Delete(connStr);
+            this.connStr = connStr;
             using (var db = new LiteDatabase(connStr))
             {
                 if (!db.CollectionExists("users"))
-                {
+                { 
                     db.GetCollection("users");
+                }
+            }
+        }
+       
+        public void loadDB(string connStr)
+        {
+            this.connStr = connStr;
+            using (var db = new LiteDatabase(connStr))
+            {
+                // TODO Если юзер пытается загрузить пустую или испорченную бд
+                try
+                {
+                    if (!db.CollectionExists("users"))
+                    {
+                        db.GetCollection("users");
+                        corrupted = false;
+                    }
+                }
+                catch (NullReferenceException)
+                {
+                    Console.WriteLine(this.ToString() + ": Испорченная база данных");
+                    MessageBox.Show("Невозможно загрузить базу данных!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    corrupted = true;
                 }
             }
         }
@@ -139,7 +166,7 @@ namespace DB
         {
             return new FileInfo(connStr);
         }
-
+        /*
         public long getUserCount(string collName = "users")
         {
             using (var db = new LiteDatabase(connStr))
@@ -147,5 +174,6 @@ namespace DB
                 return db.GetCollection(collName).Count();
             }
         }
+         * */
     }
 }

@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using WebApi;
 using DB;
 using Microsoft.Win32;
+using System.IO;
 
 namespace GUI
 {
@@ -25,7 +26,7 @@ namespace GUI
     {
         public CreateDB()
         {
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
         }
 
@@ -34,19 +35,19 @@ namespace GUI
         {
             Console.WriteLine(this.ToString() + ": Сформировать БД :"
                 + LocalGroups.IsChecked + " : " + PublicGroups.IsChecked + " : " + Search.IsChecked);
-
             SaveFileDialog save_file_dialog = new SaveFileDialog();
-            // TODO Придумать формат для файлов списка
-            save_file_dialog.Filter = "Text files (*.json)|*.json|All files (*.*)|*.*";
+
+            save_file_dialog.Filter = "Text files (*.ldb)|*.ldb|All files (*.*)|*.*";
             save_file_dialog.ShowDialog();
             if (save_file_dialog.FileName != "")
             {
                 Console.WriteLine(save_file_dialog.FileName);
+                // TODO Проблема с файлами
+                //File.Delete(save_file_dialog.FileName);
                 new DBCreator().Create(save_file_dialog.FileName,
                     LocalGroups.IsChecked.Value, PublicGroups.IsChecked.Value, Search.IsChecked.Value);
             }
-            
-            MessageBox.Show("Создание базы данных закончено", "", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+            MessageBox.Show("Создание базы данных закончено!", "Info", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             this.Close();
         }
     }

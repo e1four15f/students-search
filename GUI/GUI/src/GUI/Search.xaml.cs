@@ -37,33 +37,33 @@ namespace GUI
         public Human SelectedListItem { get; set; }
 
         private bool saved;
-        
-        public Search(string current_file = "Новый список")
+
+        public Search(string current_file = "Новый список", List<Human> selected_users = null)
         {
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
 
-            selected_users = new ObservableCollection<Human>();
+            if (selected_users == null)
+            {
+                this.selected_users = new ObservableCollection<Human>();
+                UpdateResponse(MainWindow.db_users);
+            }
+            else
+            {
+                this.selected_users = new ObservableCollection<Human>(selected_users);
+                UpdateResponse(selected_users);
+                SelectedUsersListBox.ItemsSource = this.selected_users;
+            }
 
             saved = true;
             this.Title = current_file;
-
-            /* SQLite tests zone
-            */
-            //CopyDB("data/users_data_27_10_2018.json");
-            LoadDB();
-            //LoadDBOld("data/users_data_27_10_2018.json");
-            //UpdateResponse(db_users);
-
-            UpdateResponse(MainWindow.db_users);
-
         }
 
         // TODO Разобраться с ошибкой ArgumentOutOfRange
         /* Обновляет окно результатов поиска пользователей */
         private void UpdateResponse(List<Human> users_from_db)
         {
-            response_users = new ObservableCollection<Human>(users_from_db); //new List<Human>();
+            response_users = new ObservableCollection<Human>(users_from_db); 
 
             // TODO Выбрать оптимальное значение 
             if (response_users.Count < 1000)
@@ -76,56 +76,7 @@ namespace GUI
             }
 
             ResponseInfo.Content = "Найденно " + response_users.Count + " пользователей";
-            // TODO Мб переместить в инит
             ResponseListBox.ItemsSource = response_users;
-        }
-
-        /* Слушатель изменений списка отобажаемых пользователей */
-
-        private void CopyDB(string jsonFilename)
-        {
-            DatabaseAPI db = new DatabaseAPI(DatabaseAPI.DEFAULT_DB);
-
-            //int counter = 0;
-            foreach (JToken user_data in LoadFileJson(jsonFilename))
-            {
-                db.addUser(new Human(user_data));
-            }
-
-            Console.WriteLine("Копирование завершено!");
-        }
-
-        /* Временный метод пока нет бд */
-        private void LoadDB()
-        {
-            // Жуйсон-вёрджин
-
-            // БД-чад
-            MainWindow.db_users = new DatabaseAPI(DatabaseAPI.DEFAULT_DB).getAllUsers();
-        }
-
-        private void LoadDBOld(string filename)
-        {
-            // Жуйсон-вёрджин
-            MainWindow.db_users = new List<Human>();
-            foreach (JToken user_data in LoadFileJson(filename))
-            {
-                MainWindow.db_users.Add(new Human(user_data));
-            }
-        }
-
-        /* Временный метод пока нет бд */
-        private static JArray LoadFileJson(string filename)
-        {
-            JArray data = new JArray();
-            using (StreamReader file = File.OpenText(filename))
-            {
-                using (JsonTextReader reader = new JsonTextReader(file))
-                {
-                    data = JArray.Load(reader);
-                }
-            }
-            return data;
         }
 
         /* Вызывает окно сохранения списка и проверяет сохранён ли файл */
@@ -158,15 +109,16 @@ namespace GUI
             MakeRequest make_request = new MakeRequest();
             make_request.ShowDialog();
 
-            Console.WriteLine(make_request.FirstName.Text + " : " + make_request.LastName.Text);
-            
             // UPD Биде есть
-            List<Human> criterion_users = new DatabaseAPI(DatabaseAPI.DEFAULT_DB).search(make_request);
-            Console.WriteLine(criterion_users.Count);
-            //if (criterion_users.Count != MainWindow.db_users.Count)
-            //{
+            if (MainWindow.db != null)
+            { 
+                List<Human> criterion_users = MainWindow.db.search(make_request);
+                Console.WriteLine(criterion_users.Count);
+                //if (criterion_users.Count != MainWindow.db_users.Count)
+                //{
                 UpdateResponse(criterion_users);
-            //}
+                //}
+            }
         }
 
         /* Добавляет выбранного в панели результатов поиска пользователя в список */
@@ -229,7 +181,6 @@ namespace GUI
                 {
                     Console.WriteLine(ex.Message);
                 }
-                
             }
         }
 
@@ -259,7 +210,7 @@ namespace GUI
                     "Exit", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
                 if (dialog == MessageBoxResult.Yes)
                 {
-                    if (MenuController.SaveList(this, saved))
+                    if (MenuController.SaveList(this, saved, selected_users.ToList()))
                     {
                         Console.WriteLine(this.ToString() + ": Выход с сохранением списка");
                         saved = true;
@@ -308,13 +259,14 @@ namespace GUI
         /* Сохраняет список */
         private void MenuSaveList(object sender, RoutedEventArgs e)
         {
-            saved = MenuController.SaveList(this, saved);
+            saved = MenuController.SaveList(this, saved, selected_users.ToList());
         }
 
         /* Загружает БД */
         private void MenuLoadDB(object sender, RoutedEventArgs e)
         {
             MenuController.LoadDB(this);
+            UpdateResponse(MainWindow.db_users);
         }
 
         /* Информация о БД */
@@ -327,6 +279,12 @@ namespace GUI
         private void MenuExit(object sender, RoutedEventArgs e)
         {
             MenuController.Exit(this);
+        }
+
+        /* Создатели */
+        private void About(object sender, RoutedEventArgs e)
+        {
+            MenuController.About(this);
         }
     }
 }

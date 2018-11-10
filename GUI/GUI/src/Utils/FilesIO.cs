@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using DB;
+
 namespace Utils
 {
     // Класс для загрузки/сохранения файлов
@@ -40,6 +42,19 @@ namespace Utils
                 }
             }
             Console.WriteLine(filename + " was saved!");
+        }
+        
+        internal static void SaveHumans(string filename, List<Human> users)
+        {
+            File.WriteAllText(filename, JsonConvert.SerializeObject(users));
+            Console.WriteLine(filename + " was saved!");
+        }
+
+        internal static List<Human> LoadHumans(string filename)
+        {
+            string users = File.ReadAllText(filename);
+            Console.WriteLine(filename + " was loaded!");
+            return JsonConvert.DeserializeObject<List<Human>>(users);
         }
         /*
         internal static List<int> LoadFileInt(string filename)

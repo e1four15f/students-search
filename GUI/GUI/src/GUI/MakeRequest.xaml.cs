@@ -21,12 +21,10 @@ namespace GUI
     public partial class MakeRequest : Window
     {
         //private string current_placeholder;
-        private bool isMan;
-        private bool isWoman;
 
         public MakeRequest()
         {
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
         }
 
@@ -35,7 +33,7 @@ namespace GUI
             Console.WriteLine(this.ToString() + ": Найти, Параметры: "
                 + FirstName.Text + ":"
                 + LastName.Text + ":"
-                + (isMan ? isWoman ? "Мужчина:" : "Женщина:" : "Пол неопределён")
+                + (ManSex.IsChecked.Value ? FemaleSex.IsChecked.Value ? "Мужчина:" : "Женщина:" : "Пол неопределён")
                 + FacultyName.Text + ":"
                 + ChairName.Text + ":"
                 + GraduationYear.Text);
@@ -52,18 +50,10 @@ namespace GUI
             ChairName.Text = "";
             GraduationYear.Text = "";
 
-            ManSex.IsChecked = true;
+            ManSex.IsChecked = false;
             FemaleSex.IsChecked = false;
         }
-        // Радиобаттоны не нужны
-        /*
-        private void RadioButtonChecked(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine(this.ToString() + ": Переключатель");
-            RadioButton radio_button = (RadioButton) sender;
-            sex = radio_button.Content.ToString() == "Мужчина" ? true : false;
-        }
-        */
+        
         private void TextNumberValidation(object sender, TextCompositionEventArgs e)
         {
             Regex regex = new Regex("[^0-9]+");

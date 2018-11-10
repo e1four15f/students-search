@@ -27,7 +27,7 @@
         <!--Text="Введите фамилию"-->
 
         <Label Content="Пол" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top"/>
-        <CheckBox Name="ManSex" Content="Мужчина" HorizontalAlignment="Left" Margin="150,75,0,0" VerticalAlignment="Top" IsChecked="True"/>
+        <CheckBox Name="ManSex" Content="Мужчина" HorizontalAlignment="Left" Margin="150,75,0,0" VerticalAlignment="Top"/>
         <CheckBox Name="FemaleSex" Content="Женщина" HorizontalAlignment="Left" Margin="230,75,0,0" VerticalAlignment="Top"/>
             
         <Label Content="Факультет" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top"/>
