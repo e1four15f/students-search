@@ -36,6 +36,7 @@ namespace GUI
                 Result.Content = "Успешно!";
                 Result.Foreground = new SolidColorBrush(Colors.Green);
                 this.Close();
+                new CreateDB().Show();
             }
             else
             {

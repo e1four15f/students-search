@@ -16,6 +16,7 @@ using WebApi;
 using DB;
 using Microsoft.Win32;
 using System.IO;
+using System.Threading;
 
 namespace GUI
 {
@@ -35,17 +36,28 @@ namespace GUI
         {
             Console.WriteLine(this.ToString() + ": Сформировать БД :"
                 + LocalGroups.IsChecked + " : " + PublicGroups.IsChecked + " : " + Search.IsChecked);
-            SaveFileDialog save_file_dialog = new SaveFileDialog();
 
+            if (!LocalGroups.IsChecked.Value && !PublicGroups.IsChecked.Value && !Search.IsChecked.Value)
+            {
+                MessageBox.Show("Необходимо выбрать хотя бы один метод поиска", "Warning", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                return;
+            }
+
+            SaveFileDialog save_file_dialog = new SaveFileDialog();
             save_file_dialog.Filter = "Text files (*.ldb)|*.ldb|All files (*.*)|*.*";
             save_file_dialog.ShowDialog();
             if (save_file_dialog.FileName != "")
             {
                 Console.WriteLine(save_file_dialog.FileName);
-                // TODO Проблема с файлами
-                //File.Delete(save_file_dialog.FileName);
+
+                Thread loading_thread = new Thread(() => new Loading().Start());
+                loading_thread.SetApartmentState(ApartmentState.STA);
+                loading_thread.Start();
+
                 new DBCreator().Create(save_file_dialog.FileName,
                     LocalGroups.IsChecked.Value, PublicGroups.IsChecked.Value, Search.IsChecked.Value);
+                
+                loading_thread.Abort();
             }
             MessageBox.Show("Создание базы данных закончено!", "Info", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             this.Close();
