@@ -110,6 +110,38 @@ namespace AnalyzeAndProcess
 			return profiles.ToArray();
 		}
 		
+			/*Использовать в связке с GetEmails*/
+	    public static string[] GenerateAddr(Human human){
+			/*NOT TESTED*/
+			HashSet<string> addresses = new HashSet<string>();
+			List<string> dates = new List<string>();
+			addresses.Add(human.domain);
+			addresses.Add(human.social.instagram);
+			addresses.Add(human.social.facebook);
+			addresses.Add(human.social.livejournal);
+			addresses.Add(human.social.twitter);
+			addresses.Add(human.social.skype);
+			dates.Add(human.bdate.Month.ToString() + "_" + human.bdate.Year.ToString());
+			dates.Add(human.bdate.Month.ToString() + "." + human.bdate.Year.ToString());
+			dates.Add(human.bdate.Month.ToString() + "-" + human.bdate.Year.ToString());
+			dates.Add(human.bdate.Month.ToString() + human.bdate.Year.ToString());
+			dates.Add(human.bdate.Month.ToString() + (human.bdate.Year % 100).ToString());
+			dates.Add(human.bdate.Month.ToString());
+			dates.Add((human.bdate.Year % 100).ToString());
+			dates.Add(human.bdate.Year.ToString());
+			
+			foreach(string entry in addresses)
+				foreach(string date in dates){
+					addresses.Add(entry + date);
+					addresses.Add(entry + "_" + date);
+					addresses.Add(entry + "." + date);
+					addresses.Add(entry + "-" + date);
+			}
+			
+			return addresses.ToArray<string>();
+		}
+	    
+			/*Использовать в связке с GenerateAddr*/
 		public static string[] GetEmails(string address){
 			/*Возвращает, если есть, список возможных имэйлов пользователя*/
 			WebClient client = new WebClient();
