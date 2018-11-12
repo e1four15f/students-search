@@ -109,22 +109,8 @@ namespace AnalyzeAndProcess
 			}
 			return profiles.ToArray();
 		}
-			
-		public static void Progress(int current, int full){
-		/*рисует прогресс чего-то в консоли*/
-			Console.Clear();
-			Console.BackgroundColor = ConsoleColor.Green;
-			Console.ForegroundColor = ConsoleColor.White;
-			for(int i = 0; i < (int)(((float)current/(float)full)*100); i++)
-				Console.Write("{0,3}",i);
-			Console.BackgroundColor = ConsoleColor.Red;
-			for(int i = (int)(((float)current/(float)full)*100); i < 100; i++)
-				Console.Write("{0,3}",i);
-			Console.ResetColor();
-			Console.WriteLine();
-		}
 		
-		public static string[] GetEmails(Human human){
+		public static string[] GetEmails(string address){
 			/*Возвращает, если есть, список возможных имэйлов пользователя*/
 			WebClient client = new WebClient();
 			
@@ -145,16 +131,8 @@ namespace AnalyzeAndProcess
 			
 			/*проверяем всех провайдеров, и если почта удовлетворяет всем требованиям - заносим в лист*/
 			for(int i = 0; i < providers.Length; i++){
-				string email = human.domain + providers[i].Item1;
-				if(IsValidEmail(email,providers[i].Item2) && human.domain != null && !human.domain.Contains("id"))
-					profiles.Add(email);
-				
-				if(human.skype == null)
-					continue;
-				
-				email = human.skype + providers[i].Item1;
-				
-				if(human.skype != null && IsValidEmail(email,providers[i].Item2) )
+				string email = address + providers[i].Item1;
+				if(IsValidEmail(email,providers[i].Item2) && address != null)
 					profiles.Add(email);
 			}
 			
