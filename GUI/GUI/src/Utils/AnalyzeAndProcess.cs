@@ -110,22 +110,40 @@ namespace Utils
 			}
 			return profiles.ToArray();
 		}
-			
-		public static void Progress(int current, int full){
-		/*рисует прогресс чего-то в консоли*/
-			Console.Clear();
-			Console.BackgroundColor = ConsoleColor.Green;
-			Console.ForegroundColor = ConsoleColor.White;
-			for(int i = 0; i < (int)(((float)current/(float)full)*100); i++)
-				Console.Write("{0,3}",i);
-			Console.BackgroundColor = ConsoleColor.Red;
-			for(int i = (int)(((float)current/(float)full)*100); i < 100; i++)
-				Console.Write("{0,3}",i);
-			Console.ResetColor();
-			Console.WriteLine();
-		}
 		
-		public static string[] GetEmails(Human human){
+			/*Использовать в связке с GetEmails*/
+	    public static string[] GenerateAddr(Human human){
+			/*NOT TESTED*/
+			HashSet<string> addresses = new HashSet<string>();
+			List<string> dates = new List<string>();
+			addresses.Add(human.domain);
+			addresses.Add(human.social.instagram);
+			addresses.Add(human.social.facebook);
+			addresses.Add(human.social.livejournal);
+			addresses.Add(human.social.twitter);
+			addresses.Add(human.social.skype);
+			dates.Add(human.bdate.Month.ToString() + "_" + human.bdate.Year.ToString());
+			dates.Add(human.bdate.Month.ToString() + "." + human.bdate.Year.ToString());
+			dates.Add(human.bdate.Month.ToString() + "-" + human.bdate.Year.ToString());
+			dates.Add(human.bdate.Month.ToString() + human.bdate.Year.ToString());
+			dates.Add(human.bdate.Month.ToString() + (human.bdate.Year % 100).ToString());
+			dates.Add(human.bdate.Month.ToString());
+			dates.Add((human.bdate.Year % 100).ToString());
+			dates.Add(human.bdate.Year.ToString());
+			
+			foreach(string entry in addresses)
+				foreach(string date in dates){
+					addresses.Add(entry + date);
+					addresses.Add(entry + "_" + date);
+					addresses.Add(entry + "." + date);
+					addresses.Add(entry + "-" + date);
+			}
+			
+			return addresses.ToArray<string>();
+		}
+	    
+			/*Использовать в связке с GenerateAddr*/
+		public static string[] GetEmails(string address){
 			/*Возвращает, если есть, список возможных имэйлов пользователя*/
 			WebClient client = new WebClient();
 			
@@ -146,16 +164,8 @@ namespace Utils
 			
 			/*проверяем всех провайдеров, и если почта удовлетворяет всем требованиям - заносим в лист*/
 			for(int i = 0; i < providers.Length; i++){
-				string email = human.domain + providers[i].Item1;
-				if(IsValidEmail(email,providers[i].Item2) && human.domain != null && !human.domain.Contains("id"))
-					profiles.Add(email);
-				
-				if(human.skype == null)
-					continue;
-				
-				email = human.skype + providers[i].Item1;
-				
-				if(human.skype != null && IsValidEmail(email,providers[i].Item2) )
+				string email = address + providers[i].Item1;
+				if(IsValidEmail(email,providers[i].Item2) && address != null)
 					profiles.Add(email);
 			}
 			
