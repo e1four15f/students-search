@@ -12,6 +12,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
 using MinimalisticTelnet;
 using Newtonsoft.Json;
@@ -113,15 +114,23 @@ namespace Utils
 		
 			/*Использовать в связке с GetEmails*/
 	    public static string[] GenerateAddr(Human human){
+
+            if (human.domain.Substring(0, 2) == "id"
+                && human.domain.Substring(3, human.domain.Length - 3).Any(char.IsDigit))
+            {
+                return new string[0];
+            }
+
 			/*NOT TESTED*/
 			HashSet<string> addresses = new HashSet<string>();
-			List<string> dates = new List<string>();
+            HashSet<string> dates = new HashSet<string>();
 			addresses.Add(human.domain);
 			addresses.Add(human.social.instagram);
 			addresses.Add(human.social.facebook);
 			addresses.Add(human.social.livejournal);
 			addresses.Add(human.social.twitter);
 			addresses.Add(human.social.skype);
+
 			dates.Add(human.bdate.Month.ToString() + "_" + human.bdate.Year.ToString());
 			dates.Add(human.bdate.Month.ToString() + "." + human.bdate.Year.ToString());
 			dates.Add(human.bdate.Month.ToString() + "-" + human.bdate.Year.ToString());
@@ -130,20 +139,26 @@ namespace Utils
 			dates.Add(human.bdate.Month.ToString());
 			dates.Add((human.bdate.Year % 100).ToString());
 			dates.Add(human.bdate.Year.ToString());
-			
-			foreach(string entry in addresses)
-				foreach(string date in dates){
-					addresses.Add(entry + date);
-					addresses.Add(entry + "_" + date);
-					addresses.Add(entry + "." + date);
-					addresses.Add(entry + "-" + date);
-			}
-			
+
+            addresses.Remove(null);
+
+			for (int i = 0, len = addresses.Count; i < len; i++)
+            { 
+				foreach(string date in dates)
+                {
+                    addresses.Add(addresses.ElementAt(i) + date);
+                    addresses.Add(addresses.ElementAt(i) + "_" + date);
+                    addresses.Add(addresses.ElementAt(i) + "." + date);
+                    addresses.Add(addresses.ElementAt(i) + "-" + date);
+			    }
+                addresses.RemoveWhere(x => x.Length < 5);
+            }
 			return addresses.ToArray<string>();
 		}
 	    
 			/*Использовать в связке с GenerateAddr*/
-		public static string[] GetEmails(string address){
+        public static List<string> GetEmails(string address)
+        {
 			/*Возвращает, если есть, список возможных имэйлов пользователя*/
 			WebClient client = new WebClient();
 			
@@ -153,9 +168,9 @@ namespace Utils
 			/*дефолтные провайдеры почты*/
 			Tuple<string,string>[] providers = {	new Tuple<string,string>("@yandex.ru","mx.yandex.ru"),
 													new Tuple<string,string>("@gmail.com","gmail-smtp-in.l.google.com"),
-													new Tuple<string,string>("@mail.ru", "mxs.mail.ru"),
+											//		new Tuple<string,string>("@mail.ru", "mxs.mail.ru"),
 													new Tuple<string,string>("@protonmail.com", "mailsec.protonmail.ch"),
-													new Tuple<string,string>("@yahoo.com", "mta7.am0.yahoodns.net"),
+											//		new Tuple<string,string>("@yahoo.com", "mta7.am0.yahoodns.net"),
 													new Tuple<string,string>("@rambler.ru","inmx.rambler.ru")};
 													
 			
@@ -169,7 +184,7 @@ namespace Utils
 					profiles.Add(email);
 			}
 			
-			return profiles.ToArray();
+			return profiles;
 		}
 		
 		static bool IsValidEmail(string email,string provider){

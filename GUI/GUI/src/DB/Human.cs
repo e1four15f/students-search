@@ -23,7 +23,7 @@ namespace DB
     {
         public string mobile_phone { get; set; }
         public string home_phone { get; set; }
-        public string email { get; set; }
+        public List<string> emails { get; set; }
     }
 
     public class Social
@@ -70,7 +70,8 @@ namespace DB
         [BsonIgnore]
         public string home_phone { get { return contacts.home_phone != null ? "Дом. " + contacts.home_phone : ""; } }
         [BsonIgnore]
-        public string email { get { return contacts.email; } }
+        public List<string> emails { get { return contacts.emails; } set { contacts.emails = value; } }
+        public string email { get { return contacts.emails != null ? contacts.emails[0] : ""; } }
 
         public Social social { get; set; } // TODO // TODO Odnoklassniki
         [BsonIgnore]
@@ -102,6 +103,7 @@ namespace DB
 
         public int plausibility;
 
+        // Дефолтный конструктор нужен для бд
         public Human()
         {
             id = 0;
@@ -123,6 +125,7 @@ namespace DB
 
             plausibility = 0;
         }
+
         public Human(JToken user_data)
         {
             id = (int) user_data["id"];
@@ -160,7 +163,9 @@ namespace DB
                 ? Regex.Replace(user_data["mobile_phone"].ToString(), @"\t|\n|\r", "") : null;
             contacts.home_phone = user_data["home_phone"] != null && user_data["home_phone"].ToString().Length > 8
                 ? Regex.Replace(user_data["home_phone"].ToString(), @"\t|\n|\r", "") : null;
-            contacts.email = user_data["email"] != null ? user_data["email"].ToString() : null;
+
+            contacts.emails = new List<string>();
+            contacts.emails.Add(user_data["email"] != null ? user_data["email"].ToString() : null);
 
             social.instagram = user_data["instagram"] != null ? user_data["instagram"].ToString() : null;
             social.skype = user_data["skype"] != null ? user_data["skype"].ToString() : null;

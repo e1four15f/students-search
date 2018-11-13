@@ -93,6 +93,9 @@
     <Compile Include="src\GUI\CreateDB.xaml.cs">
       <DependentUpon>CreateDB.xaml</DependentUpon>
     </Compile>
+    <Compile Include="src\GUI\ListOperation.xaml.cs">
+      <DependentUpon>ListOperation.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\GUI\Loading.xaml.cs">
       <DependentUpon>Loading.xaml</DependentUpon>
     </Compile>
@@ -122,6 +125,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="src\GUI\CreateDB.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\GUI\ListOperation.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

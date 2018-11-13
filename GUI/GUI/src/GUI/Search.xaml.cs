@@ -130,7 +130,8 @@ namespace GUI
             {
                 // TODO При одноклассниках стоит использовать другую проверку
                 // UPD Для БД нужен был свой индекс типа ObjectId, здесь использую его
-                if (selected_users.Where(x => x._id == SelectedHuman._id).ToList().Count() == 0)
+                // TODO Сделать нормальную проверку, мб переопределить == в хумане 
+                if (!selected_users.Contains(SelectedHuman))
                 {
                     selected_users.Add(SelectedHuman);
                     SelectedUsersListBox.ItemsSource = selected_users;
@@ -162,9 +163,10 @@ namespace GUI
                 {
                     // TODO При одноклассниках стоит использовать другую проверку
                     // UPD Для БД нужен был свой индекс типа ObjectId, здесь использую его
-                    if (selected_users.Where(x => x._id == SelectedListItem._id).ToList().Count() == 1)
+                    if (SelectedListItem != null)
                     {
                         selected_users.Remove(SelectedListItem);
+                        //selected_users.Remove(selected_users.Single(x => x.id == SelectedListItem.id));
                         SelectedUsersListBox.ItemsSource = selected_users;
                         if (saved)
                         {
@@ -182,6 +184,12 @@ namespace GUI
                     Console.WriteLine(ex.Message);
                 }
             }
+        }
+
+        /* Открывает окно для дополнительных функция для работы со списком */
+        private void ButtonListOperation(object sender, RoutedEventArgs e)
+        {
+            new ListOperation(selected_users.ToList()).ShowDialog();
         }
 
         /* Открывает подробную информацио о выбранном в панели результатов поиска пользователя */
@@ -285,6 +293,19 @@ namespace GUI
         private void About(object sender, RoutedEventArgs e)
         {
             MenuController.About(this);
+        }
+
+        /* Drag and Drop обработчики */
+        private void ResponseListBoxMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                if (sender is DockPanel)
+                {
+                    DockPanel draggedItem = sender as DockPanel;
+                    DragDrop.DoDragDrop(draggedItem, draggedItem.DataContext, DragDropEffects.Move);
+                }
+            }
         }
     }
 }

@@ -97,67 +97,74 @@ namespace DB
 
         public List<Human> search(MakeRequest request)
         {
-            using (var db = new LiteDatabase(connStr))
+            if (MainWindow.db_users.Count > 0)
+            { 
+                using (var db = new LiteDatabase(connStr))
+                {
+                    var coll = db.GetCollection<Human>("users");
+
+                    coll.EnsureIndex(p => p.first_name);
+                    coll.EnsureIndex(p => p.last_name);
+                    coll.EnsureIndex(p => p.sex);
+
+                    List<Query> queries = new List<Query>();
+
+                    // First name criteria
+                    if (request.FirstName.Text.Length > 0)
+                    {
+                        queries.Add(Query.Contains("LOWER($.first_name)", request.FirstName.Text.ToLower()));
+                    }
+                    // Last name criteria
+                    if (request.LastName.Text.Length > 0)
+                    {
+                        queries.Add(Query.Contains("LOWER($.last_name)", request.LastName.Text.ToLower()));
+                    }
+                    // Sex criteria
+                    if (request.ManSex.IsChecked.Value && !request.FemaleSex.IsChecked.Value)
+                    {
+                        queries.Add(Query.EQ("sex", true));
+                    } 
+                    else if (!request.ManSex.IsChecked.Value && request.FemaleSex.IsChecked.Value)
+                    {
+                        queries.Add(Query.EQ("sex", false));
+                    }
+                    // Faculty name criteria
+                    if (request.FacultyName.Text.Length > 0)
+                    {
+                        queries.Add(Query.Contains("LOWER($.universities[*].faculty_name)", request.FacultyName.Text.ToLower()));
+                    }
+                    // Chair name criteria
+                    if (request.ChairName.Text.Length > 0)
+                    {
+                        queries.Add(Query.Contains("LOWER($.universities[*].chair_name)", request.ChairName.Text.ToLower()));
+                    }
+                    // Chair name criteria
+                    if (request.ChairName.Text.Length > 0)
+                    {
+                        queries.Add(Query.Contains("LOWER($.universities[*].chair_name)", request.ChairName.Text.ToLower()));
+                    }
+                    // Graduation year criteria
+                    if (request.GraduationYear.Text.Length > 0)
+                    {
+                        queries.Add(Query.EQ("universities[0].graduation_year", int.Parse(request.GraduationYear.Text)));
+                    }
+
+                    // Empty request
+                    if (queries.Count < 1)
+                    {
+                        return getAllUsers();
+                    }
+
+                    IEnumerable<Human> result = (queries.Count > 1) ? 
+                        coll.Find(Query.And(queries.ToArray())) : 
+                        coll.Find(queries[0]);        
+
+                    return result.ToList();
+                }
+            }
+            else
             {
-                var coll = db.GetCollection<Human>("users");
-
-                coll.EnsureIndex(p => p.first_name);
-                coll.EnsureIndex(p => p.last_name);
-                coll.EnsureIndex(p => p.sex);
-
-                List<Query> queries = new List<Query>();
-
-                // First name criteria
-                if (request.FirstName.Text.Length > 0)
-                {
-                    queries.Add(Query.Contains("LOWER($.first_name)", request.FirstName.Text.ToLower()));
-                }
-                // Last name criteria
-                if (request.LastName.Text.Length > 0)
-                {
-                    queries.Add(Query.Contains("LOWER($.last_name)", request.LastName.Text.ToLower()));
-                }
-                // Sex criteria
-                if (request.ManSex.IsChecked.Value && !request.FemaleSex.IsChecked.Value)
-                {
-                    queries.Add(Query.EQ("sex", true));
-                } 
-                else if (!request.ManSex.IsChecked.Value && request.FemaleSex.IsChecked.Value)
-                {
-                    queries.Add(Query.EQ("sex", false));
-                }
-                // Faculty name criteria
-                if (request.FacultyName.Text.Length > 0)
-                {
-                    queries.Add(Query.Contains("LOWER($.universities[*].faculty_name)", request.FacultyName.Text.ToLower()));
-                }
-                // Chair name criteria
-                if (request.ChairName.Text.Length > 0)
-                {
-                    queries.Add(Query.Contains("LOWER($.universities[*].chair_name)", request.ChairName.Text.ToLower()));
-                }
-                // Chair name criteria
-                if (request.ChairName.Text.Length > 0)
-                {
-                    queries.Add(Query.Contains("LOWER($.universities[*].chair_name)", request.ChairName.Text.ToLower()));
-                }
-                // Graduation year criteria
-                if (request.GraduationYear.Text.Length > 0)
-                {
-                    queries.Add(Query.EQ("universities[0].graduation_year", int.Parse(request.GraduationYear.Text)));
-                }
-
-                // Empty request
-                if (queries.Count < 1)
-                {
-                    return getAllUsers();
-                }
-
-                IEnumerable<Human> result = (queries.Count > 1) ? 
-                    coll.Find(Query.And(queries.ToArray())) : 
-                    coll.Find(queries[0]);        
-
-                return result.ToList();
+                return new List<Human>();
             }
         }
         
