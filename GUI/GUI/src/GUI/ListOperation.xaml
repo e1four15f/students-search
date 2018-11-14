@@ -1,13 +1,15 @@
 ﻿<Window x:Class="GUI.ListOperation"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        ResizeMode="CanMinimize"
         Title="ListOperation" Height="300" Width="300">
     <Grid>
         <StackPanel Margin="10">
             <TextBlock TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,15">
             hit 👋👊 or miss 👋😳 i guess 🤔💭 they never ❌🚫 miss 👋😔 huh 🤠 you got a boyfriend 😛👫💑💏 i bet he doesn’t ❌🚫 kiss 😘💋👄 ya 😂 muah 😍✨👄😘✨ he gon find 👀👓🔍 another girl 👧🏻👫💑💏💔 and he won’t ❌🚫 miss ya 😔💔He gon’ skrrt🚀 and hit the dab 👊like Wiz Khalifa😗💨🍁
             </TextBlock>
-            <Button Width="150" Content="Найти email-ы" Click="ButtonFindEmails"/>
+            <Button Margin="5" Width="150" Content="Найти email-ы" Click="ButtonFindEmails"/>
+            <Button Margin="5" Width="200" Content="Найти на популярных сайтах" Click="ButtonMostLikelySites"/>
         </StackPanel>
     </Grid>
 </Window>

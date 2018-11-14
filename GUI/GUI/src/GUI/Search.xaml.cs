@@ -131,7 +131,7 @@ namespace GUI
                 // TODO При одноклассниках стоит использовать другую проверку
                 // UPD Для БД нужен был свой индекс типа ObjectId, здесь использую его
                 // TODO Сделать нормальную проверку, мб переопределить == в хумане 
-                if (!selected_users.Contains(SelectedHuman))
+                if (!selected_users.Any(x => x == SelectedHuman))
                 {
                     selected_users.Add(SelectedHuman);
                     SelectedUsersListBox.ItemsSource = selected_users;
@@ -163,9 +163,9 @@ namespace GUI
                 {
                     // TODO При одноклассниках стоит использовать другую проверку
                     // UPD Для БД нужен был свой индекс типа ObjectId, здесь использую его
-                    if (SelectedListItem != null)
+                    if (!SelectedListItem.Equals(null))
                     {
-                        selected_users.Remove(SelectedListItem);
+                        selected_users.Remove(selected_users.Single(x => x == SelectedListItem));
                         //selected_users.Remove(selected_users.Single(x => x.id == SelectedListItem.id));
                         SelectedUsersListBox.ItemsSource = selected_users;
                         if (saved)

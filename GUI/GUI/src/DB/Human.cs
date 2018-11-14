@@ -103,6 +103,8 @@ namespace DB
 
         public int plausibility;
 
+        public List<string> sites {get; set; }
+
         // Дефолтный конструктор нужен для бд
         public Human()
         {
@@ -262,15 +264,36 @@ namespace DB
                 + (social.facebook != null ? " facebook:" + social.facebook : "")
                 + (social.livejournal != null ? " livejournal:" + social.livejournal : "")
                 + (social.twitter != null ? " twitter:" + social.twitter : "")
-                + "\n";
+                + "\n" + _id + "\n";
 
             foreach (University university in universities)
             {
                 user_info += university.university_name + " " 
                     + university.faculty_name + " " 
                     + (university.graduation_year != 0 ? university.graduation_year.ToString() : "") + "\n";
-            }
+            }   
             return user_info;
         }
+        // TODO Пока простая проверка
+        //public bool Equals(Human user)
+        //{
+        //    //Human user = (Human)obj;
+        //    return id == user.id && first_name == user.first_name && last_name == user.last_name;
+        //}
+
+        public static bool operator ==(Human user1, Human user2)
+        {
+            return user1.id == user2.id
+                && user1.first_name == user2.first_name
+                && user1.last_name == user2.last_name;
+        }
+
+        public static bool operator !=(Human user1, Human user2)
+        {
+            return user1.id != user2.id
+               || user1.first_name != user2.first_name
+               || user1.last_name != user2.last_name;
+        }
+
     }
 }

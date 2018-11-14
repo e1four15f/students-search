@@ -187,10 +187,12 @@
                             <DockPanel Width="765" Height="105" Margin="0,0,0,5" PreviewMouseMove="ResponseListBoxMouseMove">
 
                                 <Image Source="{Binding photo_100}" Width="100" Height="100" />
-                                <!--<Grid>
-                                    <CheckBox Margin="0,3,0,0" Opacity="0.9" IsChecked="{Binding isSelected}" 
-                                              Checked="IsSelectedCheckboxChange" Unchecked="IsSelectedCheckboxChange"/>
-                                </Grid>-->
+                                <!--Checked="IsSelectedCheckboxChange" IsChecked="{Binding isSelected}" Unchecked="IsSelectedCheckboxChange"
+                                <Grid>
+                                    
+                                    <CheckBox Margin="0,3,0,0" Opacity="0.9" 
+                                              />
+                                </Grid> -->
                                 <StackPanel Margin="10,0,0,0" Width="100">
                                     <!-- Информация пользователя -->
                                     <TextBlock Text="{Binding first_name}" VerticalAlignment="Center" FontSize="16"/>

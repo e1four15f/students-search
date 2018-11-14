@@ -71,7 +71,7 @@ namespace Utils
 	abstract class ProcessData{
 	    //TODO сделать методы для обращения к поставляемой с софтом БД
 	    
-		public static string[] MostLikelySites(Human human){
+		public static List<string> MostLikelySites(Human human){
 			/*Проверяет наиболее популярные сайты, на предмет существования там аккаунта человека*/
 			
 			/*функция скачивания страницы пользователя*/
@@ -109,7 +109,7 @@ namespace Utils
 					profiles.Add(sites[i] + human.domain);
 				}
 			}
-			return profiles.ToArray();
+			return profiles;
 		}
 		
 			/*Использовать в связке с GetEmails*/
