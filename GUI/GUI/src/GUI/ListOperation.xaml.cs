@@ -12,6 +12,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Collections.Concurrent;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Reflection;
+using System.Resources;
+using System.IO;
 
 using DB;
 using Utils;
@@ -47,10 +52,6 @@ namespace GUI
                     emails.TryAdd(user, ProcessData.GetEmails(email));//.ToList();
                     
                 });
-                /*
-                foreach (KeyValuePair<Human, List<string>> kvp in emails)
-                    foreach (string s in kvp.Value)
-                        Console.WriteLine("ALL " + user.first_name + ": " + s);*/
                 
             }
             foreach (Human user in result)
@@ -69,30 +70,24 @@ namespace GUI
 
         private void ButtonMostLikelySites(object sender, RoutedEventArgs e)
         {
-            ConcurrentDictionary<Human, List<string>> sites = new ConcurrentDictionary<Human, List<string>>();
+            ConcurrentDictionary<Human, HashSet<string>> sites = new ConcurrentDictionary<Human, HashSet<string>>();
             HashSet<Human> result = new HashSet<Human>();
+            List<Action> get_sites = new List<Action>();
+            
             foreach (Human user in users)
             {
                 result.Add(user);
-                Parallel.ForEach(ProcessData.MostLikelySites(user), site =>
-                {
-                    Console.WriteLine(user.first_name + ": " + site);
-
-                    sites.TryAdd(user, ProcessData.GetEmails(site));//.ToList();
-
-                });
-                /*
-                foreach (KeyValuePair<Human, List<string>> kvp in emails)
-                    foreach (string s in kvp.Value)
-                        Console.WriteLine("ALL " + user.first_name + ": " + s);*/
-
+                get_sites.Add(() => sites.TryAdd(user, ProcessData.MostLikelySites(user)));
             }
+            Parallel.Invoke(get_sites.ToArray());
             foreach (Human user in result)
             {
-                List<string> temp = new List<string>();
+                HashSet<string> temp = new HashSet<string>();
                 if (sites.TryGetValue(user, out temp))
                 {
-                    user.emails = new List<string>(temp);
+                	if(temp.Count == 0)
+                		continue;
+                    user.sites = new HashSet<string>(temp);
 
                     foreach (string s in temp)
                         Console.WriteLine("ALL " + user.first_name + ": " + s);
@@ -100,6 +95,59 @@ namespace GUI
                     temp.Clear();
                 }
             }
+            return;
         }
+        
+        private void ButtonGoogleIt(object sender, RoutedEventArgs e)
+        {
+            ConcurrentDictionary<Human, HashSet<string>> sites = new ConcurrentDictionary<Human, HashSet<string>>();
+            HashSet<Human> result = new HashSet<Human>();
+            List<Action> get_sites = new List<Action>();
+            List<string> user_agents;
+            
+            string serialized_agents = Encoding.Default.GetString(Properties.Resources.user_agents);
+
+            if(serialized_agents != null)
+          		user_agents =  JsonConvert.DeserializeObject<List<string>>(serialized_agents);
+            else
+           		throw new Exception("где агенты, джонни???");
+            
+            foreach (Human user in users)
+            {
+                result.Add(user);
+                if(user.domain != null)
+                	get_sites.Add(() => sites.TryAdd(user, ProcessData.SearchInNet(user.domain, user_agents)));
+                
+                if(user.instagram != null)
+                	get_sites.Add(() => sites.TryAdd(user, ProcessData.SearchInNet(user.instagram, user_agents)));
+                
+                if(user.facebook != null)
+               		get_sites.Add(() => sites.TryAdd(user, ProcessData.SearchInNet(user.facebook, user_agents)));
+                
+                if(user.twitter != null)
+                	get_sites.Add(() => sites.TryAdd(user, ProcessData.SearchInNet(user.twitter, user_agents)));
+                
+                if(user.skype != null)
+                	get_sites.Add(() => sites.TryAdd(user, ProcessData.SearchInNet(user.skype, user_agents)));
+            }
+            Parallel.Invoke(get_sites.ToArray());
+            foreach (Human user in result)
+            {
+                HashSet<string> temp = new HashSet<string>();
+                if (sites.TryGetValue(user, out temp))
+                {
+                	if(temp.Count == 0)
+                		continue;
+                    user.sites = new HashSet<string>(temp);
+
+                    foreach (string s in temp)
+                        Console.WriteLine("ALL " + user.first_name + ": " + s);
+
+                    temp.Clear();
+                }
+            }
+            return;
+        }
+        
     }
 }

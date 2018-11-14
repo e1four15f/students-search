@@ -43,7 +43,7 @@ namespace Utils
 	}
 
 
-	public delegate bool Searcher(string query, string nickname, string user_agent, ref List<string> profiles);
+	public delegate bool Searcher(string query, string nickname, string user_agent, ref HashSet<string> profiles);
 	         /*
 	         	Функции обращения к поисковику одинаковые - под капотом:
 	         	1. Получение страницы по запросу (query + nickname)
@@ -71,14 +71,14 @@ namespace Utils
 	abstract class ProcessData{
 	    //TODO сделать методы для обращения к поставляемой с софтом БД
 	    
-		public static List<string> MostLikelySites(Human human){
+		public static HashSet<string> MostLikelySites(Human human){
 			/*Проверяет наиболее популярные сайты, на предмет существования там аккаунта человека*/
 			
 			/*функция скачивания страницы пользователя*/
 			WebClient client = new WebClient();
 				
 			/*строка, скачиваемая WebClient*/
-			string html;
+			List<string> html = new List<string>();
 			
 			
 			/*дефолтные сайты, для которые проверяются вне гугла*/
@@ -91,22 +91,39 @@ namespace Utils
 			
 			
 			/*лист с найденной информацией*/
-			List<string> profiles = new List<string>();
+			HashSet<string> profiles = new HashSet<string>();
 			
 			/*обрабатываем дефолтные сайты*/
 			for(int i = 0; i < sites.Length; i++){
 				try{
-					html =  System.Text.Encoding.UTF8.GetString(client.DownloadData(sites[i] + human.domain)).ToLower();
+					if(human.domain != null && 
+					   (!human.domain.Substring(0, 2).Equals("id") && human.domain.Substring(0, human.domain.Length -1).Any(char.IsDigit)))
+						html.Add(System.Text.Encoding.UTF8.GetString(client.DownloadData(sites[i] + human.domain)).ToLower());
+					
+					if(human.instagram != null)
+						html.Add(System.Text.Encoding.UTF8.GetString(client.DownloadData(sites[i] + human.instagram)).ToLower());
+					if(human.skype != null)
+						html.Add(System.Text.Encoding.UTF8.GetString(client.DownloadData(sites[i] + human.skype)).ToLower());
+					if(human.twitter != null)
+						html.Add(System.Text.Encoding.UTF8.GetString(client.DownloadData(sites[i] + human.twitter)).ToLower());
 				}
 				catch(Exception e){
 					continue;
 				}
 				
 				/*если на странице есть либо никнейм, либо имя, либо фамилия - добавляем в лист в виде:  айди_вк;профиль_дефолтного_сайта*/
-				if ( html.Contains(human.domain) || 
-				     html.Contains(human.first_name) || 
-				     html.Contains(human.last_name)){
-					profiles.Add(sites[i] + human.domain);
+				foreach(string code in html){
+					if (human.domain != null && code.Contains(human.domain))
+						profiles.Add(sites[i] + human.domain);
+						
+					if (human.instagram != null && code.Contains(human.instagram))
+						profiles.Add(sites[i] + human.instagram);
+					
+					if (human.skype != null && code.Contains(human.skype))
+						profiles.Add(sites[i] + human.skype);
+					
+					if (human.twitter != null && code.Contains(human.twitter))
+						profiles.Add(sites[i] + human.twitter);
 				}
 			}
 			return profiles;
@@ -229,8 +246,6 @@ namespace Utils
 		
 		
 		/********************************************************************/
-		/*замок для потоков*/
-		static object profile_locker;
 		
 		 /*сайты, на которые мы ориентируемся*/
         static string[] sites = {"pikabu.ru",
@@ -250,7 +265,7 @@ namespace Utils
 		
        	
 	
-		static bool Google	(string query, string nickname, string user_agent, ref List<string> profiles){
+		static bool Google	(string query, string nickname, string user_agent, ref HashSet<string> profiles){
         	
             WebClient client = new WebClient();
             client.Headers.Add ("user-agent", user_agent);
@@ -268,7 +283,11 @@ namespace Utils
             		
 			for(int j = 0; j < 20; j++){
 			/*вычленяем в googled_url ссылку из всего html*/
-			string get_url = "/url?q=";
+			string get_url;
+			if(html.Contains("/url?url="))
+				get_url = "/url?url=";
+			else
+				get_url = "/url?q=";
 			html = html.Substring(html.IndexOf(get_url)+get_url.Length);
 			string googled_url = html.Substring(0,html.IndexOf("&amp"));
 
@@ -279,7 +298,8 @@ namespace Utils
 			for(int i = 0; i < sites.Length; i++){
 				if (googled_url.Contains(sites[i]))
 		                if (!profiles.Contains(googled_url)){
-		            	lock(profile_locker)
+	/*FIXME что-то выбивает ошибку*/	
+							lock(profiles)
 		                    profiles.Add(googled_url);
 				}
 			}
@@ -290,12 +310,12 @@ namespace Utils
             return true;
 		}
 		
-		static bool Bing	(string query, string nickname, string user_agent, ref List<string> profiles){
+		static bool Bing	(string query, string nickname, string user_agent, ref HashSet<string> profiles){
         	WebClient client = new WebClient();
         	client.Headers.Add ("user-agent", user_agent);
             string html;
 			try{
-				html =  client.DownloadString(query + nickname).ToLower(); //System.Text.Encoding.UTF8.GetString(client.DownloadData(query + nickname)).ToLower();
+            	html = System.Text.Encoding.UTF8.GetString(client.DownloadData(query + nickname)).ToLower(); //client.DownloadString(query + nickname).ToLower();;
 				}
 			catch(Exception e){
 				html = null;
@@ -307,7 +327,9 @@ namespace Utils
 			for(int j = 0; j < 20; j++){
 			/*вычленяем в googled_url ссылку из всего html*/
 			string get_url = "<a href=\"";
-			html = html.Substring(html.IndexOf(get_url)+get_url.Length);
+			html = html.Substring(html.IndexOf(get_url) + get_url.Length);
+			if(html.Contains("не удалось"))
+				return false;
 			string googled_url = html.Substring(0,html.IndexOf("&amp"));
 
 			foreach(string dnw2contain in ignore){
@@ -317,7 +339,7 @@ namespace Utils
 			for(int i = 0; i < sites.Length; i++){
 				if (googled_url.Contains(sites[i]))
 		                if (!profiles.Contains(googled_url)){
-		            	lock(profile_locker)
+		            	lock(profiles)
 		                    profiles.Add(googled_url);
 				}
 			}
@@ -328,7 +350,7 @@ namespace Utils
             return true;
 		}
 		
-        static bool Yandex	(string query, string nickname, string user_agent, ref List<string> profiles){
+        static bool Yandex	(string query, string nickname, string user_agent, ref HashSet<string> profiles){
         	WebClient client = new WebClient();
         	client.Headers.Add ("user-agent", user_agent);
             string html;
@@ -342,6 +364,8 @@ namespace Utils
             	return false;
             }
             
+            if(html.Contains("нам очень жаль, но"))
+            	return false;
             /*пропустить джаваскрипт*/
             html = html.Substring(html.IndexOf("</script><div class=\""));
             
@@ -358,7 +382,7 @@ namespace Utils
 			for(int i = 0; i < sites.Length; i++){
 				if (googled_url.Contains(sites[i]))
 		                if (!profiles.Contains(googled_url)){
-		            	lock(profile_locker)
+		            	lock(profiles)
 		                    profiles.Add(googled_url);
 				}
 			}
@@ -368,7 +392,7 @@ namespace Utils
             return true;
 		}
         
-        static bool Rambler	(string query, string nickname, string user_agent, ref List<string> profiles){
+        static bool Rambler	(string query, string nickname, string user_agent, ref HashSet<string> profiles){
         	WebClient client = new WebClient();
         	client.Headers.Add ("user-agent", user_agent);
             string html;
@@ -395,7 +419,7 @@ namespace Utils
 			for(int i = 0; i < sites.Length; i++){
 				if (googled_url.Contains(sites[i]))
 		                if (!profiles.Contains(googled_url)){
-		            	lock(profile_locker)
+		            	lock(profiles)
 		                    profiles.Add(googled_url);
 				}
 			}
@@ -405,7 +429,7 @@ namespace Utils
             return true;
 		}
         
-		static string[] SearchInNet(Human human, List<string> user_agents)
+		public static HashSet<string> SearchInNet(string to_search, List<string> user_agents)
         {
             
             /*строки запроса для поисковиков*/
@@ -415,7 +439,7 @@ namespace Utils
             						 "https://nova.rambler.ru/search?query="};
 
             /*лист с найденной информацией по нику*/
-            List<string> profiles = new List<string>();
+            HashSet<string> profiles = new HashSet<string>();
            
 			
             /*Словарь для хранения функций, которые скачивают данные из определенного поисковика*/
@@ -439,14 +463,14 @@ namespace Utils
             	int random_user_agent = new Random().Next(0,user_agents.Count);
             	/*достаем в user_agent случайный user-agent из листа*/
             	user_agent = user_agents[random_user_agent];
-            }while(!current_searcher(search_queries[dice], human.domain, user_agent, ref profiles));
+            }while(!current_searcher(search_queries[dice], to_search, user_agent, ref profiles));
 
-             foreach(string url in profiles)
-            	/*выкидывает из profles url`ы, содержащие какой-нибудь мусор*/
-            	if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
-            		profiles.Remove(url);
+            for (int i = 0; i < profiles.Count; i++)
+                /*выкидывает из profles url`ы, содержащие какой-нибудь мусор*/
+                if (!Uri.IsWellFormedUriString(profiles.ElementAt(i), UriKind.Absolute))
+                    profiles.Remove(profiles.ElementAt(i));
              
-            return profiles.ToArray();
+            return profiles;
         }
 		
 		

@@ -6,7 +6,7 @@
     <Grid>
         <DockPanel>
             <Image Name="Loader" Margin="20" HorizontalAlignment="Center" VerticalAlignment="Center" Height="200" Width="200" 
-                   Source="/GUI;component/img/loading.png" RenderTransformOrigin="0.5,0.5" RenderOptions.BitmapScalingMode="HighQuality"/>
+                   Source="/GUI;component/resources/img/loading.png" RenderTransformOrigin="0.5,0.5" RenderOptions.BitmapScalingMode="HighQuality"/>
             <!--
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <ItemsControl Name="LoadingInfo" ScrollViewer.HorizontalScrollBarVisibility="Disabled">

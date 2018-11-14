@@ -103,7 +103,7 @@ namespace DB
 
         public int plausibility;
 
-        public List<string> sites {get; set; }
+        public HashSet<string> sites {get; set; }
 
         // Дефолтный конструктор нужен для бд
         public Human()
