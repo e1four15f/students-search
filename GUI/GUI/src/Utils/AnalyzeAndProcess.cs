@@ -174,7 +174,7 @@ namespace Utils
 		}
 	    
 			/*Использовать в связке с GenerateAddr*/
-        public static List<string> GetEmails(string address)
+        public static HashSet<string> GetEmails(string address)
         {
 			/*Возвращает, если есть, список возможных имэйлов пользователя*/
 			WebClient client = new WebClient();
@@ -192,7 +192,7 @@ namespace Utils
 													
 			
 			/*лист с найденной информацией по нику*/
-			List<string> profiles = new List<string>();
+			HashSet<string> profiles = new HashSet<string>();
 			
 			/*проверяем всех провайдеров, и если почта удовлетворяет всем требованиям - заносим в лист*/
 			for(int i = 0; i < providers.Length; i++){
@@ -297,8 +297,7 @@ namespace Utils
             }
 			for(int i = 0; i < sites.Length; i++){
 				if (googled_url.Contains(sites[i]))
-		                if (!profiles.Contains(googled_url)){
-	/*FIXME что-то выбивает ошибку*/	
+					if (!googled_url.Contains("#")){
 							lock(profiles)
 		                    profiles.Add(googled_url);
 				}
@@ -338,7 +337,7 @@ namespace Utils
             }
 			for(int i = 0; i < sites.Length; i++){
 				if (googled_url.Contains(sites[i]))
-		                if (!profiles.Contains(googled_url)){
+		                if (!googled_url.Contains("#")){
 		            	lock(profiles)
 		                    profiles.Add(googled_url);
 				}
@@ -381,7 +380,7 @@ namespace Utils
             }
 			for(int i = 0; i < sites.Length; i++){
 				if (googled_url.Contains(sites[i]))
-		                if (!profiles.Contains(googled_url)){
+		                if (!googled_url.Contains("#")){
 		            	lock(profiles)
 		                    profiles.Add(googled_url);
 				}
@@ -418,7 +417,7 @@ namespace Utils
             }
 			for(int i = 0; i < sites.Length; i++){
 				if (googled_url.Contains(sites[i]))
-		                if (!profiles.Contains(googled_url)){
+		                if (!googled_url.Contains("#")){
 		            	lock(profiles)
 		                    profiles.Add(googled_url);
 				}

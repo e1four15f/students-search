@@ -40,7 +40,7 @@ namespace GUI
 
         private void ButtonFindEmails(object sender, RoutedEventArgs e)
         {
-            ConcurrentDictionary<Human, List<string>> emails = new ConcurrentDictionary<Human, List<string>>();
+            ConcurrentDictionary<Human, HashSet<string>> emails = new ConcurrentDictionary<Human, HashSet<string>>();
             HashSet<Human> result = new HashSet<Human>();
             foreach (Human user in users)
             {
@@ -56,16 +56,15 @@ namespace GUI
             }
             foreach (Human user in result)
             {
-                List<string> temp = new List<string>();
+                HashSet<string> temp = new HashSet<string>();
                 if (emails.TryGetValue(user, out temp)) { 
-                    user.emails = new List<string>(temp);
-
-                foreach (string s in temp)
-                    Console.WriteLine("ALL " + user.first_name + ": " + s);
-
-                temp.Clear();
+                	
+                	user.emails.UnionWith(new HashSet<string>(temp));
+                	temp.Clear();
                 }
             }
+            
+			Console.Beep();
         }
 
         private void ButtonMostLikelySites(object sender, RoutedEventArgs e)
@@ -87,14 +86,13 @@ namespace GUI
                 {
                 	if(temp.Count == 0)
                 		continue;
-                    user.sites = new HashSet<string>(temp);
-
-                    foreach (string s in temp)
-                        Console.WriteLine("ALL " + user.first_name + ": " + s);
-
+                	
+                	user.sites.UnionWith(new HashSet<string>(temp));
                     temp.Clear();
                 }
             }
+            
+			Console.Beep();
             return;
         }
         
@@ -138,14 +136,12 @@ namespace GUI
                 {
                 	if(temp.Count == 0)
                 		continue;
-                    user.sites = new HashSet<string>(temp);
-
-                    foreach (string s in temp)
-                        Console.WriteLine("ALL " + user.first_name + ": " + s);
-
+                	user.sites.UnionWith(new HashSet<string>(temp));
                     temp.Clear();
                 }
             }
+            
+			Console.Beep();
             return;
         }
         

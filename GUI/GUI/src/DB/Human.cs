@@ -23,7 +23,7 @@ namespace DB
     {
         public string mobile_phone { get; set; }
         public string home_phone { get; set; }
-        public List<string> emails { get; set; }
+        public HashSet<string> emails { get; set; }
     }
 
     public class Social
@@ -70,7 +70,7 @@ namespace DB
         [BsonIgnore]
         public string home_phone { get { return contacts.home_phone != null ? "Дом. " + contacts.home_phone : ""; } }
         [BsonIgnore]
-        public List<string> emails { get { return contacts.emails; } set { contacts.emails = value; } }
+        public HashSet<string> emails { get { return contacts.emails; } set { contacts.emails = value; } }
         public string email { get { return contacts.emails != null ? contacts.emails[0] : ""; } }
 
         public Social social { get; set; } // TODO // TODO Odnoklassniki
@@ -272,6 +272,17 @@ namespace DB
                     + university.faculty_name + " " 
                     + (university.graduation_year != 0 ? university.graduation_year.ToString() : "") + "\n";
             }   
+            
+            user_info += "\n-----\n";
+            foreach(string email in emails){
+            	user_info += "\n" + email;
+            }
+            
+            user_info += "\n~~~~~\n";
+            foreach(string site in sites){
+            	user_info += "\n" + site;
+            }
+            
             return user_info;
         }
         // TODO Пока простая проверка
