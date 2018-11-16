@@ -21,6 +21,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using RuntimePlugin_ns;
 using DB;
 
 namespace GUI
@@ -307,5 +308,25 @@ namespace GUI
                 }
             }
         }
+        
+        HashSet<RuntimePlugin> plugins = new HashSet<RuntimePlugin>();
+        
+        /* Создатели */
+        private void PluginLoad(object sender, RoutedEventArgs e)
+        {
+        	OpenFileDialog dialog = new OpenFileDialog();
+        	dialog.ShowDialog();
+        	if(dialog.FileName.Contains(".dll"))
+        		plugins.Add(new RuntimePlugin(dialog.FileName));
+        }
+        
+        private void LaunchPlugin(object sender, RoutedEventArgs e)
+        {
+        	List<Human> humans = selected_users.ToList();
+        	string returned = " ";
+        	if(plugins.Count != 0)
+        		plugins.ElementAt(0).Call(humans);
+        }
+        
     }
 }

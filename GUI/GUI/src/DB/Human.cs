@@ -71,7 +71,7 @@ namespace DB
         public string home_phone { get { return contacts.home_phone != null ? "Дом. " + contacts.home_phone : ""; } }
         [BsonIgnore]
         public HashSet<string> emails { get { return contacts.emails; } set { contacts.emails = value; } }
-        public string email { get { return contacts.emails != null ? contacts.emails[0] : ""; } }
+        public string email { get { return contacts.emails != null ? contacts.emails.ElementAt(0) : ""; } }
 
         public Social social { get; set; } // TODO // TODO Odnoklassniki
         [BsonIgnore]
@@ -166,7 +166,7 @@ namespace DB
             contacts.home_phone = user_data["home_phone"] != null && user_data["home_phone"].ToString().Length > 8
                 ? Regex.Replace(user_data["home_phone"].ToString(), @"\t|\n|\r", "") : null;
 
-            contacts.emails = new List<string>();
+            contacts.emails = new HashSet<string>();
             contacts.emails.Add(user_data["email"] != null ? user_data["email"].ToString() : null);
 
             social.instagram = user_data["instagram"] != null ? user_data["instagram"].ToString() : null;
