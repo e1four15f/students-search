@@ -13,15 +13,17 @@
         <Label Content="ВКонтакте" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="11,70,0,0" TextWrapping="Wrap" Text="ID приложения ВК" VerticalAlignment="Top" Width="195"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="11,100,0,0" TextWrapping="Wrap" Text="Сервисный ключ приложения ВК" VerticalAlignment="Top" Width="195"/>
+        <!--
         <TextBox HorizontalAlignment="Left" Height="23" Margin="11,130,0,0" TextWrapping="Wrap" Text="Логин ВК" VerticalAlignment="Top" Width="195"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="11,160,0,0" TextWrapping="Wrap" Text="Пароль ВК" VerticalAlignment="Top" Width="195"/>
-
+        -->
         <Label Content="Одноклассники" HorizontalAlignment="Left" Margin="210,40,0,0" VerticalAlignment="Top"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="211,70,0,0" TextWrapping="Wrap" Text="ID приложения OК" VerticalAlignment="Top" Width="195"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="211,100,0,0" TextWrapping="Wrap" Text="Сервисный ключ приложения OK" VerticalAlignment="Top" Width="195"/>
+        <!--
         <TextBox HorizontalAlignment="Left" Height="23" Margin="211,130,0,0" TextWrapping="Wrap" Text="Логин OК" VerticalAlignment="Top" Width="195"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="211,160,0,0" TextWrapping="Wrap" Text="Пароль OК" VerticalAlignment="Top" Width="195"/>
-
+        -->
         <Button Content="Изменить список ключевых слов для поиска локальных групп" HorizontalAlignment="Left" Margin="10,200,0,0" VerticalAlignment="Top" Width="395" Click="ButtonChangeLocalGroupsKeywords"/>
         <Button Content="Изменить список ключевых слов для поиска публичных групп" HorizontalAlignment="Left" Margin="10,225,0,0" VerticalAlignment="Top" Width="395" Click="ButtonChangePublicGroupsKeywords"/>
     </Grid>

@@ -5,28 +5,59 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Collections.Concurrent;
 using LiteDB;
 
 using GUI;
+using Utils;
 
 namespace DB
 {
-    class DatabaseAPI
+    public class DatabaseAPI
     {
         public static readonly string DEFAULT_DB = "data/liteDB.ldb";
 
         private string connStr;
 
-        public DatabaseAPI(string connStr)
-        {
-            this.connStr = connStr;
+        public bool corrupted;
 
+        private bool loaded = false;
+        public bool Loaded { get { return loaded; } }
+
+        public void saveDB(string connStr)
+        {
+            File.Delete(connStr);
+            this.connStr = connStr;
             using (var db = new LiteDatabase(connStr))
             {
                 if (!db.CollectionExists("users"))
-                {
+                { 
                     db.GetCollection("users");
+                }
+            }
+        }
+       
+        public void loadDB(string connStr)
+        {
+            this.connStr = connStr;
+            using (var db = new LiteDatabase(connStr))
+            {
+                // TODO Если юзер пытается загрузить пустую или испорченную бд
+                try
+                {
+                    if (!db.CollectionExists("users"))
+                    {
+                        db.GetCollection("users");
+                        corrupted = false;
+                    }
+                    loaded = true;
+                }
+                catch (NullReferenceException)
+                {
+                    Console.WriteLine(this.ToString() + ": Испорченная база данных");
+                    MessageBox.Show("Невозможно загрузить базу данных!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    corrupted = true;
                 }
             }
         }
@@ -77,6 +108,7 @@ namespace DB
                 coll.EnsureIndex(p => p.first_name);
                 coll.EnsureIndex(p => p.last_name);
                 coll.EnsureIndex(p => p.sex);
+                //coll.EnsureIndex(p => p.universities[0].faculty_id);
 
                 List<Query> queries = new List<Query>();
 
@@ -94,20 +126,22 @@ namespace DB
                 if (request.ManSex.IsChecked.Value && !request.FemaleSex.IsChecked.Value)
                 {
                     queries.Add(Query.EQ("sex", true));
-                } 
+                }
                 else if (!request.ManSex.IsChecked.Value && request.FemaleSex.IsChecked.Value)
                 {
                     queries.Add(Query.EQ("sex", false));
                 }
                 // Faculty name criteria
-                if (request.FacultyName.Text.Length > 0)
+                var faculName = (MakeRequest.Faculty)request.FacultyName.SelectedItem;
+                if (faculName != null && faculName.Value != -1)
                 {
-                    queries.Add(Query.Contains("LOWER($.universities[*].faculty_name)", request.FacultyName.Text.ToLower()));
+                    queries.Add(Query.EQ("universities[0].faculty_id)", faculName.Value));
                 }
                 // Chair name criteria
-                if (request.ChairName.Text.Length > 0)
+                var chairName = (MakeRequest.Chair)request.ChairName.SelectedItem;
+                if (chairName != null && chairName.Value != -1)
                 {
-                    queries.Add(Query.Contains("LOWER($.universities[*].chair_name)", request.ChairName.Text.ToLower()));
+                    queries.Add(Query.EQ("universities[0].chair_id)", chairName.Value));
                 }
                 // Chair name criteria
                 if (request.ChairName.Text.Length > 0)
@@ -120,20 +154,26 @@ namespace DB
                     queries.Add(Query.EQ("universities[0].graduation_year", int.Parse(request.GraduationYear.Text)));
                 }
 
-                IEnumerable<Human> result = (queries.Count > 1) ? 
-                    coll.Find(Query.And(queries.ToArray())) : 
-                    coll.Find(queries[0]);        
+                // Empty request
+                if (queries.Count < 1)
+                {
+                    return getAllUsers();
+                }
+
+                IEnumerable<Human> result = (queries.Count > 1) ?
+                    coll.Find(Query.And(queries.ToArray())) :
+                    coll.Find(queries[0]);
 
                 return result.ToList();
             }
         }
-        
+
         // Subinfo methods
         public FileInfo getDBFileInfo()
         {
             return new FileInfo(connStr);
         }
-
+        /*
         public long getUserCount(string collName = "users")
         {
             using (var db = new LiteDatabase(connStr))
@@ -141,5 +181,6 @@ namespace DB
                 return db.GetCollection(collName).Count();
             }
         }
+         * */
     }
 }

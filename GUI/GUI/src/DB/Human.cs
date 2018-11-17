@@ -7,6 +7,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using LiteDB;
 
+using Utils;
+
 namespace DB
 {
     // TODO Нужно ли в структурах хранить и id, и название?
@@ -98,7 +100,7 @@ namespace DB
         public string photo_100 { get; set; }
         public string arrived_from { get; set; }
 
-        public int plausibility { get; set; }
+        public int plausibility;
 
         public Human()
         {
@@ -225,10 +227,25 @@ namespace DB
             universities.Add(university);
         }
 
-        // TODO quick math
-        public int CalcPlausibility()
+        //если внести graduation_year в Human, то надо убрать передачу аргумента
+        public int CalcPlausibility(DateTime graduation)
         {
-            return 100;
+            plausibility = 0;
+
+            if (AnalyzeData.IsPresent(last_name, first_name, bdate, graduation, ref plausibility));
+
+            if (city.city_title.ToLower().Equals("зеленоград"))
+                plausibility += 2;
+            else if (city.city_title.ToLower().Equals("москва"))
+                plausibility++;
+
+            //TODO пусть дефолтным будет миэт, тогда, думаю, graduation_year нужно будет из него вынести
+            if (universities.Contains(default(University)))
+                plausibility += 20;
+            else
+                plausibility -= 2;
+
+            return plausibility;
         }
 
         public override string ToString()
