@@ -105,6 +105,7 @@ namespace DB
 
         public HashSet<string> sites {get; set; }
 
+        public HashSet<Human> friends{get; set;}
         // Дефолтный конструктор нужен для бд
         public Human()
         {
@@ -235,11 +236,12 @@ namespace DB
         }
 
         //если внести graduation_year в Human, то надо убрать передачу аргумента
-        public int CalcPlausibility(DateTime graduation)
+        public int CalcPlausibility()
         {
             plausibility = 0;
 
-            if (AnalyzeData.IsPresent(last_name, first_name, bdate, graduation, ref plausibility));
+            if (AnalyzeData.CheckAge(bdate,	DateTime.Parse(graduation_year)))
+            	plausibility++;
 
             if (city.city_title.ToLower().Equals("зеленоград"))
                 plausibility += 2;
@@ -251,6 +253,12 @@ namespace DB
                 plausibility += 20;
             else
                 plausibility -= 2;
+            
+            if(AnalyzeData.CheckFriends(friends))
+            	plausibility += 4;
+            
+            if(AnalyzeData.CheckArrival(arrived_from))
+            	plausibility += 3;
 
             return plausibility;
         }

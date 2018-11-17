@@ -24,19 +24,27 @@ namespace Utils
 	abstract class AnalyzeData
 	{
 		
-		public static bool IsPresent(string surname, string name, DateTime bday, DateTime graduation, ref int plausibility){
-			//TODO сделать проверку имени и фамилии
-			
-			if(CheckAge(bday,graduation))
-					plausibility += 5;
-			
-			return true;
-		}
-		
 		public static bool CheckAge(DateTime bday, DateTime graduation){
 			if(!bday.Equals(default(DateTime)) && !graduation.Equals(default(DateTime)))
 				if(graduation.Year - bday.Year < 20)
 					return true;
+			return false;
+		}
+		
+		public static bool CheckFriends(HashSet<Human> friends){
+			int count = 0;
+			foreach(Human friend in friends){
+				if(friend.plausibility > 10)
+					count++;
+				if(count > 5)
+					return true;
+			}
+			return false;
+		}
+		
+		public static bool CheckArrival(string arrival){
+			//TODO вставить проверку через апи/веб_клиент, что паблик, из которого он пришел, относится к миэту
+			
 			return false;
 		}
 		

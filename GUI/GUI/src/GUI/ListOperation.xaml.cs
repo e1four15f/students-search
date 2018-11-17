@@ -59,7 +59,12 @@ namespace GUI
                 HashSet<string> temp = new HashSet<string>();
                 if (emails.TryGetValue(user, out temp)) { 
                 	
-                	user.emails.UnionWith(new HashSet<string>(temp));
+                	
+                	if(user.emails != null)
+                		user.emails.UnionWith(new HashSet<string>(temp));
+                	else
+                		user.emails = new HashSet<string>(temp);
+                		
                 	temp.Clear();
                 }
             }
@@ -87,7 +92,10 @@ namespace GUI
                 	if(temp.Count == 0)
                 		continue;
                 	
-                	user.sites.UnionWith(new HashSet<string>(temp));
+                	if(user.sites != null)
+                		user.sites.UnionWith(new HashSet<string>(temp));
+                	else
+                		user.sites = new HashSet<string>(temp);
                     temp.Clear();
                 }
             }
@@ -136,7 +144,11 @@ namespace GUI
                 {
                 	if(temp.Count == 0)
                 		continue;
-                	user.sites.UnionWith(new HashSet<string>(temp));
+                	
+                	if(user.sites != null)
+                		user.sites.UnionWith(new HashSet<string>(temp));
+                	else
+                		user.sites = new HashSet<string>(temp);
                     temp.Clear();
                 }
             }
@@ -145,5 +157,11 @@ namespace GUI
             return;
         }
         
+        private void ButtonComputePlausibility(object sender, RoutedEventArgs e)
+        {
+        	foreach(Human user in users){
+        		user.CalcPlausibility();
+        	}
+        }
     }
 }

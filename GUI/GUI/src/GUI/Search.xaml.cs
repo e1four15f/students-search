@@ -76,7 +76,7 @@ namespace GUI
                 ResponseListBox.SetValue(ScrollViewer.CanContentScrollProperty, true);
             }
 
-            ResponseInfo.Content = "Найденно " + response_users.Count + " пользователей";
+            ResponseInfo.Content = "Найдено " + response_users.Count + " пользователей";
             ResponseListBox.ItemsSource = response_users;
         }
 
