@@ -12,7 +12,7 @@
             <DockPanel>
                 <TextBlock HorizontalAlignment="Center"> 
                     <Hyperlink NavigateUri="" RequestNavigate="HyperlinkRequestNavigate" TextDecorations="None">  
-                        <Image Width="32" Height="32" Margin="2,0" Source="/GUI;component/img/vk_logo.png"/>
+                        <Image Width="32" Height="32" Margin="2,0" Source="/GUI;component/resources/img/vk_logo.png"/>
                     </Hyperlink>
                 </TextBlock>
                 <TextBox Name="Token" FontSize="16" Width="200" Height="24"/>

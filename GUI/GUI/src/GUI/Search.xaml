@@ -269,13 +269,8 @@
                                     </Hyperlink>
                                 </TextBlock>
                             </DockPanel>
-                            <CheckBox Margin="0,3,0,0" Opacity="0.9"/>
-                            <!--Checked="IsSelectedCheckboxChange" IsChecked="{Binding isSelected}" Unchecked="IsSelectedCheckboxChange"
-                                <Grid>
-                                    
-                                     
-                                              />
-                                </Grid> -->
+                            <!-- TODO Доделать чекбоксы -->
+                            <CheckBox Height="15" Width="15" Margin="-748,-90,0,0" Opacity="0.9" Checked="IsSelectedCheckboxChange" Unchecked="IsSelectedCheckboxChange"/>
                         </Grid>
                     </Border>
                 </DataTemplate>

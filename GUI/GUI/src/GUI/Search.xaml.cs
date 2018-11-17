@@ -327,6 +327,12 @@ namespace GUI
         	if(plugins.Count != 0)
         		plugins.ElementAt(0).Call(humans);
         }
+
+        /* Обработчик чекбоксов */
+        private void IsSelectedCheckboxChange(object sender, RoutedEventArgs e)
+        {
+
+        }
         
     }
 }

@@ -138,7 +138,7 @@ namespace WebApi
         }
 
         /* Метод позволяющий произвести поиск людей по параметрам
-           Возвращает лист int с id найденных пользователей */
+           Возвращает лист string с id найденных пользователей */
         internal static List<string> UsersSearch(string q = "", short count = 1000, short age = 0, byte sex = 0)
         {
             Dictionary<string, string> parameters = new Dictionary<string, string>()
@@ -175,6 +175,45 @@ namespace WebApi
             }
 
             return user_ids;
+        }
+
+        /* Метод выдает друзей заданного пользователя
+           Возвращает лист string с id найденных пользователей */
+        internal static List<string> FriendsGet(string user_id)
+        {
+            Dictionary<string, string> parameters = new Dictionary<string, string>()
+            {
+                { "user_id", user_id },
+                { "count", "500" }
+            };
+            JObject data;
+            try
+            {
+                data = VkApiUtils.MethodRequest("friends.get", parameters, VkApiUtils.service_key);
+            }
+            catch (Exception e)
+            {
+                if (e.Data.Keys.Cast<short>().Single() == 6)
+                {
+                    return FriendsGet(user_id);
+                }
+                if (e.Data.Keys.Cast<short>().Single() == 15)
+                {
+                    return new List<string>();
+                }
+                else
+                {
+                    throw e;
+                }
+            }
+
+            List<string> friends_ids = new List<string>();
+            foreach (JToken user in data["response"]["items"])
+            {
+                friends_ids.Add(user.ToString());
+            }
+
+            return friends_ids;
         }
     }
 }

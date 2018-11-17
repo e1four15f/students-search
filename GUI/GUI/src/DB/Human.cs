@@ -103,6 +103,10 @@ namespace DB
 
         public int plausibility;
 
+        // Поля для чекбоксов
+        [BsonIgnore]
+        public bool isSelected { get; set; }
+
         public HashSet<string> sites {get; set; }
 
         public HashSet<Human> friends{get; set;}

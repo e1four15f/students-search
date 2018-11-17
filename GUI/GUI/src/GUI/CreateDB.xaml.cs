@@ -55,12 +55,34 @@ namespace GUI
                 loading_thread.Start();
 
                 new DBCreator().Create(save_file_dialog.FileName,
-                    LocalGroups.IsChecked.Value, PublicGroups.IsChecked.Value, Search.IsChecked.Value);
+                    LocalGroups.IsChecked.Value, PublicGroups.IsChecked.Value, Search.IsChecked.Value, Friends.IsChecked.Value);
                 
                 loading_thread.Abort();
             }
             MessageBox.Show("Создание базы данных закончено!", "Info", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             this.Close();
+        }
+
+        private void CheckboxChange(object sender, RoutedEventArgs e)
+        {
+            if (!LocalGroups.IsChecked.Value && !PublicGroups.IsChecked.Value && !Search.IsChecked.Value)
+            {
+                Friends.IsEnabled = false;
+                Friends.IsChecked = false;
+            }
+            else
+            {
+                Friends.IsEnabled = true;
+            }
+
+        }
+
+        private void Temp(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog save_file_dialog = new SaveFileDialog();
+            save_file_dialog.Filter = "Text files (*.ldb)|*.ldb|All files (*.*)|*.*";
+            save_file_dialog.ShowDialog();
+            new DBCreator().Create(save_file_dialog.FileName);
         }
     }
 }
