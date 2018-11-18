@@ -1,6 +1,4 @@
 ﻿using Microsoft.Win32;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,21 +6,14 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 using RuntimePlugin_ns;
 using DB;
+using System.Configuration;
 
 namespace GUI
 {
@@ -44,6 +35,8 @@ namespace GUI
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
 
+            MessageInfo.Content = "Загружена бд " + Path.GetFileNameWithoutExtension(MainWindow.db_name);
+
             if (selected_users == null)
             {
                 this.selected_users = new ObservableCollection<Human>();
@@ -58,6 +51,12 @@ namespace GUI
 
             saved = true;
             this.Title = current_file;
+        }
+
+        private void ShowMessage(string message)
+        {
+
+            //MessageInfo.Content = "Загружена бд " + connStr;
         }
 
         // TODO Разобраться с ошибкой ArgumentOutOfRange
@@ -141,9 +140,11 @@ namespace GUI
                         this.Title += "*";
                     }
                     saved = false;
+                    MessageInfo.Content = "";
                 }
                 else
                 {
+                    MessageInfo.Content = "Данный пользователь уже находится в списке";
                     Console.WriteLine("Данный пользователь уже находится в списке");
                 }
             }
@@ -198,7 +199,7 @@ namespace GUI
         {
             Console.WriteLine(this.ToString() + ": Подробная информация");
             try
-            { 
+            {
                 MessageBox.Show(SelectedHuman.ToString());
             } 
             catch (NullReferenceException ex)
@@ -276,6 +277,8 @@ namespace GUI
         {
             MenuController.LoadDB(this);
             UpdateResponse(MainWindow.db_users);
+            string connStr = ConfigurationManager.AppSettings.Get("db_destination");
+            MessageInfo.Content = "Загружена бд " + Path.GetFileNameWithoutExtension(connStr);    
         }
 
         /* Информация о БД */
@@ -323,7 +326,7 @@ namespace GUI
         private void LaunchPlugin(object sender, RoutedEventArgs e)
         {
         	List<Human> humans = selected_users.ToList();
-        	string returned = " ";
+        	//string returned = " ";
         	if(plugins.Count != 0)
         		plugins.ElementAt(0).Call(humans);
         }

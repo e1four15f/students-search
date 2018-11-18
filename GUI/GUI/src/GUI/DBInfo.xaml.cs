@@ -12,8 +12,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Configuration;
+using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
 
 using DB;
+using WebApi;
 
 namespace GUI
 {
@@ -32,6 +36,7 @@ namespace GUI
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
+
             if (MainWindow.db == null || MainWindow.db_users.Count == 0) 
             {
                 DateOfCreation.Content = "База данных не загружена!";
@@ -52,6 +57,5 @@ namespace GUI
                 SizeInMb.Content = "Размер БД: " + db_size_in_mb + " мб";
             }
         }
-        
     }
 }

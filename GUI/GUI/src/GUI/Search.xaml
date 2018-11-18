@@ -183,11 +183,14 @@
         </ListView>
 -->
         <!-- Результат поиска SelectionMode="Multiple" -->
-        <Label Content="Результат поиска" HorizontalAlignment="Left" Margin="230,20,0,0" VerticalAlignment="Top"/>
-        <Label Name="ResponseInfo" HorizontalAlignment="Left" Margin="340,20,0,0" VerticalAlignment="Top"/>
+        <DockPanel Margin="220,20,0,0" Width="790">
+            <Label Content="Результат поиска" HorizontalAlignment="Left"/>
+            <Label Name="ResponseInfo" HorizontalAlignment="Left"/>
+            <Label Name="MessageInfo" HorizontalAlignment="Right" Foreground="Red"/>
+        </DockPanel>
         <ListBox Name="ResponseListBox" 
                  SelectedItem="{Binding SelectedHuman, RelativeSource={RelativeSource AncestorType=Window}}"  
-                 Margin="230,45,10,35" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                 Margin="230,45,10,35" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Border BorderThickness="0,0,0,1" BorderBrush="LightGray">
@@ -271,6 +274,11 @@
                             </DockPanel>
                             <!-- TODO Доделать чекбоксы -->
                             <CheckBox Height="15" Width="15" Margin="-748,-90,0,0" Opacity="0.9" Checked="IsSelectedCheckboxChange" Unchecked="IsSelectedCheckboxChange"/>
+                            <!-- Кружки с плюсабилити -->
+                            <Canvas>
+                                <Ellipse Fill="{Binding plausibility_color}" Height="10" Width="10" Opacity="0.9" Margin="88,5,0,0" StrokeThickness="1" Stroke="#000"/>
+                            </Canvas>
+                            
                         </Grid>
                     </Border>
                 </DataTemplate>

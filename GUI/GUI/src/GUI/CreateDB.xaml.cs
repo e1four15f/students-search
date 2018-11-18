@@ -11,12 +11,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
-using WebApi;
-using DB;
 using Microsoft.Win32;
 using System.IO;
 using System.Threading;
+
+using Newtonsoft.Json.Linq;
+
+using WebApi;
+using DB;
 
 namespace GUI
 {
@@ -29,6 +31,11 @@ namespace GUI
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
+
+            if (MainWindow.db_users.Count() == 0)
+            {
+                UpdateDB.Visibility = Visibility.Collapsed;
+            }
         }
 
         // TODO Выводить информацию на экран
@@ -44,7 +51,7 @@ namespace GUI
             }
 
             SaveFileDialog save_file_dialog = new SaveFileDialog();
-            save_file_dialog.Filter = "Text files (*.ldb)|*.ldb|All files (*.*)|*.*";
+            save_file_dialog.Filter = "Database files (*.ldb)|*.ldb|All files (*.*)|*.*";
             save_file_dialog.ShowDialog();
             if (save_file_dialog.FileName != "")
             {
@@ -59,7 +66,7 @@ namespace GUI
                 
                 loading_thread.Abort();
             }
-            MessageBox.Show("Создание базы данных закончено!", "Info", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+            MessageBox.Show("Создание базы данных завершено!", "Info", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             this.Close();
         }
 
@@ -77,12 +84,53 @@ namespace GUI
 
         }
 
-        private void Temp(object sender, RoutedEventArgs e)
+        private void ButtonUpdateDB(object sender, RoutedEventArgs e)
         {
+            Console.WriteLine(sender.ToString() + ": Обновить бд");
             SaveFileDialog save_file_dialog = new SaveFileDialog();
-            save_file_dialog.Filter = "Text files (*.ldb)|*.ldb|All files (*.*)|*.*";
+
+            save_file_dialog.Filter = "Database files (*.ldb)|*.ldb|All files (*.*)|*.*";
             save_file_dialog.ShowDialog();
-            new DBCreator().Create(save_file_dialog.FileName);
+
+            if (save_file_dialog.FileName.Count() != 0)
+            {
+                List<string> users_ids = new List<string>();
+
+                // Получаем id пользователей из исходной бд
+                Console.WriteLine("Before : " + MainWindow.db_users.Count());
+                foreach (Human user in MainWindow.db_users)
+                {
+                    users_ids.Add(user.vk_id.ToString());
+                }
+                Console.WriteLine("After : " + users_ids.Count());
+
+                // Получаем новую информацию через vk api
+                JArray users_data = VkApiMulti.UsersGet(users_ids, VkApiUtils.fields, "Update");
+
+                // Парсим json в Human
+                List<Human> users = new List<Human>();
+                Parallel.ForEach(users_data, user_data =>
+                {
+                    lock (users)
+                    {
+                        users.Add(new Human(user_data));
+                    }
+                });
+
+                // Сохраняем данные в бд
+                MainWindow.db = new DatabaseAPI();
+                MainWindow.db.saveDB(save_file_dialog.FileName);
+                MainWindow.db.addUsers(users);
+                MainWindow.db_users = MainWindow.db.getAllUsers();
+
+                MessageBox.Show("Обновление базы данных завершено!", "Info", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                Console.WriteLine(sender.ToString() + ": Обнавлена бд: " + save_file_dialog.FileName);
+                this.Close();
+            }
+            else
+            {
+                Console.WriteLine(sender.ToString() + ": Отмена обновления бд");
+            }
         }
     }
 }

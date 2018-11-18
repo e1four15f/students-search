@@ -4,6 +4,17 @@
         Title="Авторизация" 
         ResizeMode="NoResize"
         Height="210" Width="300">
+    
+    <Window.Resources>
+        <RoutedUICommand x:Key="ButtonAuth"/>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource ButtonAuth}" Executed="ButtonAuth"/>
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Key="Enter" Command="{Binding Source={StaticResource ButtonAuth}}"/>
+    </Window.InputBindings>
+    
     <Grid>
         <StackPanel Margin="15,15">
             <Label Height="40" Name="Result" Content="Для работы необходимо авторизоваться!" HorizontalAlignment="Center" FontWeight="Bold"/>

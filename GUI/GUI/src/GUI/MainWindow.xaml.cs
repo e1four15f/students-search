@@ -12,11 +12,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.ComponentModel;
+using System.Configuration;
+using System.IO;
 
 using WebApi;
 using DB;
-using System.ComponentModel;
 
 namespace GUI
 {
@@ -28,6 +29,7 @@ namespace GUI
         private bool auth;
         public static DatabaseAPI db;
         public static List<Human> db_users;
+        public static string db_name;
 
         public MainWindow()
         {
@@ -37,14 +39,23 @@ namespace GUI
             auth = false;
             db = new DatabaseAPI();
             db_users = new List<Human>();
+
+            // Загрузка бд с прошлого сеанса
+            string connStr = ConfigurationManager.AppSettings.Get("db_destination");
+            if (MainWindow.db_users.Count() == 0 && File.Exists(connStr))
+            {
+                MainWindow.db.loadDB(connStr);
+                db_name = Path.GetFileNameWithoutExtension(connStr);
+            }
         }
-        // TODO Иногда программа не выходит 
-        /*
+
+        // TODO Иногда программа не выходит, с таким решением долго выходит
         protected override void OnClosing(CancelEventArgs e)
         {
-            Application.Current.Shutdown();
+            //Application.Current.Shutdown();
+            this.Hide();
+            Environment.Exit(0);
         }
-        */
 
         /* Кнопки */
         /* Формирует бд */

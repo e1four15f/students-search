@@ -24,9 +24,9 @@ namespace Utils
 	abstract class AnalyzeData
 	{
 		
-		public static bool CheckAge(DateTime bday, DateTime graduation){
-			if(!bday.Equals(default(DateTime)) && !graduation.Equals(default(DateTime)))
-				if(graduation.Year - bday.Year < 20)
+		public static bool CheckAge(int bday_year, int graduation_year){
+            if (!bday_year.Equals(default(DateTime)) && !graduation_year.Equals(default(DateTime)))
+                if (graduation_year - bday_year < 20)
 					return true;
 			return false;
 		}
@@ -115,7 +115,7 @@ namespace Utils
 					if(human.twitter != null)
 						html.Add(System.Text.Encoding.UTF8.GetString(client.DownloadData(sites[i] + human.twitter)).ToLower());
 				}
-				catch(Exception e){
+				catch(Exception){
 					continue;
 				}
 				
@@ -188,7 +188,7 @@ namespace Utils
 			WebClient client = new WebClient();
 			
 			/*строка, скачиваемая WebClient*/
-			string html;
+			//string html;
 			
 			/*дефолтные провайдеры почты*/
 			Tuple<string,string>[] providers = {	new Tuple<string,string>("@yandex.ru","mx.yandex.ru"),
@@ -220,7 +220,7 @@ namespace Utils
 			try{
 				telnet = new TelnetConnection(provider,25);
 			}
-			catch(Exception e){
+			catch(Exception){
 				return false;
 			}
 			
@@ -242,7 +242,7 @@ namespace Utils
 				telnet.WriteLine("quit");
 				telnet.Read();
 			}
-			catch(Exception e){
+			catch(Exception){
 				return false;
 			}
 			/*250 - адресат есть, 550 - нет*/
@@ -281,7 +281,7 @@ namespace Utils
 			try{
 				html =  System.Text.Encoding.UTF8.GetString(client.DownloadData(query + nickname)).ToLower();//client.DownloadString(query + nickname).ToLower(); //
 			}
-			catch(Exception e){
+			catch(Exception){
 				html = null;
 			}
         	
@@ -324,7 +324,7 @@ namespace Utils
 			try{
             	html = System.Text.Encoding.UTF8.GetString(client.DownloadData(query + nickname)).ToLower(); //client.DownloadString(query + nickname).ToLower();;
 				}
-			catch(Exception e){
+			catch(Exception){
 				html = null;
 			}
             
@@ -364,7 +364,7 @@ namespace Utils
 			try{
             	html =  System.Text.Encoding.UTF8.GetString(client.DownloadData(query + nickname)).ToLower(); //System.Text.Encoding.UTF8.GetString(client.DownloadData(google + nickname)).ToLower();
 			}
-			catch(Exception e){
+			catch(Exception){
 				html = null;
 			}
         	if(html == null){
@@ -406,7 +406,7 @@ namespace Utils
 			try{
 				html =  client.DownloadString(query + nickname).ToLower(); //System.Text.Encoding.UTF8.GetString(client.DownloadData(query + nickname)).ToLower();
 			}
-			catch(Exception e){
+			catch(Exception){
 				html = null;
 			}
         	if(html == null){
@@ -518,7 +518,7 @@ namespace Utils
 						//<br> будет заменен на ;
 						return isolated.Replace("<br>", ";");
 					}
-					catch(Exception e){
+					catch(Exception){
 						return null;
 					}
 			};
@@ -530,7 +530,7 @@ namespace Utils
 				//и скипаем данные до контактов
 				html = html.Substring(html.IndexOf(filter2contacts));
 			}
-			catch(Exception e){
+			catch(Exception){
 				return null;
 			}
 			
@@ -539,7 +539,7 @@ namespace Utils
 				cycles = html.Substring(html.IndexOf(filter2count.Item1) + filter2count.Item1.Length);
 				cycles = cycles.Substring(0,cycles.IndexOf(filter2count.Item2));
 			}
-			catch(Exception e){
+			catch(Exception){
 				return null;
 			}
 			
@@ -553,7 +553,7 @@ namespace Utils
 				try{
 					html = html.Substring(html.IndexOf(filter_person));
 				}
-				catch(Exception e){				
+				catch(Exception){				
 					continue;
 				}
 				contact.id				= isolate(filter_id.Item1, filter_id.Item2, ref html);

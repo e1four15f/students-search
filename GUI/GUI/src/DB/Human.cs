@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using LiteDB;
 
 using Utils;
+using System.Reflection;
 
 namespace DB
 {
@@ -24,6 +25,7 @@ namespace DB
         public string mobile_phone { get; set; }
         public string home_phone { get; set; }
         public HashSet<string> emails { get; set; }
+        public HashSet<string> sites { get; set; }
     }
 
     public class Social
@@ -49,7 +51,8 @@ namespace DB
     public class Human
     {
         public ObjectId _id { get; set; }
-        public int id; // TODO Если будет несколько сетей, то можно запутаться в ID
+        // TODO пришлось переименовать, litedb почему-то скипал и оставлял дефолтное значение 
+        public int vk_id { get; set; } 
         public string first_name { get; set; }
         public string last_name { get; set; }
         public bool sex { get; set; }
@@ -70,7 +73,6 @@ namespace DB
         [BsonIgnore]
         public string home_phone { get { return contacts.home_phone != null ? "Дом. " + contacts.home_phone : ""; } }
         [BsonIgnore]
-        public HashSet<string> emails { get { return contacts.emails; } set { contacts.emails = value; } }
         public string email { get { return contacts.emails != null ? contacts.emails.ElementAt(0) : ""; } }
 
         public Social social { get; set; } // TODO // TODO Odnoklassniki
@@ -100,42 +102,37 @@ namespace DB
 
         public string photo_100 { get; set; }
         public string arrived_from { get; set; }
+        public int plausibility { get; set; }
 
-        public int plausibility;
+        [BsonIgnore]
+        public string plausibility_color { get { return "#" + ((int)(6.375 * (40 - plausibility))).ToString("X2") + ((int)(6.375 * plausibility)).ToString("X2") + "00"; } }
 
         // Поля для чекбоксов
         [BsonIgnore]
         public bool isSelected { get; set; }
-
-        public HashSet<string> sites {get; set; }
-
-        public HashSet<Human> friends{get; set;}
+        
+        [BsonIgnore]
+        public HashSet<Human> friends { get; set; }
         // Дефолтный конструктор нужен для бд
         public Human()
         {
-            id = 0;
+            vk_id = 0;
             first_name = null;
             last_name = null;
             sex = false;
             domain = null;
             bdate = new DateTime();
-
             city = new City();
-
-
             contacts = new Contacts();
-
             social = new Social();
-
             photo_100 = null;
             arrived_from = null;
-
             plausibility = 0;
         }
 
         public Human(JToken user_data)
         {
-            id = (int) user_data["id"];
+            vk_id = (int) user_data["id"];
             first_name = user_data["first_name"].ToString();
             last_name = user_data["last_name"].ToString();
             sex = (int) user_data["sex"] == 2 ? true : false;
@@ -174,6 +171,8 @@ namespace DB
             contacts.emails = new HashSet<string>();
             contacts.emails.Add(user_data["email"] != null ? user_data["email"].ToString() : null);
 
+            contacts.sites = new HashSet<string>();
+
             social.instagram = user_data["instagram"] != null ? user_data["instagram"].ToString() : null;
             social.skype = user_data["skype"] != null ? user_data["skype"].ToString() : null;
             social.facebook = user_data["facebook"] != null ? user_data["facebook"].ToString() : null;
@@ -209,6 +208,8 @@ namespace DB
             }
 
             arrived_from = user_data["arrived_from"].ToString();
+            // Вычисляем плюсабилити 
+            CalcPlausibility();
         }
 
         private void AddUniversity(JToken university_data)
@@ -244,39 +245,101 @@ namespace DB
         {
             plausibility = 0;
 
-            if (AnalyzeData.CheckAge(bdate,	DateTime.Parse(graduation_year)))
-            	plausibility++;
+            if (universities.Any())
+            { 
+                foreach (University university in universities)
+                {
+                    if (university.graduation_year != 0 && AnalyzeData.CheckAge(bdate.Year, university.graduation_year))
+            	        plausibility += 2;
+                    
+                    if (university.university_id == 241)
+                    {
+                        plausibility += 15;
 
-            if (city.city_title.ToLower().Equals("зеленоград"))
+                        if (university.faculty_id != 0)
+                            plausibility += 3;
+
+                        if (university.chair_id != 0)
+                            plausibility += 3;
+
+                        break;
+                    }
+                    else
+                    {
+                        plausibility -= 8;
+                 
+                        if (university.faculty_id != 0)
+                            plausibility++;
+
+                        if (university.chair_id != 0)
+                            plausibility++;
+                    }
+                }
+            }
+            
+            if (!String.IsNullOrEmpty(social.twitter))
                 plausibility += 2;
-            else if (city.city_title.ToLower().Equals("москва"))
+            else
+                plausibility--;
+
+            if (!String.IsNullOrEmpty(social.skype))
+                plausibility += 2;
+            else
+                plausibility--;
+
+            if (!String.IsNullOrEmpty(social.livejournal))
+                plausibility += 2;
+            else
+                plausibility--;
+
+            if (!String.IsNullOrEmpty(social.instagram))
+                plausibility += 2;
+            else
+                plausibility--;
+
+            if (!String.IsNullOrEmpty(social.facebook))
+                plausibility += 2;
+            else
+                plausibility--;
+            
+            if (city.city_id == 1463)
+                plausibility += 4;
+            else if (city.city_id == 1)
+                plausibility++;
+            else
+                plausibility -= 3;
+            
+            if (contacts.mobile_phone != null)
+                plausibility++;
+            if (contacts.home_phone != null)
                 plausibility++;
 
-            //TODO пусть дефолтным будет миэт, тогда, думаю, graduation_year нужно будет из него вынести
-            if (universities.Contains(default(University)))
-                plausibility += 20;
-            else
-                plausibility -= 2;
+            if (bdate.Year != DateTime.MinValue.Year)
+                plausibility++;
             
-            if(AnalyzeData.CheckFriends(friends))
-            	plausibility += 4;
+            //if(AnalyzeData.CheckFriends(friends))
+            //	plausibility += 4;
             
-            if(AnalyzeData.CheckArrival(arrived_from))
-            	plausibility += 3;
+            //if(AnalyzeData.CheckArrival(arrived_from))
+            //	plausibility += 3;
 
+            if (plausibility > 40)
+                plausibility = 40;
+            if (plausibility < 0)
+                plausibility = 0;
             return plausibility;
         }
 
         public override string ToString()
         {
-            string user_info = domain + " " + first_name + " " + last_name + " " + (sex ? "Муж" : "Жен") + " " + bdate.ToShortDateString() + " " + city.city_title + " " + arrived_from + "\n"
+            string user_info = vk_id + " " + first_name + " " + last_name + " " + (sex ? "Муж" : "Жен") + " " + bdate.ToShortDateString() + " " + city.city_title + " " + arrived_from + "\n"
                 + (contacts.mobile_phone != null ? " Моб.телефон:" + contacts.mobile_phone : "") + (contacts.home_phone != null ? " Дом.телефон:" + contacts.home_phone : "")
                 + (social.instagram != null ? " instagram:" + social.instagram : "")
                 + (social.skype != null ? " skype:" + social.skype : "")
                 + (social.facebook != null ? " facebook:" + social.facebook : "")
                 + (social.livejournal != null ? " livejournal:" + social.livejournal : "")
                 + (social.twitter != null ? " twitter:" + social.twitter : "")
-                + "\n" + _id + "\n";
+                + "\n" + _id + "\nplausibility " + plausibility + "\n";
 
             foreach (University university in universities)
             {
@@ -286,34 +349,31 @@ namespace DB
             }   
             
             user_info += "\n-----\n";
-            foreach(string email in emails){
+            foreach (string email in contacts.emails)
+            {
             	user_info += "\n" + email;
             }
             
             user_info += "\n~~~~~\n";
-            foreach(string site in sites){
+            foreach (string site in contacts.sites)
+            {
             	user_info += "\n" + site;
             }
             
             return user_info;
         }
-        // TODO Пока простая проверка
-        //public bool Equals(Human user)
-        //{
-        //    //Human user = (Human)obj;
-        //    return id == user.id && first_name == user.first_name && last_name == user.last_name;
-        //}
 
+        // TODO Пока простая проверка
         public static bool operator ==(Human user1, Human user2)
         {
-            return user1.id == user2.id
+            return user1.vk_id == user2.vk_id
                 && user1.first_name == user2.first_name
                 && user1.last_name == user2.last_name;
         }
 
         public static bool operator !=(Human user1, Human user2)
         {
-            return user1.id != user2.id
+            return user1.vk_id != user2.vk_id
                || user1.first_name != user2.first_name
                || user1.last_name != user2.last_name;
         }

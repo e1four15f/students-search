@@ -60,10 +60,10 @@ namespace GUI
                 if (emails.TryGetValue(user, out temp)) { 
                 	
                 	
-                	if(user.emails != null)
-                		user.emails.UnionWith(new HashSet<string>(temp));
+                	if(user.contacts.emails != null)
+                        user.contacts.emails.UnionWith(new HashSet<string>(temp));
                 	else
-                		user.emails = new HashSet<string>(temp);
+                        user.contacts.emails = new HashSet<string>(temp);
                 		
                 	temp.Clear();
                 }
@@ -91,11 +91,11 @@ namespace GUI
                 {
                 	if(temp.Count == 0)
                 		continue;
-                	
-                	if(user.sites != null)
-                		user.sites.UnionWith(new HashSet<string>(temp));
+
+                    if (user.contacts.sites != null)
+                        user.contacts.sites.UnionWith(new HashSet<string>(temp));
                 	else
-                		user.sites = new HashSet<string>(temp);
+                        user.contacts.sites = new HashSet<string>(temp);
                     temp.Clear();
                 }
             }
@@ -144,11 +144,11 @@ namespace GUI
                 {
                 	if(temp.Count == 0)
                 		continue;
-                	
-                	if(user.sites != null)
-                		user.sites.UnionWith(new HashSet<string>(temp));
+
+                    if (user.contacts.sites != null)
+                        user.contacts.sites.UnionWith(new HashSet<string>(temp));
                 	else
-                		user.sites = new HashSet<string>(temp);
+                        user.contacts.sites = new HashSet<string>(temp);
                     temp.Clear();
                 }
             }

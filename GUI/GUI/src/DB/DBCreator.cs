@@ -22,7 +22,7 @@ namespace DB
 
         /* Метод для старта сбора данных пользователей с vk
            Возвращает лист Human */
-        public void Create(string filename, bool local_groups = false, bool public_groups = false, bool search = false, bool friends = true)
+        public void Create(string filename, bool local_groups = false, bool public_groups = false, bool search = false, bool friends = false)
         {
             this.filename = filename;
             Stopwatch full_timer = new Stopwatch();
@@ -31,13 +31,13 @@ namespace DB
             JArray local_groups_members_data = local_groups ? LocalGroupsSearch() : new JArray();                         
             JArray public_groups_members_data = public_groups ? PublicGroupsSearch() : new JArray();   
             JArray search_users_data = search ? DefaultUsersSearch() : new JArray();
-
+            
             List<string> unique_ids = new List<string>();
             JArray users_data = new JArray();
             
             timer.Start();
             /* 00:00:04.7994276 */
-            /*foreach (JArray data in new List<JArray>() { local_groups_members_data, public_groups_members_data, search_users_data })
+            foreach (JArray data in new List<JArray>() { local_groups_members_data, public_groups_members_data, search_users_data })
             {
                 Parallel.For (0, data.Count, i => 
                 {
@@ -51,9 +51,9 @@ namespace DB
                         }
                     }
                 });
-            } */
+            } 
 
-            users_data = FilesIO.LoadFileJson("users_data_27_10_2018.json");
+            //users_data = FilesIO.LoadFileJson("users_data_27_10_2018.json");
             foreach (JToken data in users_data)
             {
                 string id = data["id"].ToString();
@@ -81,10 +81,10 @@ namespace DB
                 }
             });
 
-
             MainWindow.db = new DatabaseAPI();
             MainWindow.db.saveDB(filename);
             MainWindow.db.addUsers(users);
+            MainWindow.db_users = MainWindow.db.getAllUsers();
             
             full_timer.Stop();
 

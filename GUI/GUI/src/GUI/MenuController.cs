@@ -2,9 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
+using System.IO;
 
 using DB;
 using Utils;
@@ -28,14 +27,13 @@ namespace GUI
             }
         }
 
-        // TODO Доделать логику
         /* Загружает список */
         internal static void LoadList(Window sender, bool saved = true)
         {
             Console.WriteLine(sender.ToString() + ": Загрузить список");
             OpenFileDialog open_file_dialog = new OpenFileDialog();
-            // TODO Придумать формат для файлов списка
-            open_file_dialog.Filter = "Text files (*.json)|*.json|All files (*.*)|*.*";
+
+            open_file_dialog.Filter = "List files (*.json)|*.json|All files (*.*)|*.*";
             open_file_dialog.ShowDialog();
             if (open_file_dialog.FileName != "")
             {
@@ -50,7 +48,6 @@ namespace GUI
                     List<Human> users = FilesIO.LoadHumans(open_file_dialog.FileName);
 
                     Console.WriteLine(sender.ToString() + ": Загружен список: " + open_file_dialog.FileName);
-                    // TODO Читать файл и передавать его как новый параметр конструктору
                     new Search(System.IO.Path.GetFileNameWithoutExtension(open_file_dialog.FileName), users).Show();
                 }
             }
@@ -61,14 +58,13 @@ namespace GUI
         {
             Console.WriteLine(sender.ToString() + ": Сохранить список");
             SaveFileDialog save_file_dialog = new SaveFileDialog();
-            // TODO Придумать расширения для файлов
-            save_file_dialog.Filter = "Text files (*.json)|*.json|All files (*.*)|*.*";
+            save_file_dialog.Filter = "List files (*.json)|*.json|All files (*.*)|*.*";
             save_file_dialog.ShowDialog();
 
             if (save_file_dialog.FileName.Count() != 0)
             {
                 saved = true;
-                sender.Title = saved ? sender.Title.Remove(sender.Title.Length - 1) : sender.Title + "*";
+                sender.Title = Path.GetFileNameWithoutExtension(save_file_dialog.FileName);
 
                 FilesIO.SaveHumans(save_file_dialog.FileName, users);
 
@@ -87,15 +83,15 @@ namespace GUI
         {
             Console.WriteLine(sender.ToString() + ": Загрузить БД");
             OpenFileDialog open_file_dialog = new OpenFileDialog();
-            open_file_dialog.Filter = "Text files (*.ldb)|*.ldb|All files (*.*)|*.*";
+            open_file_dialog.Filter = "Database files (*.ldb)|*.ldb|All files (*.*)|*.*";
             open_file_dialog.ShowDialog();
             if (open_file_dialog.FileName != "")
             {
                 MainWindow.db.loadDB(open_file_dialog.FileName);
                 if (!MainWindow.db.corrupted)
-                { 
-                    MainWindow.db_users = MainWindow.db.getAllUsers();
+                {
                     Console.WriteLine(sender.ToString() + ": Загружена БД: " + open_file_dialog.FileName);
+                    MainWindow.db_name = Path.GetFileNameWithoutExtension(open_file_dialog.FileName);
                     MessageBox.Show("База данных загружена!", "Info", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                     new AboutDB().Show();
                 }

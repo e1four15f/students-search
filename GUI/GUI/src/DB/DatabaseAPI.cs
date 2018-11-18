@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Collections.Concurrent;
+using System.Configuration;
+
 using LiteDB;
 
 using GUI;
@@ -16,10 +18,7 @@ namespace DB
 {
     public class DatabaseAPI
     {
-        public static readonly string DEFAULT_DB = "data/liteDB.ldb";
-
         private string connStr;
-
         public bool corrupted;
 
         public void saveDB(string connStr)
@@ -43,13 +42,21 @@ namespace DB
                 // TODO Если юзер пытается загрузить пустую или испорченную бд
                 try
                 {
-                    if (!db.CollectionExists("users"))
+                    if (db.CollectionExists("users"))
                     {
-                        db.GetCollection("users");
+
+                        MainWindow.db_users = getAllUsers();
+
+                        // Сохраним путь к бд в конфиг, чтобы в следующий раз само открылось
+                        Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                        config.AppSettings.Settings["db_destination"].Value = connStr;
+                        config.Save(ConfigurationSaveMode.Modified);
+                        ConfigurationManager.RefreshSection("appSettings");
+
                         corrupted = false;
                     }
                 }
-                catch (NullReferenceException)
+                catch (LiteException)
                 {
                     Console.WriteLine(this.ToString() + ": Испорченная база данных");
                     MessageBox.Show("Невозможно загрузить базу данных!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -152,12 +159,15 @@ namespace DB
                     // Empty request
                     if (queries.Count < 1)
                     {
-                        return getAllUsers();
+                        return getAllUsers().OrderByDescending(x => x.plausibility).ToList();
                     }
 
                     IEnumerable<Human> result = (queries.Count > 1) ? 
                         coll.Find(Query.And(queries.ToArray())) : 
                         coll.Find(queries[0]);        
+
+                    // Sort by plausibility
+                    result = result.OrderByDescending(x => x.plausibility);
 
                     return result.ToList();
                 }

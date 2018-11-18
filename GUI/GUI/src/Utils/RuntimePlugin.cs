@@ -41,7 +41,7 @@ namespace RuntimePlugin_ns
 			try{
 				dll_name = path.Substring(start, path.IndexOf(".") - start).ToLower();
 			}
-			catch(Exception e){
+			catch(Exception){
 				throw new Exception("Error occured in finding dll name");
 			}
 			
@@ -61,7 +61,7 @@ namespace RuntimePlugin_ns
 			//и пытаемся получить объект экспортированного класса в лист экспортированных классов
 					members.Add(Activator.CreateInstance(exported_type));
 				}
-				catch(Exception e){
+				catch(Exception){
 			//видимо это не класс, идем дальше	
 					continue;
 				}
