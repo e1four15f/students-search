@@ -287,6 +287,12 @@ namespace GUI
             MenuController.DBInfo(this);
         }
 
+        /* Печать */
+        private void MenuPrintList(object sender, RoutedEventArgs e)
+        {
+            MenuController.MenuPrintList(this, selected_users.ToList());
+        }
+
         /* Выход */
         private void MenuExit(object sender, RoutedEventArgs e)
         {
@@ -336,6 +342,5 @@ namespace GUI
         {
 
         }
-        
     }
 }

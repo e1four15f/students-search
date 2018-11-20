@@ -61,12 +61,59 @@ namespace GUI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;section class=&quot;content&quot;&gt;
+        ///	&lt;img class=&quot;photo&quot; src=&quot;{photo_100}&quot; alt=&quot;Изображение профиля&quot;/&gt;
+        ///	&lt;div class=&quot;user_info&quot;&gt;
+        ///		&lt;p&gt;{first_name}&lt;/p&gt;
+        ///		&lt;p&gt;{last_name}&lt;/p&gt;
+        ///		&lt;div class=&quot;additional_info&quot;&gt;
+        ///			&lt;p&gt;{bdate}&lt;/p&gt;
+        ///			&lt;p&gt;{sex}&lt;/p&gt;
+        ///		&lt;/div&gt;
+        ///	&lt;/div&gt;
+        ///	&lt;div class=&quot;additional_info&quot;&gt;
+        ///		&lt;div class=&quot;university_info&quot;&gt;
+        ///			&lt;p&gt;{university}&lt;/p&gt;
+        ///			&lt;p&gt;{faculty}&lt;/p&gt;
+        ///			&lt;p&gt;{chair}&lt;/p&gt;
+        ///		&lt;/div&gt;
+        ///		&lt;div class=&quot;social_info&quot;&gt;
+        ///			&lt;div&gt;
+        ///				&lt;p&gt;{city}&lt;/p&gt;
+        ///				&lt;p&gt;{addr}&lt;/p&gt;
+        ///			&lt;/div&gt;
+        ///			&lt;div class=&quot;phone&quot;&gt;				
+        ///				 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string content {
+            get {
+                return ResourceManager.GetString("content", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap facebook_logo {
             get {
                 object obj = ResourceManager.GetObject("facebook_logo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!DOCTYPE html&gt;
+        ///&lt;html lang=&quot;en&quot;&gt;
+        ///&lt;head&gt;
+        ///    &lt;meta charset=&quot;UTF-8&quot;&gt;
+        ///    &lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;style.css&quot;&gt;
+        ///    &lt;title&gt;{list_name}&lt;/title&gt;
+        ///&lt;/head&gt;
+        ///&lt;body&gt;.
+        /// </summary>
+        internal static string header {
+            get {
+                return ResourceManager.GetString("header", resourceCulture);
             }
         }
         
@@ -127,6 +174,55 @@ namespace GUI.Properties {
             get {
                 object obj = ResourceManager.GetObject("skype_logo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to @page {
+        ///  size: A4;
+        ///}
+        ////*
+        ///@page :left {
+        ///  margin-left: 3cm;
+        ///}
+        ///
+        ///@page :right {
+        ///  margin-left: 3cm;
+        ///}
+        ///*/
+        ///body {
+        ///	display: flex;
+        ///	flex-direction: column;
+        ///	align-items: center;
+        ///	justify-content: center;
+        ///}
+        ///
+        ///.content {
+        ///    display: flex;
+        ///    flex-wrap: wrap;
+        ///    border-bottom: 1px solid #888;
+        ///	padding: 1px;
+        ///}
+        ///
+        ///.photo {
+        ///    float: left;
+        ///    width: 100px;
+        ///    height: 100px;
+        ///	margin: 1px;
+        ///}
+        ///
+        ///p {
+        ///	margin: 0px;
+        ///}
+        ///
+        ///.user_info {
+        ///	width: 130px;
+        ///    font-size: 20px;
+        ///	margin: 1px 4px; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string style {
+            get {
+                return ResourceManager.GetString("style", resourceCulture);
             }
         }
         

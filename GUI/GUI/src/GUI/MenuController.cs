@@ -129,5 +129,23 @@ namespace GUI
             Console.WriteLine(sender.ToString() + ": Создатели");
             MessageBox.Show("Программа создана студентами группы МП-35А\nКармазин Василий\nМежуев Владислав\nУманский Александр", "Создатели", MessageBoxButton.OK, MessageBoxImage.Asterisk);
         }
+        /* Печать */
+        internal static void MenuPrintList(Window sender, List<Human> list)
+        {
+            Console.WriteLine(sender.ToString() + ": Печать");
+            SaveFileDialog save_file_dialog = new SaveFileDialog();
+            save_file_dialog.Filter = "Print files (*.html)|*.html|All files (*.*)|*.*";
+            save_file_dialog.ShowDialog();
+
+            if (save_file_dialog.FileName.Count() != 0)
+            {
+                ReportGenerator.GeneratePrintableList(save_file_dialog.FileName, list);
+                Console.WriteLine(sender.ToString() + ": Печать списока: " + save_file_dialog.FileName);
+            }
+            else
+            {
+                Console.WriteLine(sender.ToString() + ": Отмена печати");
+            }
+        }
     }
 }

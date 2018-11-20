@@ -113,6 +113,7 @@
     <Compile Include="src\DB\DBCreator.cs" />
     <Compile Include="src\Utils\FilesIO.cs" />
     <Compile Include="src\Utils\AnalyzeAndProcess.cs" />
+    <Compile Include="src\Utils\ReportGenerator.cs" />
     <Compile Include="src\Utils\RuntimePlugin.cs" />
     <Compile Include="src\Utils\TelnetInterface.cs" />
     <Compile Include="src\WebApi\OkApi.cs" />
@@ -254,6 +255,21 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="resources\img\ok_logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\report\header.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\report\content.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\report\style.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

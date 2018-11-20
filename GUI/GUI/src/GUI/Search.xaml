@@ -14,6 +14,7 @@
         <RoutedUICommand x:Key="MenuLoadDB"/>
         <RoutedUICommand x:Key="MenuExit"/>
         <RoutedUICommand x:Key="MenuDBInfo"/>
+        <RoutedUICommand x:Key="MenuPrintList"/>
 
         <RoutedUICommand x:Key="ButtonMakeRequest"/>
 
@@ -132,6 +133,7 @@
         <CommandBinding Command="{StaticResource MenuLoadDB}" Executed="MenuLoadDB"/>
         <CommandBinding Command="{StaticResource MenuExit}" Executed="MenuExit"/>
         <CommandBinding Command="{StaticResource MenuDBInfo}" Executed="MenuDBInfo"/>
+        <CommandBinding Command="{StaticResource MenuPrintList}" Executed="MenuPrintList"/>
 
         <CommandBinding Command="{StaticResource ButtonMakeRequest}" Executed="ButtonMakeRequest"/>
     </Window.CommandBindings>
@@ -142,6 +144,7 @@
         <KeyBinding Modifiers="Control+Shift" Key="O" Command="{Binding Source={StaticResource MenuLoadDB}}"/>
         <KeyBinding Modifiers="Alt" Key="F4" Command="{Binding Source={StaticResource MenuExit}}"/>
         <KeyBinding Modifiers="Control" Key="I" Command="{Binding Source={StaticResource MenuDBInfo}}"/>
+        <KeyBinding Modifiers="Control" Key="P" Command="{Binding Source={StaticResource MenuPrintList}}"/>
 
         <KeyBinding Key="Enter" Command="{Binding Source={StaticResource ButtonMakeRequest}}"/>
     </Window.InputBindings>
@@ -155,21 +158,23 @@
                 <Separator/>
                 <MenuItem Header="_Загрузить БД" InputGestureText="Ctrl+Shift+O" Click="MenuLoadDB"/>
                 <Separator/>
+                <MenuItem Header="_Печать" InputGestureText="Ctrl+P" Click="MenuPrintList"/>
+                <Separator/>
                 <MenuItem Header="_Выход" InputGestureText="Alt+F4" Click="MenuExit"/>
             </MenuItem>
+
+            <!-- тут плагины мои -->
+            <MenuItem Header="_Плагины">
+                <MenuItem Header="_Загрузить плагин" InputGestureText="Ctrl+P" Click="PluginLoad"/>
+                <Separator />
+                <MenuItem Header="_Передать плагину список" Click="LaunchPlugin"/>
+            </MenuItem>
+
             <MenuItem Header="_Настройки">
                 <MenuItem Header="_Информация о БД" InputGestureText="Ctrl+I" Click="MenuDBInfo"/>
                 <MenuItem Header="_Настройки" InputGestureText="Саня, придумай что за настройки здесь будут"/>
                 <Separator />
                 <MenuItem Header="_Создатели" Click="About"/>
-            </MenuItem>
-    	
-        	
-        <!-- тут плагины мои -->
-            <MenuItem Header="_Плагины">
-                <MenuItem Header="_Загрузить плагин" InputGestureText="Ctrl+P" Click="PluginLoad"/>
-                <Separator />
-                <MenuItem Header="_Передать плагину список" Click="LaunchPlugin"/>
             </MenuItem>
         </Menu>
 
