@@ -34,7 +34,7 @@ namespace GUI
         public MainWindow()
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            InitializeComponent();
+            InitializeComponent();       
 
             auth = false;
             db = new DatabaseAPI();

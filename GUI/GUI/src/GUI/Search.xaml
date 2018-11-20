@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         ResizeMode="CanMinimize" 
-        Title="Поиск" Height="600" Width="1050">
+        Title="Поиск" Height="600" Width="1050"
+        Icon="/GUI;component/resources/img/miet_logo.png">
 
     <Window.Resources>
         <RoutedUICommand x:Key="MenuNewList"/>
@@ -189,16 +190,16 @@
             <Label Name="MessageInfo" HorizontalAlignment="Right" Foreground="Red"/>
         </DockPanel>
         <ListBox Name="ResponseListBox" 
-                 SelectedItem="{Binding SelectedHuman, RelativeSource={RelativeSource AncestorType=Window}}"  
-                 Margin="230,45,10,35" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                 SelectionMode="Extended"
+                 Margin="230,45,10,35" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible"
+                 VirtualizingStackPanel.VirtualizationMode="Recycling">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Border BorderThickness="0,0,0,1" BorderBrush="LightGray">
                         <Grid>
-                            <DockPanel Width="765" Height="105" Margin="0,0,0,5" PreviewMouseMove="ResponseListBoxMouseMove">
+                            <DockPanel Name="Dock" Width="765" Height="105" Margin="0,0,0,5" PreviewMouseMove="ResponseListBoxMouseMove">
 
                                 <Image Source="{Binding photo_100}" Width="100" Height="100" />
-                               
                                 <StackPanel Margin="10,0,0,0" Width="100">
                                     <!-- Информация пользователя -->
                                     <TextBlock Text="{Binding first_name}" VerticalAlignment="Center" FontSize="16"/>
@@ -272,8 +273,6 @@
                                     </Hyperlink>
                                 </TextBlock>
                             </DockPanel>
-                            <!-- TODO Доделать чекбоксы -->
-                            <CheckBox Height="15" Width="15" Margin="-748,-90,0,0" Opacity="0.9" Checked="IsSelectedCheckboxChange" Unchecked="IsSelectedCheckboxChange"/>
                             <!-- Кружки с плюсабилити -->
                             <Canvas>
                                 <Ellipse Fill="{Binding plausibility_color}" Height="10" Width="10" Opacity="0.9" Margin="88,5,0,0" StrokeThickness="1" Stroke="#000"/>

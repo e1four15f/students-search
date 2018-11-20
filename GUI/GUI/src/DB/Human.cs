@@ -51,6 +51,10 @@ namespace DB
     public class Human
     {
         public ObjectId _id { get; set; }
+        [BsonIgnore]
+        public string obj_id { get; set; }
+        [BsonIgnore]
+        public bool isChecked { get; set; }
         // TODO пришлось переименовать, litedb почему-то скипал и оставлял дефолтное значение 
         public int vk_id { get; set; } 
         public string first_name { get; set; }

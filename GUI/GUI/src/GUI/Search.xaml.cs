@@ -14,6 +14,8 @@ using System.Windows.Input;
 using RuntimePlugin_ns;
 using DB;
 using System.Configuration;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace GUI
 {
@@ -24,6 +26,7 @@ namespace GUI
     {
         private ObservableCollection<Human> response_users;
         private ObservableCollection<Human> selected_users;
+        private List<Human> checked_users;
 
         public Human SelectedHuman { get; set; }
         public Human SelectedListItem { get; set; }
@@ -125,27 +128,30 @@ namespace GUI
         private void ButtonAddToList(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(this.ToString() + ": Добавить в список");
-            // TODO Это плохое решение задачи
+            
+            /// Test begin
             try
             {
-                // TODO При одноклассниках стоит использовать другую проверку
-                // UPD Для БД нужен был свой индекс типа ObjectId, здесь использую его
-                // TODO Сделать нормальную проверку, мб переопределить == в хумане 
-                if (!selected_users.Any(x => x == SelectedHuman))
+                checked_users = ResponseListBox.SelectedItems.Cast<Human>().ToList();
+
+                foreach (Human human in checked_users)
                 {
-                    selected_users.Add(SelectedHuman);
-                    SelectedUsersListBox.ItemsSource = selected_users;
-                    if (saved)
+                    if (!selected_users.Any(x => x._id == human._id))
                     {
-                        this.Title += "*";
+                        selected_users.Add(human);
+                        SelectedUsersListBox.ItemsSource = selected_users;
+                        if (saved)
+                        {
+                            this.Title += "*";
+                        }
+                        saved = false;
+                        MessageInfo.Content = "";
                     }
-                    saved = false;
-                    MessageInfo.Content = "";
-                }
-                else
-                {
-                    MessageInfo.Content = "Данный пользователь уже находится в списке";
-                    Console.WriteLine("Данный пользователь уже находится в списке");
+                    else
+                    {
+                        MessageInfo.Content = "Данный пользователь уже находится в списке";
+                        Console.WriteLine("Данный пользователь уже находится в списке");
+                    }
                 }
             }
             catch (NullReferenceException ex)
@@ -334,8 +340,28 @@ namespace GUI
         /* Обработчик чекбоксов */
         private void IsSelectedCheckboxChange(object sender, RoutedEventArgs e)
         {
-
+            
         }
-        
+
+        private IEnumerable<DependencyObject> FindContolsByType(DependencyObject dObject, Type targetType)
+        {
+            var childCount = VisualTreeHelper.GetChildrenCount(dObject);
+            var list = new List<DependencyObject>();
+            for (int i = 0; i < childCount; i++)
+            {
+                var control = VisualTreeHelper.GetChild(dObject, i);
+                if (control.GetType() == targetType)
+                {
+                    list.Add(control);
+                }
+                if (VisualTreeHelper.GetChildrenCount(control) > 0)
+                {
+                    list.AddRange(FindContolsByType(control, targetType));
+                }
+            }
+
+            return list;
+        }
+
     }
 }
