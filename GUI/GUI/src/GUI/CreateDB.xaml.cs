@@ -41,10 +41,22 @@ namespace GUI
         // TODO Выводить информацию на экран
         private void ButtonCreateDB(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(this.ToString() + ": Сформировать БД :"
-                + LocalGroups.IsChecked + " : " + PublicGroups.IsChecked + " : " + Search.IsChecked);
+            // Чекбоксы вк
+            bool vk_local_groups = VkLocalGroups.IsChecked.Value;
+            bool vk_public_groups = VkPublicGroups.IsChecked.Value;
+            bool vk_search = VkSearch.IsChecked.Value;
+            bool vk_friends = VkFriends.IsChecked.Value;
 
-            if (!LocalGroups.IsChecked.Value && !PublicGroups.IsChecked.Value && !Search.IsChecked.Value)
+            // Чекбоксы ок
+            bool ok_communities = OkCommunities.IsChecked.Value;
+            bool ok_group = OkGroup.IsChecked.Value;
+            
+            Console.WriteLine(this.ToString() + ": Сформировать БД :"
+                + vk_local_groups + " : " + vk_public_groups + " : " + vk_search + " : " + vk_friends + " : "
+                + ok_communities + " : " + ok_group);
+
+            if (!vk_local_groups && !vk_public_groups && !vk_search
+                && !ok_communities && !ok_group)
             {
                 MessageBox.Show("Необходимо выбрать хотя бы один метод поиска", "Warning", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 return;
@@ -62,7 +74,8 @@ namespace GUI
                 loading_thread.Start();
 
                 new DBCreator().Create(save_file_dialog.FileName,
-                    LocalGroups.IsChecked.Value, PublicGroups.IsChecked.Value, Search.IsChecked.Value, Friends.IsChecked.Value);
+                    vk_local_groups, vk_public_groups, vk_search, vk_friends,
+                    ok_communities, ok_group);
                 
                 loading_thread.Abort();
             }
@@ -72,14 +85,14 @@ namespace GUI
 
         private void CheckboxChange(object sender, RoutedEventArgs e)
         {
-            if (!LocalGroups.IsChecked.Value && !PublicGroups.IsChecked.Value && !Search.IsChecked.Value)
+            if (!VkLocalGroups.IsChecked.Value && !VkPublicGroups.IsChecked.Value && !VkSearch.IsChecked.Value)
             {
-                Friends.IsEnabled = false;
-                Friends.IsChecked = false;
+                VkFriends.IsEnabled = false;
+                VkFriends.IsChecked = false;
             }
             else
             {
-                Friends.IsEnabled = true;
+                VkFriends.IsEnabled = true;
             }
 
         }

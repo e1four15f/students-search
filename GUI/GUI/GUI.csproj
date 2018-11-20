@@ -115,6 +115,9 @@
     <Compile Include="src\Utils\AnalyzeAndProcess.cs" />
     <Compile Include="src\Utils\RuntimePlugin.cs" />
     <Compile Include="src\Utils\TelnetInterface.cs" />
+    <Compile Include="src\WebApi\OkApi.cs" />
+    <Compile Include="src\WebApi\OkApiMulti.cs" />
+    <Compile Include="src\WebApi\OkApiUtils.cs" />
     <Compile Include="src\WebApi\VkApi.cs" />
     <Compile Include="src\WebApi\VkApiAdvanced.cs" />
     <Compile Include="src\WebApi\VkApiMulti.cs" />
@@ -246,6 +249,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="resources\img\loading.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resources\img\ok_logo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

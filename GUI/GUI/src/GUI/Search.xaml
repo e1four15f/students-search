@@ -66,6 +66,14 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <Style TargetType="Hyperlink" x:Key="ok_link">
+            <Setter Property="NavigateUri" Value="{Binding ok}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ok}" Value="{x:Null}">
+                    <Setter Property="NavigateUri" Value=""/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
 
         <Style TargetType="TextBlock" x:Key="vk_block">
             <Style.Triggers>
@@ -105,6 +113,13 @@
         <Style TargetType="TextBlock" x:Key="skype_block">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding skype}" Value="{x:Null}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="ok_block">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ok}" Value="{x:Null}">
                     <Setter Property="Visibility" Value="Collapsed"/>
                 </DataTrigger>
             </Style.Triggers>
@@ -239,6 +254,12 @@
                                 <TextBlock Style="{StaticResource vk_block}"> 
                                     <Hyperlink Style="{StaticResource vk_link}" RequestNavigate="HyperlinkRequestNavigate" TextDecorations="None">  
                                         <Image Width="32" Height="32" Margin="2,0" Source="/GUI;component/resources/img/vk_logo.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                    </Hyperlink>
+                                </TextBlock>
+
+                                <TextBlock Style="{StaticResource ok_block}"> 
+                                    <Hyperlink Style="{StaticResource ok_link}" RequestNavigate="HyperlinkRequestNavigate" TextDecorations="None">  
+                                        <Image Width="32" Height="32" Margin="2,0" Source="/GUI;component/resources/img/ok_logo.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                                     </Hyperlink>
                                 </TextBlock>
 
