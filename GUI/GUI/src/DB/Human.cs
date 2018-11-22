@@ -48,6 +48,7 @@ namespace DB
         public int graduation_year { get; set; }
     }
 
+    delegate bool CheckField(dynamic for_check, ref int plausibility);
     public class Human
     {
         public ObjectId _id { get; set; }
@@ -105,8 +106,43 @@ namespace DB
 
         public string photo_100 { get; set; }
         public string arrived_from { get; set; }
-        public int plausibility { get; set; }
+        public int plausibility;
+        
+        //для замены большого числа if'ов
+        CheckField check_social = (dynamic for_check, ref int plausibility)=>{
+            if (!String.IsNullOrEmpty(for_check))
+                plausibility += 2;
+            else
+                plausibility--;
+            return true;
+        };
+        
+        //для замены большого if'а
+        CheckField check_university = (dynamic university, ref int plausibility)=>{
+                    if (university.university_id == 241){
+                        plausibility += 15;
 
+                        if (university.faculty_id != 0)
+                            plausibility += 3;
+
+                        if (university.chair_id != 0)
+                            plausibility += 3;
+
+                        return false;
+                    }
+                    else{
+                        plausibility -= 8;
+                 
+                        if (university.faculty_id != 0)
+                            plausibility++;
+
+                        if (university.chair_id != 0)
+                            plausibility++;
+                    }
+        	return true;
+        };
+        
+        
         [BsonIgnore]
         public string plausibility_color { get { return "#" + ((int)(6.375 * (40 - plausibility))).ToString("X2") + ((int)(6.375 * plausibility)).ToString("X2") + "00"; } }
 
@@ -415,55 +451,16 @@ namespace DB
                     if (university.graduation_year != 0 && AnalyzeData.CheckAge(bdate.Year, university.graduation_year))
             	        plausibility += 2;
                     
-                    if (university.university_id == 241)
-                    {
-                        plausibility += 15;
-
-                        if (university.faculty_id != 0)
-                            plausibility += 3;
-
-                        if (university.chair_id != 0)
-                            plausibility += 3;
-
-                        break;
-                    }
-                    else
-                    {
-                        plausibility -= 8;
-                 
-                        if (university.faculty_id != 0)
-                            plausibility++;
-
-                        if (university.chair_id != 0)
-                            plausibility++;
-                    }
+                    if(!check_university(university, ref plausibility))
+                    	break;
                 }
             }
             
-            if (!String.IsNullOrEmpty(social.twitter))
-                plausibility += 2;
-            else
-                plausibility--;
-
-            if (!String.IsNullOrEmpty(social.skype))
-                plausibility += 2;
-            else
-                plausibility--;
-
-            if (!String.IsNullOrEmpty(social.livejournal))
-                plausibility += 2;
-            else
-                plausibility--;
-
-            if (!String.IsNullOrEmpty(social.instagram))
-                plausibility += 2;
-            else
-                plausibility--;
-
-            if (!String.IsNullOrEmpty(social.facebook))
-                plausibility += 2;
-            else
-                plausibility--;
+            check_social(social.twitter,	ref plausibility);
+            check_social(social.skype,		ref plausibility);
+            check_social(social.livejournal,ref plausibility);
+            check_social(social.instagram,	ref plausibility);
+            check_social(social.facebook,	ref plausibility);
             
             if (city.city_id == 1463)
                 plausibility += 4;
@@ -480,12 +477,6 @@ namespace DB
             if (bdate.Year != DateTime.MinValue.Year)
                 plausibility++;
             
-            //if(AnalyzeData.CheckFriends(friends))
-            //	plausibility += 4;
-            
-            //if(AnalyzeData.CheckArrival(arrived_from))
-            //	plausibility += 3;
-
             if (plausibility > 40)
                 plausibility = 40;
             if (plausibility < 0)
