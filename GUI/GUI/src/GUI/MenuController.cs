@@ -2,9 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
+using System.IO;
 
 using DB;
 using Utils;
@@ -16,7 +15,7 @@ namespace GUI
         /* Создаёт новую панель поиска */
         internal static void NewList(Window sender, bool saved = true)
         {
-            if (MainWindow.db != null && MainWindow.db.Loaded)
+            if (MainWindow.db != null && MainWindow.db_users.Count > 0)
             {
                 Console.WriteLine(sender.ToString() + ": Новый список");
                 if (sender != App.Current.MainWindow)
@@ -31,18 +30,19 @@ namespace GUI
             }
             else
             {
-                MessageBox.Show("База данных не загружена!\nЧтобы загрузить базу данных нажмите\n\"Файл -> Загрузить БД\" \nИли нажмите комбинацию клавиш Ctrl+Shift+O", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("База данных не загружена!\n" +
+                "Чтобы загрузить базу данных выберите:\n" +
+                "Файл → Загрузить БД (Ctrl+Shift+O)\n", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
-        // TODO Доделать логику
         /* Загружает список */
         internal static void LoadList(Window sender, bool saved = true)
         {
             Console.WriteLine(sender.ToString() + ": Загрузить список");
             OpenFileDialog open_file_dialog = new OpenFileDialog();
-            // TODO Придумать формат для файлов списка
-            open_file_dialog.Filter = "Text files (*.json)|*.json|All files (*.*)|*.*";
+
+            open_file_dialog.Filter = "List files (*.json)|*.json|All files (*.*)|*.*";
             open_file_dialog.ShowDialog();
             if (open_file_dialog.FileName != "")
             {
@@ -57,7 +57,6 @@ namespace GUI
                     List<Human> users = FilesIO.LoadHumans(open_file_dialog.FileName);
 
                     Console.WriteLine(sender.ToString() + ": Загружен список: " + open_file_dialog.FileName);
-                    // TODO Читать файл и передавать его как новый параметр конструктору
                     new Search(System.IO.Path.GetFileNameWithoutExtension(open_file_dialog.FileName), users).Show();
                 }
             }
@@ -68,14 +67,13 @@ namespace GUI
         {
             Console.WriteLine(sender.ToString() + ": Сохранить список");
             SaveFileDialog save_file_dialog = new SaveFileDialog();
-            // TODO Придумать расширения для файлов
-            save_file_dialog.Filter = "Text files (*.json)|*.json|All files (*.*)|*.*";
+            save_file_dialog.Filter = "List files (*.json)|*.json|All files (*.*)|*.*";
             save_file_dialog.ShowDialog();
 
             if (save_file_dialog.FileName.Count() != 0)
             {
                 saved = true;
-                sender.Title = saved ? sender.Title.Remove(sender.Title.Length - 1) : sender.Title + "*";
+                sender.Title = Path.GetFileNameWithoutExtension(save_file_dialog.FileName);
 
                 FilesIO.SaveHumans(save_file_dialog.FileName, users);
 
@@ -94,15 +92,15 @@ namespace GUI
         {
             Console.WriteLine(sender.ToString() + ": Загрузить БД");
             OpenFileDialog open_file_dialog = new OpenFileDialog();
-            open_file_dialog.Filter = "Text files (*.ldb)|*.ldb|All files (*.*)|*.*";
+            open_file_dialog.Filter = "Database files (*.ldb)|*.ldb|All files (*.*)|*.*";
             open_file_dialog.ShowDialog();
             if (open_file_dialog.FileName != "")
             {
                 MainWindow.db.loadDB(open_file_dialog.FileName);
                 if (!MainWindow.db.corrupted)
-                { 
-                    MainWindow.db_users = MainWindow.db.getAllUsers();
+                {
                     Console.WriteLine(sender.ToString() + ": Загружена БД: " + open_file_dialog.FileName);
+                    MainWindow.db_name = Path.GetFileNameWithoutExtension(open_file_dialog.FileName);
                     MessageBox.Show("База данных загружена!", "Info", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                     new AboutDB().Show();
                 }
@@ -139,6 +137,24 @@ namespace GUI
         {
             Console.WriteLine(sender.ToString() + ": Создатели");
             MessageBox.Show("Программа создана студентами группы МП-35А\nКармазин Василий\nМежуев Владислав\nУманский Александр", "Создатели", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+        }
+        /* Печать */
+        internal static void MenuPrintList(Window sender, List<Human> list)
+        {
+            Console.WriteLine(sender.ToString() + ": Печать");
+            SaveFileDialog save_file_dialog = new SaveFileDialog();
+            save_file_dialog.Filter = "Print files (*.html)|*.html|All files (*.*)|*.*";
+            save_file_dialog.ShowDialog();
+
+            if (save_file_dialog.FileName.Count() != 0)
+            {
+                ReportGenerator.GeneratePrintableList(save_file_dialog.FileName, list);
+                Console.WriteLine(sender.ToString() + ": Печать списока: " + save_file_dialog.FileName);
+            }
+            else
+            {
+                Console.WriteLine(sender.ToString() + ": Отмена печати");
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WebApi;
 
@@ -36,6 +37,7 @@ namespace GUI
                 Result.Content = "Успешно!";
                 Result.Foreground = new SolidColorBrush(Colors.Green);
                 this.Close();
+                new CreateDB().Show();
             }
             else
             {
@@ -46,7 +48,7 @@ namespace GUI
             }
         }
 
-        private void HyperlinkRequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        private void HyperlinkRequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             Process.Start(new ProcessStartInfo("https://oauth.vk.com/authorize?client_id="
                 + VkApiUtils.client_id

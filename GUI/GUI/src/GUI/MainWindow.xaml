@@ -41,7 +41,7 @@
         <Button Content="Настройки" HorizontalAlignment="Left" Margin="10,265,0,0" VerticalAlignment="Top" Width="145" Click="Settings" FontSize="14"/>
         <Button Content="Выход" HorizontalAlignment="Left" Margin="10,290,0,0" VerticalAlignment="Top" Width="145" Click="Exit" FontSize="14"/>
 
-        <Image HorizontalAlignment="Left" Height="280" Margin="190,30,0,0" VerticalAlignment="Top" Width="325" Source="/GUI;component/img/miet_logo.png"/>
+        <Image HorizontalAlignment="Left" Height="280" Margin="190,30,0,0" VerticalAlignment="Top" Width="325" Source="/GUI;component/resources/img/miet_logo.png"/>
         
         <Menu DockPanel.Dock="Top" Height="30" Margin="0,0,0,300" FontSize="14">
             <MenuItem Header="_Файл">

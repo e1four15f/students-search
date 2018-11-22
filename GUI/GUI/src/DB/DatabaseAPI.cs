@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Collections.Concurrent;
+using System.Configuration;
+
 using LiteDB;
 
 using GUI;
@@ -16,14 +18,8 @@ namespace DB
 {
     public class DatabaseAPI
     {
-        public static readonly string DEFAULT_DB = "data/liteDB.ldb";
-
-        private string connStr;
-
+        public string connStr;
         public bool corrupted;
-
-        private bool loaded = false;
-        public bool Loaded { get { return loaded; } }
 
         public void saveDB(string connStr)
         {
@@ -46,15 +42,21 @@ namespace DB
                 // TODO Если юзер пытается загрузить пустую или испорченную бд
                 try
                 {
-                    if (!db.CollectionExists("users"))
+                    if (db.CollectionExists("users"))
                     {
-                        db.GetCollection("users");
+
+                        MainWindow.db_users = getAllUsers();
+
+                        // Сохраним путь к бд в конфиг, чтобы в следующий раз само открылось
+                        Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                        config.AppSettings.Settings["db_destination"].Value = connStr;
+                        config.Save(ConfigurationSaveMode.Modified);
+                        ConfigurationManager.RefreshSection("appSettings");
+
                         corrupted = false;
                     }
-
-                    loaded = true;
                 }
-                catch (NullReferenceException)
+                catch (LiteException)
                 {
                     Console.WriteLine(this.ToString() + ": Испорченная база данных");
                     MessageBox.Show("Невозможно загрузить базу данных!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -102,70 +104,77 @@ namespace DB
 
         public List<Human> search(MakeRequest request)
         {
-            using (var db = new LiteDatabase(connStr))
+            if (MainWindow.db_users.Count > 0)
+            { 
+                using (var db = new LiteDatabase(connStr))
+                {
+                    var coll = db.GetCollection<Human>("users");
+
+                    coll.EnsureIndex(p => p.first_name);
+                    coll.EnsureIndex(p => p.last_name);
+                    coll.EnsureIndex(p => p.sex);
+
+                    List<Query> queries = new List<Query>();
+
+                    // First name criteria
+                    if (request.FirstName.Text.Length > 0)
+                    {
+                        queries.Add(Query.Contains("LOWER($.first_name)", request.FirstName.Text.ToLower()));
+                    }
+                    // Last name criteria
+                    if (request.LastName.Text.Length > 0)
+                    {
+                        queries.Add(Query.Contains("LOWER($.last_name)", request.LastName.Text.ToLower()));
+                    }
+                    // Sex criteria
+                    if (request.ManSex.IsChecked.Value && !request.FemaleSex.IsChecked.Value)
+                    {
+                        queries.Add(Query.EQ("sex", true));
+                    } 
+                    else if (!request.ManSex.IsChecked.Value && request.FemaleSex.IsChecked.Value)
+                    {
+                        queries.Add(Query.EQ("sex", false));
+                    }
+                    // Faculty name criteria
+                    if (request.FacultyName.Text.Length > 0)
+                    {
+                        queries.Add(Query.Contains("LOWER($.universities[*].faculty_name)", request.FacultyName.Text.ToLower()));
+                    }
+                    // Chair name criteria
+                    if (request.ChairName.Text.Length > 0)
+                    {
+                        queries.Add(Query.Contains("LOWER($.universities[*].chair_name)", request.ChairName.Text.ToLower()));
+                    }
+                    // Chair name criteria
+                    if (request.ChairName.Text.Length > 0)
+                    {
+                        queries.Add(Query.Contains("LOWER($.universities[*].chair_name)", request.ChairName.Text.ToLower()));
+                    }
+                    // Graduation year criteria
+                    if (request.GraduationYear.Text.Length > 0)
+                    {
+                        queries.Add(Query.EQ("universities[0].graduation_year", int.Parse(request.GraduationYear.Text)));
+                    }
+
+                    // Empty request
+                    if (queries.Count < 1)
+                    {
+                        return getAllUsers().OrderByDescending(x => x.plausibility).ToList();
+                    }
+
+                    IEnumerable<Human> result = (queries.Count > 1) ? 
+                        coll.Find(Query.And(queries.ToArray())) : 
+                        coll.Find(queries[0]);        
+
+                    // Sort by plausibility
+                    result = result.OrderByDescending(x => x.plausibility);
+
+                    return result.ToList();
+                }
+            }
+            else
             {
-                var coll = db.GetCollection<Human>("users");
-
-                coll.EnsureIndex(p => p.first_name);
-                coll.EnsureIndex(p => p.last_name);
-                coll.EnsureIndex(p => p.sex);
-                //coll.EnsureIndex(p => p.universities[0].faculty_id);
-
-                List<Query> queries = new List<Query>();
-
-                // First name criteria
-                if (request.FirstName.Text.Length > 0)
-                {
-                    queries.Add(Query.Contains("LOWER($.first_name)", request.FirstName.Text.ToLower()));
-                }
-                // Last name criteria
-                if (request.LastName.Text.Length > 0)
-                {
-                    queries.Add(Query.Contains("LOWER($.last_name)", request.LastName.Text.ToLower()));
-                }
-                // Sex criteria
-                if (request.ManSex.IsChecked.Value && !request.FemaleSex.IsChecked.Value)
-                {
-                    queries.Add(Query.EQ("sex", true));
-                }
-                else if (!request.ManSex.IsChecked.Value && request.FemaleSex.IsChecked.Value)
-                {
-                    queries.Add(Query.EQ("sex", false));
-                }
-                // Faculty name criteria
-                var faculName = (MakeRequest.Faculty)request.FacultyName.SelectedItem;
-                if (faculName != null && faculName.Value != -1)
-                {
-                    queries.Add(Query.EQ("universities[0].faculty_id)", faculName.Value));
-                }
-                // Chair name criteria
-                var chairName = (MakeRequest.Chair)request.ChairName.SelectedItem;
-                if (chairName != null && chairName.Value != -1)
-                {
-                    queries.Add(Query.EQ("universities[0].chair_id)", chairName.Value));
-                }
-                // Chair name criteria
-                if (request.ChairName.Text.Length > 0)
-                {
-                    queries.Add(Query.Contains("LOWER($.universities[*].chair_name)", request.ChairName.Text.ToLower()));
-                }
-                // Graduation year criteria
-                if (request.GraduationYear.Text.Length > 0)
-                {
-                    queries.Add(Query.EQ("universities[0].graduation_year", int.Parse(request.GraduationYear.Text)));
-                }
-
-                // Empty request
-                if (queries.Count < 1)
-                {
-                    return getAllUsers();
-                }
-
-                IEnumerable<Human> result = (queries.Count > 1) ?
-                    coll.Find(Query.And(queries.ToArray())) :
-                    coll.Find(queries[0]);
-
-                return result.ToList();
+                return new List<Human>();
             }
         }
 

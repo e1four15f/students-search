@@ -1,6 +1,4 @@
 ﻿using Microsoft.Win32;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,20 +6,15 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Configuration;
 
+using RuntimePlugin_ns;
 using DB;
+using System.Threading.Tasks;
 
 namespace GUI
 {
@@ -42,6 +35,8 @@ namespace GUI
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
+
+            MessageInfo.Content = "Загружена бд " + Path.GetFileNameWithoutExtension(MainWindow.db_name);
 
             if (selected_users == null)
             {
@@ -75,7 +70,7 @@ namespace GUI
                 ResponseListBox.SetValue(ScrollViewer.CanContentScrollProperty, true);
             }
 
-            ResponseInfo.Content = "Найденно " + response_users.Count + " пользователей";
+            ResponseInfo.Content = "Найдено " + response_users.Count + " пользователей";
             ResponseListBox.ItemsSource = response_users;
         }
 
@@ -130,7 +125,8 @@ namespace GUI
             {
                 // TODO При одноклассниках стоит использовать другую проверку
                 // UPD Для БД нужен был свой индекс типа ObjectId, здесь использую его
-                if (selected_users.Where(x => x._id == SelectedHuman._id).ToList().Count() == 0)
+                // TODO Сделать нормальную проверку, мб переопределить == в хумане 
+                if (!selected_users.Any(x => x == SelectedHuman))
                 {
                     selected_users.Add(SelectedHuman);
                     SelectedUsersListBox.ItemsSource = selected_users;
@@ -139,9 +135,11 @@ namespace GUI
                         this.Title += "*";
                     }
                     saved = false;
+                    MessageInfo.Content = "";
                 }
                 else
                 {
+                    MessageInfo.Content = "Данный пользователь уже находится в списке";
                     Console.WriteLine("Данный пользователь уже находится в списке");
                 }
             }
@@ -162,9 +160,10 @@ namespace GUI
                 {
                     // TODO При одноклассниках стоит использовать другую проверку
                     // UPD Для БД нужен был свой индекс типа ObjectId, здесь использую его
-                    if (selected_users.Where(x => x._id == SelectedListItem._id).ToList().Count() == 1)
+                    if (!SelectedListItem.Equals(null))
                     {
-                        selected_users.Remove(SelectedListItem);
+                        selected_users.Remove(selected_users.Single(x => x == SelectedListItem));
+                        //selected_users.Remove(selected_users.Single(x => x.id == SelectedListItem.id));
                         SelectedUsersListBox.ItemsSource = selected_users;
                         if (saved)
                         {
@@ -184,12 +183,18 @@ namespace GUI
             }
         }
 
+        /* Открывает окно для дополнительных функция для работы со списком */
+        private void ButtonListOperation(object sender, RoutedEventArgs e)
+        {
+            new ListOperation(selected_users.ToList()).ShowDialog();
+        }
+
         /* Открывает подробную информацио о выбранном в панели результатов поиска пользователя */
         private void ButtonMoreInfo(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(this.ToString() + ": Подробная информация");
             try
-            { 
+            {
                 MessageBox.Show(SelectedHuman.ToString());
             } 
             catch (NullReferenceException ex)
@@ -267,12 +272,20 @@ namespace GUI
         {
             MenuController.LoadDB(this);
             UpdateResponse(MainWindow.db_users);
+            string connStr = ConfigurationManager.AppSettings.Get("db_destination");
+            MessageInfo.Content = "Загружена бд " + Path.GetFileNameWithoutExtension(connStr);    
         }
 
         /* Информация о БД */
         private void MenuDBInfo(object sender, RoutedEventArgs e)
         {
             MenuController.DBInfo(this);
+        }
+
+        /* Печать */
+        private void MenuPrintList(object sender, RoutedEventArgs e)
+        {
+            MenuController.MenuPrintList(this, selected_users.ToList());
         }
 
         /* Выход */
@@ -285,6 +298,63 @@ namespace GUI
         private void About(object sender, RoutedEventArgs e)
         {
             MenuController.About(this);
+        }
+
+        /* Drag and Drop обработчики */
+        private void ResponseListBoxMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                if (sender is DockPanel)
+                {
+                    DockPanel draggedItem = sender as DockPanel;
+                    DragDrop.DoDragDrop(draggedItem, draggedItem.DataContext, DragDropEffects.Move);
+                }
+            }
+        }
+        
+        HashSet<RuntimePlugin> plugins = new HashSet<RuntimePlugin>();
+        
+        /* Создатели */
+        private void PluginLoad(object sender, RoutedEventArgs e)
+        {
+        	OpenFileDialog dialog = new OpenFileDialog();
+        	dialog.ShowDialog();
+        	if(dialog.FileName.Contains(".dll"))
+        		plugins.Add(new RuntimePlugin(dialog.FileName));
+        }
+        
+        private void LaunchPlugin(object sender, RoutedEventArgs e)
+        {
+        	List<Human> humans = selected_users.ToList();
+        	//string returned = " ";
+        	if(plugins.Count != 0)
+        		plugins.ElementAt(0).Call(humans);
+        }
+
+        /* Обработчик чекбоксов */
+        private void IsSelectedCheckboxChange(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ButtonUpdatePlausibility(object sender, RoutedEventArgs e)
+        {
+            Parallel.ForEach(MainWindow.db_users, user =>
+            {
+                user.CalcPlausibility();
+            });
+
+            List<Human> users = MainWindow.db_users;
+            string connStr = MainWindow.db.connStr;
+
+            MainWindow.db = new DatabaseAPI();
+            MainWindow.db.saveDB(connStr);
+            MainWindow.db.addUsers(users);
+            MainWindow.db_users = MainWindow.db.getAllUsers();
+
+            UpdateResponse(MainWindow.db_users);
+            MessageBox.Show("Готово", "Info", MessageBoxButton.OK, MessageBoxImage.Asterisk);
         }
     }
 }
