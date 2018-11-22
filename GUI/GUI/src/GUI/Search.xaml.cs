@@ -336,6 +336,14 @@ namespace GUI
         	if(plugins.Count != 0)
         		plugins.ElementAt(0).Call(humans);
         }
+        
+        private void MakeTemplate(object sender, RoutedEventArgs e)
+        {
+        	System.Windows.Forms.FolderBrowserDialog folder = new System.Windows.Forms.FolderBrowserDialog();
+        	folder.ShowDialog();
+        	RuntimePlugin.CreateTemplate(folder.SelectedPath);
+        	MessageBox.Show("Файлы созданы");
+        }
 
         /* Обработчик чекбоксов */
         private void IsSelectedCheckboxChange(object sender, RoutedEventArgs e)

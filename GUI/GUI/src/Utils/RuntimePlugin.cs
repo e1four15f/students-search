@@ -96,5 +96,35 @@ namespace RuntimePlugin_ns
 			string serialized_cllection = Newtonsoft.Json.JsonConvert.SerializeObject(humans);
 			return primary_method.Invoke(primary_instance, new object[]{serialized_cllection});
 		}
+		
+		public static void CreateTemplate(string path){
+			string program = 
+@"/*Шаблон плагина*/
+using System;
+using Newtonsoft.Json;
+using HumanData;
+
+namespace ChangeMe_Namespace
+{
+	public class ChangeMe_ClassName
+	{
+		/*	В импортируемом dll плагине должен содержаться класс, содержащий
+		 	имя подключаемой dll, и функция, так же содержащая имя dll.
+		 	Если требуется вызывать цепочку функций, то это должна быть функция-обертка над остальными.
+		 	Если класса или функции, содержащей имя длл не будет, то модуль выкинет ошибку.
+		 	Поиск класса и функции не зависит от регистра их имени.
+		 	class ExampleDLL, public void ExAmPlEDLL(List<Human> human),при скомпилированном Example.dll будут найдены.
+		 	Функция-обертка должна принимать List<Human>, ничего больше*/
+		 	
+		public static void NameMeAsDllFile(string serialized_list){
+			List<Human> humans = JsonConvert.DeserializeObject<List<Human>>(serialized_list);
+			
+		}
+	}
+}";
+			
+			System.IO.File.WriteAllText(path + @"\Program.cs",program);
+			System.IO.File.WriteAllText(path + @"\Human.cs", GUI.Properties.Resources.Human_class);
+		}
 	}
 }
