@@ -9,12 +9,15 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Input;
 using System.Configuration;
+using System.Threading.Tasks;
+using System.Windows.Navigation;
 
 using RuntimePlugin_ns;
 using DB;
-using System.Threading.Tasks;
 
 namespace GUI
 {
@@ -25,8 +28,8 @@ namespace GUI
     {
         private ObservableCollection<Human> response_users;
         private ObservableCollection<Human> selected_users;
+        private List<Human> checked_users;
 
-        public Human SelectedHuman { get; set; }
         public Human SelectedListItem { get; set; }
 
         private bool saved;
@@ -120,27 +123,29 @@ namespace GUI
         private void ButtonAddToList(object sender, RoutedEventArgs e)
         {
             Console.WriteLine(this.ToString() + ": Добавить в список");
-            // TODO Это плохое решение задачи
+            
             try
             {
-                // TODO При одноклассниках стоит использовать другую проверку
-                // UPD Для БД нужен был свой индекс типа ObjectId, здесь использую его
-                // TODO Сделать нормальную проверку, мб переопределить == в хумане 
-                if (!selected_users.Any(x => x == SelectedHuman))
+                checked_users = ResponseListBox.SelectedItems.Cast<Human>().ToList();
+
+                foreach (Human human in checked_users)
                 {
-                    selected_users.Add(SelectedHuman);
-                    SelectedUsersListBox.ItemsSource = selected_users;
-                    if (saved)
+                    if (!selected_users.Any(x => x._id == human._id))
                     {
-                        this.Title += "*";
+                        selected_users.Add(human);
+                        SelectedUsersListBox.ItemsSource = selected_users;
+                        if (saved)
+                        {
+                            this.Title += "*";
+                        }
+                        saved = false;
+                        MessageInfo.Content = "";
                     }
-                    saved = false;
-                    MessageInfo.Content = "";
-                }
-                else
-                {
-                    MessageInfo.Content = "Данный пользователь уже находится в списке";
-                    Console.WriteLine("Данный пользователь уже находится в списке");
+                    else
+                    {
+                        MessageInfo.Content = "Данный пользователь уже находится в списке";
+                        Console.WriteLine("Данный пользователь уже находится в списке");
+                    }
                 }
             }
             catch (NullReferenceException ex)
@@ -163,7 +168,6 @@ namespace GUI
                     if (!SelectedListItem.Equals(null))
                     {
                         selected_users.Remove(selected_users.Single(x => x == SelectedListItem));
-                        //selected_users.Remove(selected_users.Single(x => x.id == SelectedListItem.id));
                         SelectedUsersListBox.ItemsSource = selected_users;
                         if (saved)
                         {
@@ -195,9 +199,9 @@ namespace GUI
             Console.WriteLine(this.ToString() + ": Подробная информация");
             try
             {
-                MessageBox.Show(SelectedHuman.ToString());
+                MessageBox.Show(ResponseListBox.SelectedItems.Cast<Human>().ToList()[0].ToString());
             } 
-            catch (NullReferenceException ex)
+            catch (ArgumentOutOfRangeException ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -242,7 +246,7 @@ namespace GUI
         }
         
         /* Обработчик события для перехода на url */
-        private void HyperlinkRequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        private void HyperlinkRequestNavigate(object sender, RequestNavigateEventArgs e)
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
@@ -346,7 +350,27 @@ namespace GUI
         /* Обработчик чекбоксов */
         private void IsSelectedCheckboxChange(object sender, RoutedEventArgs e)
         {
+            
+        }
 
+        private IEnumerable<DependencyObject> FindContolsByType(DependencyObject dObject, Type targetType)
+        {
+            var childCount = VisualTreeHelper.GetChildrenCount(dObject);
+            var list = new List<DependencyObject>();
+            for (int i = 0; i < childCount; i++)
+            {
+                var control = VisualTreeHelper.GetChild(dObject, i);
+                if (control.GetType() == targetType)
+                {
+                    list.Add(control);
+                }
+                if (VisualTreeHelper.GetChildrenCount(control) > 0)
+                {
+                    list.AddRange(FindContolsByType(control, targetType));
+                }
+            }
+
+            return list;
         }
 
         private void ButtonUpdatePlausibility(object sender, RoutedEventArgs e)

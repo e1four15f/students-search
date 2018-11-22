@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         mc:Ignorable="d"
         ResizeMode="CanMinimize"
-        Title="Поиск выпускников 😎" Height="360" Width="500">
+        Title="Поиск выпускников 😎" Height="360" Width="500"
+        Icon="/GUI;component/resources/img/miet_logo.png">
 
     <Window.Resources>
         <RoutedUICommand x:Key="NewList"/>

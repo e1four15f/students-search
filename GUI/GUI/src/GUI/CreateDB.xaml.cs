@@ -126,7 +126,7 @@ namespace GUI
                 {
                     lock (users)
                     {
-                        users.Add(new Human(user_data));
+                        users.Add(new Human(user_data, "vk"));
                     }
                 });
 
