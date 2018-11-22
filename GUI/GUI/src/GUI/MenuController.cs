@@ -150,6 +150,7 @@ namespace GUI
             {
                 ReportGenerator.GeneratePrintableList(save_file_dialog.FileName, list);
                 Console.WriteLine(sender.ToString() + ": Печать списока: " + save_file_dialog.FileName);
+                MessageBox.Show("Готово", "Info", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             }
             else
             {

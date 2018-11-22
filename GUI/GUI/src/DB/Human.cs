@@ -49,6 +49,7 @@ namespace DB
         public int graduation_year { get; set; }
     }
 
+    delegate bool CheckField(dynamic for_check, ref int plausibility);
     public class Human
     {
         public ObjectId _id { get; set; }
@@ -106,10 +107,53 @@ namespace DB
 
         public string photo_100 { get; set; }
         public string arrived_from { get; set; }
-        public int plausibility { get; set; }
-
+        
+        public int plausibility;
+        public int Plausibility { get { return plausibility; } set { plausibility = value; } }
+        
+        //для замены большого числа if'ов
         [BsonIgnore]
-        public string plausibility_color { get { return "#" + ((int)(6.375 * (40 - plausibility))).ToString("X2") + ((int)(6.375 * plausibility)).ToString("X2") + "00"; } }
+        CheckField check_social = (dynamic for_check, ref int plausibility) =>
+        {
+            if (!String.IsNullOrEmpty(for_check))
+                plausibility += 2;
+            else
+                plausibility--;
+            return true;
+        };
+        
+        //для замены большого if'а
+        [BsonIgnore]
+        CheckField check_university = (dynamic university, ref int plausibility) =>
+        {
+            if (university.university_id == 241)
+            {
+                plausibility += 15;
+
+                if (university.faculty_id != 0)
+                    plausibility += 3;
+
+                if (university.chair_id != 0)
+                    plausibility += 3;
+
+                return false;
+            }
+            else
+            {
+                plausibility -= 8;
+                 
+                if (university.faculty_id != 0)
+                    plausibility++;
+
+                if (university.chair_id != 0)
+                    plausibility++;
+            }
+        	return true;
+        };
+        
+        
+        [BsonIgnore]
+        public string plausibility_color { get { return "#" + ((int)(6.375 * (40 - Plausibility))).ToString("X2") + ((int)(6.375 * Plausibility)).ToString("X2") + "00"; } }
 
         // Поля для чекбоксов
         [BsonIgnore]
@@ -131,7 +175,7 @@ namespace DB
             contacts = new Contacts();
             photo_100 = null;
             arrived_from = null;
-            plausibility = 0;
+            Plausibility = 0;
         }
 
         public Human(JToken user_data)
@@ -407,91 +451,46 @@ namespace DB
         //если внести graduation_year в Human, то надо убрать передачу аргумента
         public int CalcPlausibility()
         {
-            plausibility = 0;
+            Plausibility = 0;
 
             if (universities.Any())
             { 
                 foreach (University university in universities)
                 {
                     if (university.graduation_year != 0 && AnalyzeData.CheckAge(bdate.Year, university.graduation_year))
-            	        plausibility += 2;
+            	        Plausibility += 2;
                     
-                    if (university.university_id == 241)
-                    {
-                        plausibility += 15;
-
-                        if (university.faculty_id != 0)
-                            plausibility += 3;
-
-                        if (university.chair_id != 0)
-                            plausibility += 3;
-
-                        break;
-                    }
-                    else
-                    {
-                        plausibility -= 8;
-                 
-                        if (university.faculty_id != 0)
-                            plausibility++;
-
-                        if (university.chair_id != 0)
-                            plausibility++;
-                    }
+                    if(!check_university(university, ref plausibility))
+                    	break;
                 }
             }
             
-            if (!String.IsNullOrEmpty(social.twitter))
-                plausibility += 2;
-            else
-                plausibility--;
-
-            if (!String.IsNullOrEmpty(social.skype))
-                plausibility += 2;
-            else
-                plausibility--;
-
-            if (!String.IsNullOrEmpty(social.livejournal))
-                plausibility += 2;
-            else
-                plausibility--;
-
-            if (!String.IsNullOrEmpty(social.instagram))
-                plausibility += 2;
-            else
-                plausibility--;
-
-            if (!String.IsNullOrEmpty(social.facebook))
-                plausibility += 2;
-            else
-                plausibility--;
+            check_social(social.twitter,	ref plausibility);
+            check_social(social.skype,		ref plausibility);
+            check_social(social.livejournal,ref plausibility);
+            check_social(social.instagram,	ref plausibility);
+            check_social(social.facebook,	ref plausibility);
             
             if (city.city_id == 1463)
-                plausibility += 4;
+                Plausibility += 4;
             else if (city.city_id == 1)
-                plausibility++;
+                Plausibility++;
             else
-                plausibility -= 3;
+                Plausibility -= 3;
             
             if (contacts.mobile_phone != null)
-                plausibility++;
+                Plausibility++;
             if (contacts.home_phone != null)
-                plausibility++;
+                Plausibility++;
 
             if (bdate.Year != DateTime.MinValue.Year)
-                plausibility++;
+                Plausibility++;
             
-            //if(AnalyzeData.CheckFriends(friends))
-            //	plausibility += 4;
-            
-            //if(AnalyzeData.CheckArrival(arrived_from))
-            //	plausibility += 3;
-
-            if (plausibility > 40)
-                plausibility = 40;
-            if (plausibility < 0)
-                plausibility = 0;
-            return plausibility;
+            if (Plausibility > 40)
+                Plausibility = 40;
+            if (Plausibility < 0)
+                Plausibility = 0;
+            return Plausibility;
         }
 
         public override string ToString()
@@ -503,7 +502,7 @@ namespace DB
                 + (social.facebook != null ? " facebook:" + social.facebook : "")
                 + (social.livejournal != null ? " livejournal:" + social.livejournal : "")
                 + (social.twitter != null ? " twitter:" + social.twitter : "")
-                + "\n" + _id + "\nplausibility " + plausibility + "\n";
+                + "\n" + _id + "\nplausibility " + Plausibility + "\n";
 
             foreach (University university in universities)
             {

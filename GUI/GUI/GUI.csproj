@@ -64,6 +64,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -104,6 +107,9 @@
       <DependentUpon>MakeRequest.xaml</DependentUpon>
     </Compile>
     <Compile Include="src\GUI\MenuController.cs" />
+    <Compile Include="src\GUI\PluginManager.xaml.cs">
+      <DependentUpon>PluginManager.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\GUI\Search.xaml.cs">
       <DependentUpon>Search.xaml</DependentUpon>
     </Compile>
@@ -162,6 +168,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="src\GUI\PluginManager.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="src\GUI\Search.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -191,10 +201,10 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-	<Resource Include="resources\auxiliary\fac_cha.json">
+    <Resource Include="resources\auxiliary\fac_cha.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-	<Resource Include="resources\auxiliary\user-agents.json">
+    <Resource Include="resources\auxiliary\user-agents.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

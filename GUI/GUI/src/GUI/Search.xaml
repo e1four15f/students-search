@@ -166,8 +166,9 @@
             <!-- тут плагины мои -->
             <MenuItem Header="_Плагины">
                 <MenuItem Header="_Загрузить плагин" InputGestureText="Ctrl+P" Click="PluginLoad"/>
-                <Separator />
                 <MenuItem Header="_Передать плагину список" Click="LaunchPlugin"/>
+                <Separator />
+                <MenuItem Header="_Сделать шаблоны для разработчиков" Click="MakeTemplate"/>
             </MenuItem>
 
             <MenuItem Header="_Настройки">

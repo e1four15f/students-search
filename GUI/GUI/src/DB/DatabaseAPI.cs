@@ -159,7 +159,7 @@ namespace DB
                     // Empty request
                     if (queries.Count < 1)
                     {
-                        return getAllUsers().OrderByDescending(x => x.plausibility).ToList();
+                        return getAllUsers().OrderByDescending(x => x.Plausibility).ToList();
                     }
 
                     IEnumerable<Human> result = (queries.Count > 1) ? 
@@ -167,7 +167,7 @@ namespace DB
                         coll.Find(queries[0]);        
 
                     // Sort by plausibility
-                    result = result.OrderByDescending(x => x.plausibility);
+                    result = result.OrderByDescending(x => x.Plausibility);
 
                     return result.ToList();
                 }

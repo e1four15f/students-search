@@ -34,7 +34,7 @@ namespace Utils
 		public static bool CheckFriends(HashSet<Human> friends){
 			int count = 0;
 			foreach(Human friend in friends){
-				if(friend.plausibility > 10)
+				if(friend.Plausibility > 10)
 					count++;
 				if(count > 5)
 					return true;
