@@ -22,6 +22,9 @@ namespace DB
 
         public bool corrupted;
 
+        private bool loaded = false;
+        public bool Loaded { get { return loaded; } }
+
         public void saveDB(string connStr)
         {
             File.Delete(connStr);
@@ -48,6 +51,8 @@ namespace DB
                         db.GetCollection("users");
                         corrupted = false;
                     }
+
+                    loaded = true;
                 }
                 catch (NullReferenceException)
                 {
@@ -104,6 +109,7 @@ namespace DB
                 coll.EnsureIndex(p => p.first_name);
                 coll.EnsureIndex(p => p.last_name);
                 coll.EnsureIndex(p => p.sex);
+                //coll.EnsureIndex(p => p.universities[0].faculty_id);
 
                 List<Query> queries = new List<Query>();
 
@@ -121,20 +127,22 @@ namespace DB
                 if (request.ManSex.IsChecked.Value && !request.FemaleSex.IsChecked.Value)
                 {
                     queries.Add(Query.EQ("sex", true));
-                } 
+                }
                 else if (!request.ManSex.IsChecked.Value && request.FemaleSex.IsChecked.Value)
                 {
                     queries.Add(Query.EQ("sex", false));
                 }
                 // Faculty name criteria
-                if (request.FacultyName.Text.Length > 0)
+                var faculName = (MakeRequest.Faculty)request.FacultyName.SelectedItem;
+                if (faculName != null && faculName.Value != -1)
                 {
-                    queries.Add(Query.Contains("LOWER($.universities[*].faculty_name)", request.FacultyName.Text.ToLower()));
+                    queries.Add(Query.EQ("universities[0].faculty_id)", faculName.Value));
                 }
                 // Chair name criteria
-                if (request.ChairName.Text.Length > 0)
+                var chairName = (MakeRequest.Chair)request.ChairName.SelectedItem;
+                if (chairName != null && chairName.Value != -1)
                 {
-                    queries.Add(Query.Contains("LOWER($.universities[*].chair_name)", request.ChairName.Text.ToLower()));
+                    queries.Add(Query.EQ("universities[0].chair_id)", chairName.Value));
                 }
                 // Chair name criteria
                 if (request.ChairName.Text.Length > 0)
@@ -153,14 +161,14 @@ namespace DB
                     return getAllUsers();
                 }
 
-                IEnumerable<Human> result = (queries.Count > 1) ? 
-                    coll.Find(Query.And(queries.ToArray())) : 
-                    coll.Find(queries[0]);        
+                IEnumerable<Human> result = (queries.Count > 1) ?
+                    coll.Find(Query.And(queries.ToArray())) :
+                    coll.Find(queries[0]);
 
                 return result.ToList();
             }
         }
-        
+
         // Subinfo methods
         public FileInfo getDBFileInfo()
         {

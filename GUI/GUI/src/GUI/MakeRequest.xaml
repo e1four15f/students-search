@@ -21,7 +21,7 @@
         <Label Content="Имя" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <TextBox Name="FirstName" HorizontalAlignment="Left" Height="23" Margin="145,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" FontSize="16"/>
         <!--Text="Введите имя"-->
-        
+
         <Label Content="Фамилия" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top"/>
         <TextBox Name="LastName" HorizontalAlignment="Left" Height="23" Margin="145,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" FontSize="16"/>
         <!--Text="Введите фамилию"-->
@@ -29,15 +29,15 @@
         <Label Content="Пол" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top"/>
         <CheckBox Name="ManSex" Content="Мужчина" HorizontalAlignment="Left" Margin="150,75,0,0" VerticalAlignment="Top"/>
         <CheckBox Name="FemaleSex" Content="Женщина" HorizontalAlignment="Left" Margin="230,75,0,0" VerticalAlignment="Top"/>
-            
+
         <Label Content="Факультет" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top"/>
-        <TextBox Name="FacultyName" HorizontalAlignment="Left" Height="23" Margin="145,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" FontSize="16"/>
+        <ComboBox Name="FacultyName" HorizontalAlignment="Left" Height="23" Margin="145,100,0,0" VerticalAlignment="Top" Width="180" FontSize="12" IsEditable="true" IsTextSearchEnabled="false"/>
         <!--Text="Введите факультет"-->
-        
+
         <Label Content="Кафедра/направление" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top"/>
-        <TextBox Name="ChairName" HorizontalAlignment="Left" Height="23" Margin="145,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" FontSize="16"/>
-        <!--Text="Введите направление"-->    
-        
+        <ComboBox Name="ChairName" HorizontalAlignment="Left" Height="23" Margin="145,130,0,0" VerticalAlignment="Top" Width="180" FontSize="12" IsEditable="true" IsTextSearchEnabled="false"/>
+        <!--Text="Введите направление"-->
+
         <Label Content="Год выпуска" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top"/>
         <TextBox Name="GraduationYear" HorizontalAlignment="Left" Height="23" Margin="145,160,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="180" FontSize="16" PreviewTextInput="TextNumberValidation"/>
         <!--Text="Введите год"-->

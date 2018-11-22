@@ -16,15 +16,22 @@ namespace GUI
         /* Создаёт новую панель поиска */
         internal static void NewList(Window sender, bool saved = true)
         {
-            Console.WriteLine(sender.ToString() + ": Новый список");
-            if (sender != App.Current.MainWindow)
-            { 
-                sender.Close();
-            }
-            if (saved)
+            if (MainWindow.db != null && MainWindow.db.Loaded)
             {
-                App.Current.MainWindow.Hide();
-                new Search().Show();
+                Console.WriteLine(sender.ToString() + ": Новый список");
+                if (sender != App.Current.MainWindow)
+                {
+                    sender.Close();
+                }
+                if (saved)
+                {
+                    App.Current.MainWindow.Hide();
+                    new Search().Show();
+                }
+            }
+            else
+            {
+                MessageBox.Show("База данных не загружена!\nЧтобы загрузить базу данных нажмите\n\"Файл -> Загрузить БД\" \nИли нажмите комбинацию клавиш Ctrl+Shift+O", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
