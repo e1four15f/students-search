@@ -330,13 +330,9 @@ namespace GUI
         
         private void LaunchPlugin(object sender, RoutedEventArgs e)
         {
-        	List<Human> humans = selected_users.ToList();
         	ObservableCollection<RuntimePlugin> plugins2watch = new ObservableCollection<RuntimePlugin>(plugins.ToList());
-        	//GUI.PluginManager open_manager = new GUI.PluginManager();
-        	
-        	//open_manager.Show();
-        	if(plugins.Count != 0)
-        		plugins.ElementAt(0).Call(humans);
+        	GUI.PluginManager open_manager = new GUI.PluginManager(plugins2watch, selected_users.ToList());
+        	open_manager.Show();
         }
         
         private void MakeTemplate(object sender, RoutedEventArgs e)

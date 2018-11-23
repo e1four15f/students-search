@@ -7,7 +7,10 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Collections.ObjectModel;
 
+using RuntimePlugin_ns;
+using DB;
 namespace GUI
 {
 	/// <summary>
@@ -15,14 +18,22 @@ namespace GUI
 	/// </summary>
 	public partial class PluginManager : Window
 	{
-		public PluginManager()
+		ObservableCollection<RuntimePlugin> plugins;
+		List<Human> humans2pass;
+		
+		public PluginManager(ObservableCollection<RuntimePlugin> plugins, List<Human> humans_list)
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
 			InitializeComponent();
+			
+			this.humans2pass = humans_list;
+			this.plugins = plugins;
+			PluginsList.ItemsSource = plugins;
+			
 		}
-		void listView1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		void Plugins_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			throw new NotImplementedException();
+			((RuntimePlugin)PluginsList.SelectedItem).Call(humans2pass);
 		}
 	}
 }

@@ -14,7 +14,7 @@ using System.Linq;
 using DB;
 namespace RuntimePlugin_ns
 {
-	class RuntimePlugin
+	public class RuntimePlugin
 	{
 		/*	В импортируемом dll плагине должен содержаться класс, содержащий
 		 	имя подключаемой dll, и функция, так же содержащая имя dll.
@@ -25,7 +25,8 @@ namespace RuntimePlugin_ns
 		 	Функция-обертка должна принимать List<Human>, ничего больше*/
 		
 		Assembly dll;
-		string dll_name;
+		public string dll_name;
+		public string DLL_NAME {get {return dll_name;}}
 		
 		//метод-обертка из dll
 		public MethodInfo primary_method;
