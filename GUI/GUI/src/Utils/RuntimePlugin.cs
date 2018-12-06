@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 using DB;
+using System.Windows;
+using System.IO;
 namespace RuntimePlugin_ns
 {
 	public class RuntimePlugin
@@ -123,9 +125,21 @@ namespace ChangeMe_Namespace
 		}
 	}
 }";
-			
-			//System.IO.File.WriteAllText(path + @"\Program.cs", program);
-			//System.IO.File.WriteAllText(path + @"\Human.cs", GUI.Properties.Resources.Human_class);
+
+            try
+            {
+                File.WriteAllText(path + @"\Program.cs", program);
+                File.WriteAllText(path + @"\Human.cs", GUI.Properties.Resources.Human_class);
+                MessageBox.Show("Файлы созданы");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                MessageBox.Show("Попробуйте заново", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+            catch (UnauthorizedAccessException)
+            {
+
+            }
 		}
 	}
 }

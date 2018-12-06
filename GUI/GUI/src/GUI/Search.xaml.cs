@@ -340,7 +340,6 @@ namespace GUI
         	System.Windows.Forms.FolderBrowserDialog folder = new System.Windows.Forms.FolderBrowserDialog();
         	folder.ShowDialog();
         	RuntimePlugin.CreateTemplate(folder.SelectedPath);
-        	MessageBox.Show("Файлы созданы");
         }
 
         /* Обработчик чекбоксов */

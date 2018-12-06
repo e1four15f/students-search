@@ -61,16 +61,6 @@ namespace GUI.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] fac_cha {
-            get {
-                object obj = ResourceManager.GetObject("fac_cha", resourceCulture);
-                return ((byte[])(obj));
-			}
-		}
-		
-		/// <summary>
         ///   Looks up a localized string similar to &lt;section class=&quot;content&quot;&gt;
         ///	&lt;img class=&quot;photo&quot; src=&quot;{photo_100}&quot; alt=&quot;Изображение профиля&quot;/&gt;
         ///	&lt;div class=&quot;user_info&quot;&gt;
@@ -102,6 +92,16 @@ namespace GUI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] fac_cha {
+            get {
+                object obj = ResourceManager.GetObject("fac_cha", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap facebook_logo {
@@ -124,6 +124,35 @@ namespace GUI.Properties {
         internal static string header {
             get {
                 return ResourceManager.GetString("header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Linq;
+        ///using System.Text;
+        ///using System.Text.RegularExpressions;
+        ///using System.Threading.Tasks;
+        ///using System.Reflection;
+        ///
+        ///namespace ChangeMe_Namespace
+        ///{
+        ///    public class City
+        ///    {
+        ///        public int city_id { get; set; }
+        ///        public string city_title { get; set; }
+        ///    }
+        ///
+        ///    public class Contacts
+        ///    {
+        ///        public string mobile_phone { get; set; }
+        ///        public string home_phone { get; set; }
+        ///        public HashSet&lt;string&gt; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Human_class {
+            get {
+                return ResourceManager.GetString("Human_class", resourceCulture);
             }
         }
         

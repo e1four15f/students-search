@@ -84,6 +84,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <None Include="resources\auxiliary\Human_class.cs" />
     <Compile Include="src\DB\Human.cs" />
     <Compile Include="src\DB\DatabaseAPI.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
