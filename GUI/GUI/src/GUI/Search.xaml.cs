@@ -386,5 +386,14 @@ namespace GUI
             UpdateResponse(MainWindow.db_users);
             MessageBox.Show("Готово", "Info", MessageBoxButton.OK, MessageBoxImage.Asterisk);
         }
+        
+        /* Помощь */
+        private void Help(object sender, RoutedEventArgs e)
+        {
+        	if(!File.Exists("Help.pdf"))
+        		File.WriteAllBytes("Help.pdf",GUI.Properties.Resources.help_doc);
+        	
+        	System.Diagnostics.Process.Start("Help.pdf") ;
+        }
     }
 }

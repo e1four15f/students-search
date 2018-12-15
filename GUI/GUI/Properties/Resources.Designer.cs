@@ -128,6 +128,16 @@ namespace GUI.Properties {
 		}
 		
 		/// <summary>
+		///   Looks up a localized resource of type System.Byte[].
+		/// </summary>
+		internal static byte[] help_doc {
+			get {
+				object obj = ResourceManager.GetObject("help_doc", resourceCulture);
+				return ((byte[])(obj));
+			}
+		}
+		
+		/// <summary>
 		///   Looks up a localized string similar to using System;
 		///using System.Collections.Generic;
 		///using System.Linq;
