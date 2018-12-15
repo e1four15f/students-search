@@ -105,6 +105,7 @@ namespace RuntimePlugin_ns
 @"/*Шаблон плагина*/
 using System;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using HumanData;
 
 namespace ChangeMe_Namespace

@@ -76,7 +76,7 @@ namespace DB
         [BsonIgnore]
         public string home_phone { get { return contacts.home_phone != null ? "Дом. " + contacts.home_phone : ""; } }
         [BsonIgnore]
-        public string email { get { return contacts.emails != null ? contacts.emails.ElementAt(0) : ""; } }
+        public string email { get { return contacts.emails != null ? contacts.emails.ElementAtOrDefault(0) : ""; } }
 
         public Social social { get; set; } // TODO // TODO Odnoklassniki
         [BsonIgnore]
@@ -424,18 +424,6 @@ namespace DB
                     + university.faculty_name + " " 
                     + (university.graduation_year != 0 ? university.graduation_year.ToString() : "") + "\n";
             }   
-            
-            user_info += "\n-----\n";
-            foreach (string email in contacts.emails)
-            {
-            	user_info += "\n" + email;
-            }
-            
-            user_info += "\n~~~~~\n";
-            foreach (string site in contacts.sites)
-            {
-            	user_info += "\n" + site;
-            }
             
             return user_info;
         }

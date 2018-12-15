@@ -93,8 +93,6 @@ namespace Utils
 			string[] sites = {"https://pikabu.ru/@",
 							  "https://twitter.com/",
 							  "https://www.instagram.com/",
-							  "https://ask.fm/",
-							  "https://www.facebook.com/",
 							  "https://habr.com/users/"};
 			
 			
@@ -103,9 +101,10 @@ namespace Utils
 			
 			/*обрабатываем дефолтные сайты*/
 			for(int i = 0; i < sites.Length; i++){
+				html.Clear();
 				try{
 					if(human.domain != null && 
-					   (!human.domain.Substring(0, 2).Equals("id") && human.domain.Substring(0, human.domain.Length -1).Any(char.IsDigit)))
+					   !(human.domain.Substring(0, 2).Equals("id") && human.domain.Substring(0, human.domain.Length -1).Any(char.IsDigit)))
 						html.Add(System.Text.Encoding.UTF8.GetString(client.DownloadData(sites[i] + human.domain)).ToLower());
 					
 					if(human.instagram != null)
@@ -116,21 +115,24 @@ namespace Utils
 						html.Add(System.Text.Encoding.UTF8.GetString(client.DownloadData(sites[i] + human.twitter)).ToLower());
 				}
 				catch(Exception){
-					continue;
+					if(html.Count == 0)
+						continue;
 				}
 				
 				/*если на странице есть либо никнейм, либо имя, либо фамилия - добавляем в лист в виде:  айди_вк;профиль_дефолтного_сайта*/
 				foreach(string code in html){
-					if (human.domain != null && code.Contains(human.domain))
+					if(code.Contains("<title>404"))
+						break;
+					if (human.domain != null && code.Contains(human.domain) && !(profiles.Contains(sites[i] + human.domain)))
 						profiles.Add(sites[i] + human.domain);
 						
-					if (human.instagram != null && code.Contains(human.instagram))
+					if (human.instagram != null && code.Contains(human.instagram) && !(profiles.Contains(sites[i] + human.instagram)))
 						profiles.Add(sites[i] + human.instagram);
 					
-					if (human.skype != null && code.Contains(human.skype))
+					if (human.skype != null && code.Contains(human.skype) && !(profiles.Contains(sites[i] + human.skype)))
 						profiles.Add(sites[i] + human.skype);
 					
-					if (human.twitter != null && code.Contains(human.twitter))
+					if (human.twitter != null && code.Contains(human.twitter) && !(profiles.Contains(sites[i] + human.twitter)))
 						profiles.Add(sites[i] + human.twitter);
 				}
 			}
