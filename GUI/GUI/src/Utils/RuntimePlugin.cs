@@ -29,6 +29,9 @@ namespace RuntimePlugin_ns
 		Assembly dll;
 		public string dll_name;
 		public string DLL_NAME {get {return dll_name;}}
+		public string dll_descr;
+		public string DLL_DESCR {get {return dll_descr;}}
+		
 		
 		//метод-обертка из dll
 		public MethodInfo primary_method;
@@ -51,6 +54,7 @@ namespace RuntimePlugin_ns
 			GetFunction();
 		}
 		
+		
 		void GetFunction(){
 			List<Type> exported_objects = new List<Type>();
 			List<object> members = new List<object>();
@@ -72,11 +76,17 @@ namespace RuntimePlugin_ns
 			//класс должен содержать название dll плагина, из всех выбираем такой
 			primary_instance = members.Find( x => x.GetType().Name.ToLower().Contains(dll_name));
 			
+			
 			//получаем методы класса
 			MethodInfo[] methods = primary_instance.GetType().GetMethods();
 			
 			//выбираем из них тот, что содержит имя dll
 			primary_method = methods.ToList<MethodInfo>().Find(x=> x.Name.ToLower().Contains(dll_name));
+			
+			try{
+				dll_descr = (string)methods.ToList<MethodInfo>().Find(x=> x.Name.Contains("Description")).Invoke(primary_instance,new object[]{});
+			}
+			catch(Exception){}
 			
 			//методов не нашлось - выкидываем ошибку
 			if(primary_method == null)
@@ -84,6 +94,7 @@ namespace RuntimePlugin_ns
 									"Rename general method of your plugin to wherein contains dll name");
 			
 		}
+		
 		
 		//вызов функции-обертки dll без возвращаемых значений
 		public void Call(List<Human> humans){
@@ -110,7 +121,7 @@ using HumanData;
 
 namespace ChangeMe_Namespace
 {
-	public class ChangeMe_ClassName
+	public class NameMeAsDllFile_ClassName
 	{
 		/*	В импортируемом dll плагине должен содержаться класс, содержащий
 		 	имя подключаемой dll, и функция, так же содержащая имя dll.
@@ -119,7 +130,11 @@ namespace ChangeMe_Namespace
 		 	Поиск класса и функции не зависит от регистра их имени.
 		 	class ExampleDLL, public void ExAmPlEDLL(List<Human> human),при скомпилированном Example.dll будут найдены.
 		 	Функция-обертка должна принимать List<Human>, ничего больше*/
-		 	
+		 
+		/*Этот метод возвращает описание плагина*/
+		public static string Description(){
+			return "";
+		}
 		public static void NameMeAsDllFile(string serialized_list){
 			List<Human> humans = JsonConvert.DeserializeObject<List<Human>>(serialized_list);
 			

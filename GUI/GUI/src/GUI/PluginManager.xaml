@@ -32,8 +32,9 @@
 			Margin="8,45,8,45">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-				    <StackPanel Margin="5">
+				    <StackPanel Width = "263" Margin="5">
 				        <TextBlock FontSize="16" Text="{Binding DLL_NAME}" HorizontalAlignment="Center" />
+						<TextBlock FontSize="12" TextWrapping="Wrap" Text="{Binding DLL_DESCR}" HorizontalAlignment="Left" />
 				    </StackPanel>
 				</DataTemplate>
 			</ListBox.ItemTemplate>
