@@ -53,7 +53,9 @@ namespace GUI
     			ProcessData.GetEmails("example@example.com");
             	timer.Stop(); 
             	timer_switch = false;
-            	MessageBox.Show("Примерное время окончания процедуры: " + DateTime.Now.AddMilliseconds(timer.ElapsedMilliseconds*users.Count).ToShortTimeString());
+            	MessageBox.Show("Примерное время окончания процедуры: "
+	            	                + DateTime.Now.AddMilliseconds(timer.ElapsedMilliseconds*users.Count).ToShortDateString() + " "
+	            	                + DateTime.Now.AddMilliseconds(timer.ElapsedMilliseconds*users.Count).ToShortTimeString());
             }
             
             new System.Threading.Thread(() =>{
@@ -98,7 +100,9 @@ namespace GUI
     			ProcessData.MostLikelySites(users[0]);
             	timer.Stop(); 
             	timer_switch = false;
-            	MessageBox.Show("Примерное время окончания процедуры: " + DateTime.Now.AddMilliseconds(timer.ElapsedMilliseconds*users.Count).ToShortTimeString());
+            	MessageBox.Show("Примерное время окончания процедуры: "
+            	                	+ DateTime.Now.AddMilliseconds(timer.ElapsedMilliseconds*users.Count).ToShortDateString() + " "
+	            	                + DateTime.Now.AddMilliseconds(timer.ElapsedMilliseconds*users.Count).ToShortTimeString());
             }
             new System.Threading.Thread(() =>{
                                         	
@@ -150,7 +154,9 @@ namespace GUI
     			ProcessData.SearchInNet(users[0].domain, user_agents);
             	timer.Stop(); 
             	timer_switch = false;
-            	MessageBox.Show("Примерное время окончания процедуры: " + DateTime.Now.AddMilliseconds(timer.ElapsedMilliseconds*users.Count).ToShortTimeString());
+            	MessageBox.Show("Примерное время окончания процедуры: "
+            	                	+ DateTime.Now.AddMilliseconds(timer.ElapsedMilliseconds*users.Count).ToShortDateString() + " "
+	            	                + DateTime.Now.AddMilliseconds(timer.ElapsedMilliseconds*users.Count).ToShortTimeString());
             }
             
             new System.Threading.Thread(() =>{
