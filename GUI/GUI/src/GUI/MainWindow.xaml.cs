@@ -126,7 +126,7 @@ namespace GUI
         private void Help(object sender, RoutedEventArgs e)
         {
         	if(!File.Exists("Help.pdf"))
-        		File.WriteAllBytes("Help.pdf",GUI.Properties.Resources.help_doc);
+        		File.WriteAllBytes("Help.pdf",GUI.Properties.Resources.Help);
         	
         	System.Diagnostics.Process.Start("Help.pdf") ;
         }
